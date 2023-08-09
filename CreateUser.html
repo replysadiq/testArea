@@ -1,0 +1,1233 @@
+<app-breadcrumb [breadcrumbs]="breadcrumb"></app-breadcrumb>
+<app-modal #modal [modalConfig]="modalConfig">
+  <div id="modal-msg-id" [ngStyle]="{'text-align': modalConfig?.alignment }" [innerHTML]="modalConfig?.modalBody">
+  </div>
+</app-modal>
+
+<div class="tab-content-disapled">
+
+  <!-- <div class="d-flex justify-content-between">
+    <h2> {{"User Management" | translate}}</h2>
+  </div> -->
+
+  <div class="tab-pane-disapled tab-pane-2-disapled mt-3">
+    <div class="tab-content-2">
+      <div class="tab-pane active">
+        <a class="btn btn-primary collabse-btn" data-toggle="collapse" href="#multiCollapseExample1" role="button"
+          aria-expanded="false" aria-controls="multiCollapseExample1">
+          <ng-container
+            *ngIf="userBean?.individualbyMoiFlag && accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT">
+            {{'reg_user_mngt.customs.user.individual.inquiry'| translate}}
+          </ng-container>
+          <ng-container *ngIf="!userBean?.individualbyMoiFlag && !userBean?.editMode">
+            {{'reg_user_mngt.customs.user.heading.createuser'| translate}}
+          </ng-container>
+          <ng-container *ngIf="!userBean?.individualbyMoiFlag && userBean?.editMode">
+            {{'reg_user_mngt.customs.user.heading.createupdate'| translate}}
+          </ng-container>
+        </a>
+        <div class="row">
+          <div class="col">
+            <div class="collapse show">
+              <div class="row">
+                <div class="col-md-12 grid-margin stretch-card">
+                  <div class="card">
+                    <div class="card-body">
+                      <form [formGroup]="individualForm">
+
+                        <div class="row">
+                          <!-- <ng-container
+                          *ngIf="userBean && userBean?.individualbyMoiFlag && accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT"> -->
+                          <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                            <div class="form-group">
+                              <label class="control-label"><span class="mandatory-field">*</span>
+                                {{'reg_user_mngt.custom.user.individual.documenttype' | translate}}</label>
+
+                              <div class="col-sm-12">
+                                <div class="form-check form-check-primary form-check-inline">
+                                  <label class="form-check-label">
+                                    <input required formControlName="documentTypeforIndividual" value="QID" type="radio"
+                                      class="form-check-input" name="documentTypeforIndividual">
+                                    {{'reg_user_mngt.customs.user.qatariid' | translate}}
+                                    <i class="input-frame"></i>
+                                  </label>
+                                </div>
+                                <div class="form-check form-check-primary form-check-inline">
+                                  <label class="form-check-label">
+                                    <input required type="radio" formControlName="documentTypeforIndividual"
+                                      class="form-check-input" name="documentTypeforIndividual" value="PNO">
+                                    {{'reg_user_mngt.customs.user.passportno' | translate}}
+                                    <i class="input-frame"></i>
+                                  </label>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+
+                          <ng-container
+                            *ngIf="userBean?.individualQIDbyMoiFlag && accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT">
+                            <div class="search-table mt-0">
+                              <div class="col-12 col-lg-2 mb-3 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label"> <span class="alert-red">*</span>
+                                    {{'reg_user_mngt.customs.user.qatariid'
+                                    |translate}}</label>
+                                  <input type="text" formControlName="qatariId" class="form-control" [maxlength]="11">
+                                  <div class="field-error-message"
+                                    *ngIf="( individualForm.controls.qatariId.touched) && individualForm.controls.qatariId.invalid">
+                                    <small class="text-danger"
+                                      *ngIf="individualForm.controls.qatariId.errors?.required">{{'validation.required'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="individualForm.controls.qatariId.errors?.pattern">{{'validation.enternumbericdigitsonly'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="individualForm.controls.qatariId.errors?.minlength">
+                                      {{'validation.enterqatariIdof11'|
+                                      translate}}</small>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="mt-3">
+                                <a class="ml-3 mt-0 btn btn-outline-primary header-align">
+                                  {{'reg_user_mngt.customs.vts.retrieve' | translate}} </a>
+                                <a class="ml-3 mt-0 btn btn-light btn-light-custom header-align">
+                                  {{'action.cancel' | translate}} </a>
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <!-- </ng-container> -->
+                        </div>
+                      </form>
+
+
+                      <ng-container *ngIf="!userBean.individualbyMoiFlag">
+                        <hr />
+                        <!-- account details -->
+                        <form #createUserForm="ngForm" novalidate>
+
+                          <div class="row">
+
+                            <ng-container
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT || accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT">
+
+                              <!-- ******************* Account details ******************** -->
+                              <div class="col-md-12 mb-3">
+                                <h3 class="title-card-form">
+                                  {{'reg_user_mngt.customs.ac.subheading.accountdetails' | translate}} </h3>
+                              </div>
+
+                              <!-- ESTABLISHMENT ID -->
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.establishmentid' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.establishmentId" />
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.accountcode' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.accountCode" />
+                                </div>
+                              </div>
+                              <!-- COMPANY NAME -->
+
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.companyname' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.companyName" />
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.companynamear' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.arabicCompanyName" />
+                                </div>
+                              </div>
+
+                              <!-- CR NUMBER -->
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.crno' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.crNo" />
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.crexpirydate' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.crExpiryDate" />
+                                  <!-- customsConstants.DATE_PATTERN -->
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="accountBean.accountDTO.clearingAgenci
+                          && (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT
+                          || accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)">
+
+                              <!-- COMPANY ACTIVITIES -->
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.activities' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.companyActivities" />
+                                </div>
+                              </div>
+                              <!-- LICENSE ISSUE DATE -->
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.agency.licissuedate' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.clearingAgency.licenseIssueDate" />
+                                  <!-- customsConstants.DATE_PATTERN -->
+                                </div>
+                              </div>
+                              <!-- LICENSE EXPIRY DATE -->
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.agency.licexpirydate' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.clearingAgency.licenseExpiryDate" />
+                                  <!-- customsConstants.DATE_PATTERN -->
+                                </div>
+                              </div>
+                            </ng-container>
+
+
+                            <ng-container *ngIf="!accountBean.accountDTO.clearingAgenci
+                          && (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT
+                          || accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)">
+
+                              <!-- COMPANY ACTIVITIES -->
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.activities' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="accountBean.accountDTO.companyActivities" />
+                                </div>
+                              </div>
+                            </ng-container>
+                            <!-- End of Account Details -->
+
+
+                            <!-- ******************* User details ******************** -->
+                            <div class="col-md-12 mb-3">
+                              <h3 class="title-card-form">
+                                {{'reg_user_mngt.customs.user.heading.userdetails' | translate}} </h3>
+                            </div>
+
+                            <ng-container
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT || accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.user.details.userstatus' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control" [value]="userBean.userDTO.status" />
+                                  <!-- accountStatusTypeConverter -->
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <ng-container
+                              *ngIf="(userBean.userDTO.status == accountStatusTypeBean.BLACKLISTED || userBean.userDTO.status == accountStatusTypeBean.SUSPENDED) && (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT || accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.common.startdate' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control" [value]="userBean.statusStartDate" />
+                                  <!-- custConstants.DATE_PATTERN -->
+                                  <!-- accountStatusTypeConverter -->
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <ng-container
+                              *ngIf="(userBean.userDTO.status == accountStatusTypeBean.BLACKLISTED || userBean.userDTO.status == accountStatusTypeBean.SUSPENDED) && (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT || accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.common.enddate' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.statusEndDate" />
+                                  <!-- custConstants.DATE_PATTERN -->
+                                  <!-- accountStatusTypeConverter -->
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <div class="col-12 col-lg-3 mb-3 mb-lg-0">
+                              <div class="form-group">
+                                <label *ngIf="accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT"
+                                  class="control-label">
+                                  {{'reg_user_mngt.customs.user.qatariid'
+                                  |translate}}</label>
+                                <label
+                                  *ngIf="userBean.userDTO.documentTypeforIndividual == 'QID' && accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT"
+                                  class="control-label">
+                                  <span class="alert-red">*</span> {{'reg_user_mngt.customs.user.qatariid'
+                                  |translate}}</label>
+
+                                <ng-container
+                                  *ngIf="userBean.userDTO.documentTypeforIndividual == 'QID' && !userBean.editMode && accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT">
+                                  <input [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.qatariId != ''"
+                                    type="text" validateQIDdir #qatariId="ngModel" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.userDTO.qatariId" ngModel name="qatariId" class="form-control"
+                                    [maxlength]="11">
+                                  <div class="field-error-message" *ngIf="qatariId.touched && qatariId.errors">
+                                    <small class="text-danger" *ngIf="qatariId.errors.required">{{'validation.required'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="qatariId.errors?.numberOnly">{{'validation.enternumbericdigitsonly'|
+                                      translate}}</small>
+                                    <small class="text-danger" *ngIf="qatariId.errors?.minlength">
+                                      {{'validation.enterqatariIdof11'|
+                                      translate}}</small>
+                                  </div>
+                                </ng-container>
+
+                                <ng-container
+                                  *ngIf="!userBean.editMode && accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT">
+                                  <input required type="text" validateQIDdir #qatariId="ngModel" required
+                                    [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.userDTO.qatariId"
+                                    ngModel name="qatariId" class="form-control" [maxlength]="11">
+                                  <div class="field-error-message" *ngIf="qatariId.touched && qatariId.errors">
+                                    <small class="text-danger" *ngIf="qatariId.errors.required">{{'validation.required'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="qatariId.errors?.numberOnly">{{'validation.enternumbericdigitsonly'|
+                                      translate}}</small>
+                                    <small class="text-danger" *ngIf="qatariId.errors?.minlength">
+                                      {{'validation.enterqatariIdof11'|
+                                      translate}}</small>
+                                  </div>
+                                </ng-container>
+
+                                <input *ngIf="userBean.editMode" disabled required type="text" validateQIDdir
+                                  #qatariId="ngModel" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="userBean.userDTO.qatariId" ngModel name="qatariId" class="form-control"
+                                  [maxlength]="11">
+                              </div>
+                            </div>
+
+                            <!-- PASSPORT NUMBER -->
+                            <ng-container
+                              *ngIf="userBean.userDTO.documentTypeforIndividual == 'PNO' && accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.user.passportno' |
+                                    translate}}</label>
+                                  <input type="text" *ngIf="userBean.editMode && userBean.userDTO.qatariId == null"
+                                    disabled class="form-control" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.userDTO.passportNo" />
+                                  <ng-container *ngIf="!userBean.editMode or userBean.userDTO.qatariId ne null">
+                                    <input type="text" #passportNo="ngModel" validatePassportNodir class="form-control"
+                                      [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.userDTO.passportNo" />
+                                    <div class="field-error-message" *ngIf="passportNo.touched && passportNo.errors">
+                                      <small class="text-danger"
+                                        *ngIf="passportNo.errors?.invalidPassportNumber">{{'validation.CHARS_AND_DIGITS'|
+                                        translate}}</small>
+                                      <small class="text-danger"
+                                        *ngIf="passportNo.errors?.lengthIssue">{{'validation.validPassportNumber'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- FIRST NAME -->
+                            <ng-container *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                            && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT) || (userBean.editMode  &&  (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                            || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT))">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'reg_user_mngt.customs.user.firstname' |
+                                    translate}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                                  && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <input maxlength="25" #firstName="ngModel" minlength="2"
+                                      pattern="^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF a-zA-Z]*$" type="text" required
+                                      [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.firstName != null && !userBean.firstNameMoiEmptyFlag"
+                                      class="form-control" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="userBean.userDTO.firstName" />
+                                    <div class="field-error-message" *ngIf="firstName.touched && firstName.errors">
+                                      <small class="text-danger"
+                                        *ngIf="firstName.errors?.minlength || firstName.errors?.maxlength">{{'validation.validFirstName'|
+                                        translate}}</small>
+                                      <small class="text-danger"
+                                        *ngIf="firstName.errors?.pattern">{{'validation.enterAlphabetsOnly'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                  <input type="text" *ngIf="userBean.userDTO.status == 'LCG'" disabled
+                                    class="form-control" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.userDTO.firstName" />
+                                  <input type="text" *ngIf="userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                                || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)"
+                                    disabled class="form-control" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.userDTO.firstName" />
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- MIDDLE NAME -->
+                            <!-- <ng-container *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                            && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT) || (userBean.editMode  &&  (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                            || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT))"> -->
+                            <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label"><span class="alert-red">*</span>
+                                  {{'reg_user_mngt.customs.user.middlename' |
+                                  translate}}</label>
+                                <ng-container
+                                  *ngIf="accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                                    && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                  <input [maxlength]="25" #middleName="ngModel" [minlength]="2"
+                                    pattern="^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF a-zA-Z]*$" type="text" required
+                                    [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.middleName != null && !userBean.middleNameMoiEmptyFlag"
+                                    class="form-control" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.userDTO.middleName" />
+                                  <div class="field-error-message" *ngIf="middleName.touched && middleName.errors">
+                                    <small class="text-danger"
+                                      *ngIf="middleName.errors?.minlength || middleName.errors?.maxlength">{{'validation.validLastName'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="middleName.errors?.pattern">{{'validation.enterAlphabetsOnly'|
+                                      translate}}</small>
+                                  </div>
+                                </ng-container>
+                                <input type="text" *ngIf="userBean.userDTO.status == 'LCG'" disabled
+                                  class="form-control" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="userBean.userDTO.middleName" />
+                                <input type="text" *ngIf="userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                                  || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)"
+                                  disabled class="form-control" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="userBean.userDTO.middleName" />
+                              </div>
+                            </div>
+                            <!-- </ng-container> -->
+
+
+                            <!-- LAST NAME -->
+                            <ng-container *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                            && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT) || (userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                            || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT))">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'reg_user_mngt.customs.user.lastname' |
+                                    translate}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                                    && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <input [maxlength]="25" #lastName="ngModel" [minlength]="2"
+                                      pattern="^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF a-zA-Z]*$" type="text" required
+                                      [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.lastName != null && !userBean.lastNameMoiEmptyFlag"
+                                      class="form-control" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="userBean.userDTO.lastName" />
+                                    <div class="field-error-message" *ngIf="lastName.touched && lastName.errors">
+                                      <small class="text-danger"
+                                        *ngIf="lastName.errors?.minlength || lastName.errors?.maxlength">{{'validation.validMiddleName'|
+                                        translate}}</small>
+                                      <small class="text-danger"
+                                        *ngIf="lastName.errors?.pattern">{{'validation.enterAlphabetsOnly'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                  <input type="text" *ngIf="userBean.userDTO.status == 'LCG'" disabled
+                                    class="form-control" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.userDTO.lastName" />
+                                  <input type="text" *ngIf="userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                                  || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)"
+                                    disabled class="form-control" [ngModelOptions]="{standalone: true}"
+                                    [(ngModel)]="userBean.userDTO.lastName" />
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- added Arabic Name -->
+                            <div *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label">{{'reg_user_mngt.customs.user.arabicName' |
+                                  translate}}</label>
+                                <ng-container
+                                  *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                  <input type="text" class="form-control" #arabicName="ngModel"
+                                    [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.userDTO.arabicName" />
+                                  <div class="field-error-message" *ngIf="arabicName.touched && arabicName.errors">
+                                    <small class="text-danger"
+                                      *ngIf="arabicName.errors?.minlength || arabicName.errors?.maxlength">{{'validation.validName'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="arabicName.errors?.pattern">{{'validation.enterAlphabetsOnly'|
+                                      translate}}</small>
+                                  </div>
+                                </ng-container>
+                                <input type="text" *ngIf="userBean.userDTO.status == 'LCG'" disabled
+                                  class="form-control" #arabicName="ngModel" [ngModelOptions]="{standalone: true}"
+                                  [(ngModel)]="userBean.userDTO.arabicName" />
+                              </div>
+                            </div>
+                            <!--end of Arabic Name -->
+
+                            <!-- AgentInfoRegion -->
+                            <ng-container
+                              *ngIf="accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT">
+                              <ng-container *ngIf="userBean.showAgentInfoStyle">
+                                <!-- ******************* User details ******************** -->
+                                <div class="col-md-12 mb-3">
+                                  <h3 class="title-card-form">
+                                    {{'reg_user_mngt.customs.user.heading.userdetails' | translate}} </h3>
+                                </div>
+
+
+                                <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                  <div class="form-group">
+                                    <label class="control-label"><span class="alert-red">*</span>
+                                      {{'reg_user_mngt.customs.user.passportno' |
+                                      translate}}</label>
+                                    <input type="text" #passportNo="ngModel" required validatePassportNodir
+                                      class="form-control" [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="userBean.userDTO.passportNo" />
+                                    <div class="field-error-message" *ngIf="passportNo.touched && passportNo.errors">
+                                      <small class="text-danger"
+                                        *ngIf="passportNo.errors?.invalidPassportNumber">{{'validation.CHARS_AND_DIGITS'|
+                                        translate}}</small>
+                                      <small class="text-danger"
+                                        *ngIf="passportNo.errors?.lengthIssue">{{'validation.validPassportNumber'|
+                                        translate}}</small>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                  <div class="form-group">
+                                    <label class="control-label"><span class="alert-red">*</span>
+                                      {{'reg_user_mngt.customs.user.nationality' |
+                                      translate}}</label>
+                                    <select name="nationalityId" #nationalityId="ngModel" required
+                                      [ngModelOptions]="{standalone: true}"
+                                      [(ngModel)]="userBean.userDTO.nationalityId">
+                                      <option value="">--{{'action.selectone' | translate}}-- </option>
+                                      <option *ngFor="let role of coutryList">
+                                        {{'reg_user_mngt.customs.user.partialEmpID' | translate }}
+                                      </option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || nationalityId.touched) && nationalityId.errors">
+                                      <small class="text-danger"
+                                        *ngIf="nationalityId.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- EDUCATION -->
+                                <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                  <div class="form-group">
+                                    <label class="control-label"><span class="alert-red">*</span>
+                                      {{'reg_user_mngt.customs.user.education' |
+                                      translate}}</label>
+                                    <input type="text" pattern="^(\d|\w)+$" class="form-control" #education="ngModel"
+                                      [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.userDTO.education" />
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || education.touched) && education.errors">
+                                      <small class="text-danger"
+                                        *ngIf="education.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                      <small class="text-danger"
+                                        *ngIf="education.errors?.pattern">{{'validation.CHARS_AND_DIGITS'|
+                                        translate}}</small>
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                  <div class="form-group">
+                                    <label class="control-label">{{'reg_user_mngt.customs.user.dateofbirth'
+                                      | translate}}</label>
+                                    <div class="input-group date datepicker" id="userDTO_dateOfBirth">
+                                      <input type="text" #dateOfBirth="ngModel" required
+                                        #userDTO_dateOfBirth="bsDatepicker" [(ngModel)]="userBean.userDTO.dateOfBirth"
+                                        placeholder="" [bsConfig]="bsConfig" class="form-control" bsDatepicker>
+                                      <span class="input-group-addon" (click)="userDTO_dateOfBirth.toggle()"><i
+                                          data-feather="calendar"></i></span>
+                                    </div>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || dateOfBirth.touched) && dateOfBirth.errors">
+                                      <small class="text-danger"
+                                        *ngIf="dateOfBirth.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </ng-container>
+                            </ng-container>
+
+                            <!-- normal -->
+                            <!-- GENDER -->
+                            <ng-container
+                              *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                            && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT) || (userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                            || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)) || (userBean.userDTO.status == 'LCG')">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                              && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT) || (userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                              || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT))"
+                                    class="control-label"><span class="mandatory-field">*</span>
+                                    {{'reg_user_mngt.customs.user.gender'}}</label>
+                                  <div
+                                    *ngIf="accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                              && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG'"
+                                    class="col-sm-12">
+                                    <div class="form-check form-check-primary form-check-inline">
+                                      <label class="form-check-label">
+                                        <input
+                                          [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.gender !=  null && !userBean.gendeMoiEmptyFlag"
+                                          type="radio" required #gender="ngModel" class="form-check-input" value="M"
+                                          name="radioControl" [(ngModel)]="userBean.userDTO.gender">
+                                        {{'reg_user_mngt.customs.user.male'}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                    <div class="form-check form-check-primary form-check-inline">
+                                      <label class="form-check-label">
+                                        <input
+                                          [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.gender !=  null && !userBean.gendeMoiEmptyFlag"
+                                          type="radio" required #gender="ngModel" class="form-check-input" value="F"
+                                          name="radioControl" [(ngModel)]="userBean.userDTO.gender">
+                                        {{'reg_user_mngt.customs.user.female'}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || gender.touched) && gender.errors">
+                                      <small class="text-danger" *ngIf="gender.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </div>
+                                  <div *ngIf="userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                              || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)"
+                                    class="col-sm-12">
+                                    <div class="form-check form-check-primary form-check-inline">
+                                      <label class="form-check-label">
+                                        <input [attr.disabled]="true" type="radio" class="form-check-input" value="M"
+                                          name="radioControl" [(ngModel)]="userBean.userDTO.gender">
+                                        {{'reg_user_mngt.customs.user.male'}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                    <div class="form-check form-check-primary form-check-inline">
+                                      <label class="form-check-label">
+                                        <input [attr.disabled]="true" type="radio" class="form-check-input" value="F"
+                                          name="radioControl" [(ngModel)]="userBean.userDTO.gender">
+                                        {{'reg_user_mngt.customs.user.female'}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                  </div>
+                                  <div *ngIf="userBean.userDTO.status == 'LCG'" class="col-sm-12">
+                                    <div class="form-check form-check-primary form-check-inline">
+                                      <label class="form-check-label">
+                                        <input [attr.disabled]="true" type="radio" class="form-check-input" value="M"
+                                          name="radioControl" [(ngModel)]="userBean.userDTO.gender">
+                                        {{'reg_user_mngt.customs.user.male'}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                    <div class="form-check form-check-primary form-check-inline">
+                                      <label class="form-check-label">
+                                        <input [attr.disabled]="true" type="radio" class="form-check-input" value="F"
+                                          name="radioControl" [(ngModel)]="userBean.userDTO.gender">
+                                        {{'reg_user_mngt.customs.user.female'}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- LOCATION ID -->
+                            <ng-container *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.user.worklocation' |
+                                    translate}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <select required [ngModelOptions]="{standalone: true}" #locationId="ngModel"
+                                      [(ngModel)]="accountBean.accountDTO.locationId">
+                                      <option value="">--{{'action.selectone' | translate}}-- </option>
+                                      <option *ngFor="let item of selectPortOfQatarItemList">
+                                        {{item}}
+                                      </option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || locationId.touched) && locationId.errors">
+                                      <small class="text-danger"
+                                        *ngIf="locationId.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT && userBean.userDTO.status == 'LCG'">
+                                    <select disabled [ngModelOptions]="{standalone: true}" #locationId="ngModel"
+                                      [(ngModel)]="accountBean.accountDTO.locationId">
+                                      <option value="">--{{'action.selectone' | translate}}-- </option>
+                                      <option *ngFor="let item of selectPortOfQatarItemList">
+                                        {{item}}
+                                      </option>
+                                    </select>
+                                  </ng-container>
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- PERSON TYPE moi FOR INDIVIDUAL -->
+                            <ng-container
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT && userBean.userDTO.documentTypeforIndividual == 'QID'">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.user.persontype' |
+                                    translate}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <select required
+                                      [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.personType != null && !userBean.personTypeMoiEmptyFlag"
+                                      [ngModelOptions]="{standalone: true}" #personType="ngModel"
+                                      [(ngModel)]="userBean.userDTO.personType">
+                                      <option value="">--{{'action.selectone' | translate}}-- </option>
+                                      <option value="0"> {{'reg_user_mngt.customs.user.persontype.qatari' | translate }}
+                                      </option>
+                                      <option value="1"> {{'reg_user_mngt.customs.user.persontype.gcc' | translate }}
+                                      </option>
+                                      <option value="2"> {{'reg_user_mngt.customs.user.persontype.diplomat' | translate
+                                        }} </option>
+                                      <option value="3"> {{'reg_user_mngt.customs.user.persontype.resident' | translate
+                                        }} </option>
+                                      <option value="4"> {{'reg_user_mngt.customs.user.persontype.tempresident' |
+                                        translate }} </option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || personType.touched) && personType.errors">
+                                      <small class="text-danger"
+                                        *ngIf="personType.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- DATE OF BIRTH FOR INDIVIDUAL -->
+                            <div
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT && userBean.userDTO.documentTypeforIndividual == 'QID'"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label">{{'reg_user_mngt.customs.user.dateofbirth' |
+                                  translate}}</label>
+                                <input type="text" disabled class="form-control"
+                                  [value]="userBean.userDTO.dateOfBirth | date:'dd/MM/YYYY'" />
+                              </div>
+                            </div>
+
+                            <div
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT && userBean.userDTO.documentTypeforIndividual == 'QID'"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label">{{'reg_user_mngt.customs.user.qidexpirydate' |
+                                  translate}}</label>
+                                <input type="text" disabled class="form-control"
+                                  [value]="userBean.userDTO.qatariIdExpiryDate | date:'dd/MM/YYYY'" />
+                              </div>
+                            </div>
+
+                            <div
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT && userBean.userDTO.documentTypeforIndividual == 'QID'"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label">{{'reg_user_mngt.customs.user.rpexpirydate' |
+                                  translate}}</label>
+                                <input type="text" disabled class="form-control"
+                                  [value]="userBean.userDTO.rpExpiryDate | date:'dd/MM/YYYY'" />
+                              </div>
+                            </div>
+
+                            <!-- NATIONALITY -->
+                            <div *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label"><span class="alert-red">*</span>
+                                  {{'reg_user_mngt.customs.user.nationality' |
+                                  translate}}</label>
+                                <select name="nationalityId" #nationalityId="ngModel" required
+                                  [attr.disabled]="userBean.lookUpFlagMoi && userBean.userDTO.nationalityId != null && !userBean.nationalityMoiEmptyFlag"
+                                  [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.userDTO.nationalityId">
+                                  <option value="">--{{'action.selectone' | translate}}-- </option>
+                                  <option *ngFor="let role of coutryList">
+                                    {{role | translate }}
+                                  </option>
+                                </select>
+                                <div class="field-error-message"
+                                  *ngIf="(isSubmitted || nationalityId.touched) && nationalityId.errors">
+                                  <small class="text-danger"
+                                    *ngIf="nationalityId.errors.required">{{'validation.required'|
+                                    translate}}</small>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!-- INDIVIDUAL ACTIIVITIES -->
+                            <div *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label ellipsis"><span class="mandatory-field">*</span>
+                                  {{'reg_user_mngt.customs.ac.activities'}}</label>
+                                <ng-multiselect-dropdown #listOfActivities="ngModel" [required]="true"
+                                  [ngClass]="currentLang=='en' ? '' : 'multiListdropdownAR'" [placeholder]="''"
+                                  [settings]="dropdownMultipleSelectionSettings" [data]="selectItemListIndividual"
+                                  [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.listOfActivities"
+                                  (onSelect)="onSelect($event)" (onDeSelect)="onDeSelect($event)"
+                                  (onSelectAll)="onSelectAll($event)">
+                                </ng-multiselect-dropdown>
+                                <div class="field-error-message"
+                                  *ngIf="(isSubmitted || listOfActivities.touched) && listOfActivities.errors">
+                                  <small class="text-danger"
+                                    *ngIf="listOfActivities.errors.required">{{'validation.required'|
+                                    translate}}</small>
+                                </div>
+                              </div>
+                            </div>
+
+                            <!--Excise Tax CR Changes  -->
+                            <div *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label"><span class="mandatory-field">*</span>
+                                  {{'reg_user_mngt.customs.ac.excise.tax.exemptions.individual.user.enabled'}}</label>
+                                <div class="col-sm-12">
+                                  <div class="form-check form-check-primary form-check-inline">
+                                    <label class="form-check-label">
+                                      <input required [attr.disabled]="true" type="radio" class="form-check-input"
+                                        value="Y" name="radioControl" [(ngModel)]="userBean.userDTO.exciseTaxExemption">
+                                      {{'reg_user_mngt.customs.common.booleanType.Y'}}
+                                      <i class="input-frame"></i>
+                                    </label>
+                                  </div>
+                                  <div class="form-check form-check-primary form-check-inline">
+                                    <label class="form-check-label">
+                                      <input required [attr.disabled]="true" type="radio" class="form-check-input"
+                                        value="N" name="radioControl" [(ngModel)]="userBean.userDTO.exciseTaxExemption">
+                                      {{'reg_user_mngt.customs.common.booleanType.N'}}
+                                      <i class="input-frame"></i>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div *ngIf="accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT"
+                              class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                              <div class="form-group">
+                                <label class="control-label"><span class="mandatory-field">*</span>
+                                  {{'reg_user_mngt.customs.ac.excise.tax.std.price.individual.user.enabled'}}</label>
+                                <div class="col-sm-12">
+                                  <div class="form-check form-check-primary form-check-inline">
+                                    <label class="form-check-label">
+                                      <input required [attr.disabled]="true" type="radio" class="form-check-input"
+                                        value="Y" name="radioControl" [ngModelOptions]="{standalone: true}"
+                                        #exciseTaxSTDPriceEnabled="ngModel"
+                                        [(ngModel)]="userBean.userDTO.exciseTaxSTDPriceEnabled">
+                                      {{'reg_user_mngt.customs.common.booleanType.Y'}}
+                                      <i class="input-frame"></i>
+                                    </label>
+                                  </div>
+                                  <div class="form-check form-check-primary form-check-inline">
+                                    <label class="form-check-label">
+                                      <input required [attr.disabled]="true" type="radio" class="form-check-input"
+                                        value="N" name="radioControl" [ngModelOptions]="{standalone: true}"
+                                        #exciseTaxSTDPriceEnabled="ngModel"
+                                        [(ngModel)]="userBean.userDTO.exciseTaxSTDPriceEnabled">
+                                      {{'reg_user_mngt.customs.common.booleanType.N'}}
+                                      <i class="input-frame"></i>
+                                    </label>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <!--end Excise Tax CR Changes  -->
+
+                            <!-- COMPANY -->
+                            <ng-container *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT">
+
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.ac.customsoffice' |
+                                    translate}}</label>
+                                  <ng-container *ngIf="userBean.userDTO.status != 'LCG' && currentLang != 'ar'">
+                                    <select name="" class="form-control" [ngModelOptions]="{standalone: true}" #companyName="ngModel"
+                                      required [(ngModel)]="accountBean.accountDTO.companyName">
+                                      <option value="">--{{'action.selectone' | translate}}-- </option>
+                                      <option *ngFor="let role of accountBean.selectModelList">
+                                        {{role}}
+                                      </option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || companyName.touched) && companyName.errors">
+                                      <small class="text-danger"
+                                        *ngIf="companyName.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+
+                                  <select name="" class="form-control" *ngIf="userBean.userDTO.status == 'LCG' && currentLang != 'ar'"
+                                    [attr.disabled]="true" [ngModelOptions]="{standalone: true}" #companyName="ngModel"
+                                    [(ngModel)]="accountBean.accountDTO.companyName">
+                                    <option value="">--{{'action.selectone' | translate}}-- </option>
+                                    <option *ngFor="let role of accountBean.selectModelList">
+                                      {{role}}
+                                    </option>
+                                  </select>
+                                  <ng-container *ngIf="userBean.userDTO.status != 'LCG' && currentLang == 'ar'">
+                                    <select name="" class="form-control" [ngModelOptions]="{standalone: true}"
+                                      #arabicCompanyName="ngModel" required
+                                      [(ngModel)]="accountBean.accountDTO.arabicCompanyName">
+                                      <option value="">--{{'action.selectone' | translate}}-- </option>
+                                      <option *ngFor="let role of accountBean.selectModelList">
+                                        {{role}}
+                                      </option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || arabicCompanyName.touched) && arabicCompanyName.errors">
+                                      <small class="text-danger"
+                                        *ngIf="arabicCompanyName.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+
+                                  <select name="" id="" class="form-control" *ngIf="userBean.userDTO.status == 'LCG' && currentLang == 'ar'"
+                                    [attr.disabled]="true" [ngModelOptions]="{standalone: true}"
+                                    #arabicCompanyName="ngModel" required
+                                    [(ngModel)]="accountBean.accountDTO.arabicCompanyName">
+                                    <option value="">--{{'action.selectone' | translate}}-- </option>
+                                    <option *ngFor="let role of accountBean.selectModelList">
+                                      {{role}}
+                                    </option>
+                                  </select>
+
+                                </div>
+                              </div>
+                            </ng-container>
+
+
+                            <!-- DESIGNATION -->
+                            <ng-container
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'reg_user_mngt.customs.user.designation' |
+                                    translate}}</label>
+                                  <input type="text" class="form-control" pattern="^(\d|\w)+$" required minlength="3"
+                                    maxlength="25" #designation="ngModel" [(ngModel)]="userBean.userDTO.designation" />
+                                  <div class="field-error-message"
+                                    *ngIf="(isSubmitted || designation.touched) && designation.errors">
+                                    <small class="text-danger"
+                                      *ngIf="designation.errors.required">{{'validation.required'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="designation.errors?.minlength || designation.errors?.maxlength">{{'validation.CHARS_AND_DIGITS'|
+                                      translate}}</small>
+                                    <small class="text-danger"
+                                      *ngIf="designation.errors?.pattern">{{'validation.enterAlphabetsOnly'|
+                                      translate}}</small>
+                                  </div>
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- DEPARTMENT testing -->
+                            <ng-container
+                              *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'reg_user_mngt.customs.user.department' |
+                                    translate}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT">
+                                    <input type="text" class="form-control" required minlength="3" maxlength="25"
+                                      #department="ngModel" [(ngModel)]="userBean.userDTO.department" />
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || department.touched) && department.errors">
+                                      <small class="text-danger"
+                                        *ngIf="department.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                      <small class="text-danger"
+                                        *ngIf="department.errors?.minlength || department.errors?.maxlength">{{'validation.CHARS_AND_DIGITS'|
+                                        translate}}</small>
+                                      <small class="text-danger"
+                                        *ngIf="department.errors?.pattern">{{'validation.enterAlphabetsOnly'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <select name="" id="" [ngModelOptions]="{standalone: true}" #department="ngModel"
+                                      required [(ngModel)]="userBean.userDTO.department">
+                                      <option *ngFor="let role of accountBean.selectDepartmentItemList">
+                                        {{role}}
+                                      </option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || department.touched) && department.errors">
+                                      <small class="text-danger"
+                                        *ngIf="department.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT && userBean.userDTO.status == 'LCG'">
+                                    <select name="" id="" [attr.disabled]="true" [ngModelOptions]="{standalone: true}"
+                                      #department="ngModel" required [(ngModel)]="userBean.userDTO.department">
+                                      <option *ngFor="let role of accountBean.selectDepartmentItemList">
+                                        {{role}}
+                                      </option>
+                                    </select>
+                                  </ng-container>
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label *ngIf="accountBean.accountDTO.accountType != accountTypeBean.CUSTOMS_ACCOUNT"
+                                    class="control-label">
+                                    {{'reg_user_mngt.customs.user.loginid' | translate}}</label>
+                                  <label *ngIf="accountBean.accountDTO.accountType != accountTypeBean.CUSTOMS_ACCOUNT"
+                                    class="control-label">
+                                    {{'reg_user_mngt.customs.user.employeeid' | translate}}</label>
+                                  <ng-container *ngIf="!userBean.editMode">
+                                    <input type="text" required class="form-control" #loginId="ngModel"
+                                      [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.userDTO.loginId" />
+                                    <div class="field-error-message" *ngIf="loginId.touched && loginId.errors">
+                                      <small class="text-danger"
+                                        *ngIf="loginId.errors?.pattern">{{'validation.enterAlphabetsOnly'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                  <input type="text" disabled *ngIf="userBean.editMode" class="form-control"
+                                    [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.userDTO.loginId" />
+                                </div>
+                                <div>
+                                  {{'reg_user_mngt.customs.user.employeeid.info' | translate}}
+                                </div>
+                              </div>
+                            </ng-container>
+
+
+                            <ng-container *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.user.status' |
+                                    translate}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <select name="" id="" [ngModelOptions]="{standalone: true}" #status="ngModel"
+                                      [(ngModel)]="userBean.userDTO.status">
+                                      <option value="">--{{'action.selectone' | translate}}-- </option>
+                                      <option value="ACT">{{'reg_user_mngt.customs.user.status.active' | translate}}
+                                      </option>
+                                      <option value="INA">{{'reg_user_mngt.customs.user.status.inactive' | translate}}
+                                      </option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || status.touched) && status.errors">
+                                      <small class="text-danger" *ngIf="status.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                  <input type="text" disabled *ngIf="userBean.userDTO.status == 'LCG'"
+                                    class="form-control"
+                                    value="{{'reg_user_mngt.customs.account.statustype.LCG' | translate}}" />
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <ng-container *ngIf="userBean.hasAgent && (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT
+                            || accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.agency.licissuedate' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="userBean.agentDTO.licenseIssueDate | date:'dd/MM/YYYY'" />
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label class="control-label">{{'reg_user_mngt.customs.agency.licexpirydate' |
+                                    translate}}</label>
+                                  <input type="text" disabled class="form-control"
+                                    [value]="userBean.agentDTO.licenseExpiryDate | date:'dd/MM/YYYY'" />
+                                </div>
+                              </div>
+                            </ng-container>
+                            <!-- End of User Details -->
+
+                            <!-- ******************* Contact details ******************** -->
+                            <div class="col-md-12 mb-3 mt-3">
+                              <h3 class="title-card-form">
+                                {{'reg_user_mngt.customs.user.heading.contactdetails' | translate}} </h3>
+                            </div>
+
+                            <!-- LANGUAGE -->
+                            <ng-container *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                            && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG') ||
+                            (userBean.userDTO.status == 'LCG') || (userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                            || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT))">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label *ngIf="accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                                  && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT"
+                                    class="control-label">{{'reg_user_mngt.customs.user.nationality' |
+                                    translate}}</label>
+                                  <label
+                                    *ngIf="userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                                    || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)">{{'reg_user_mngt.customs.user.nationality'
+                                    |
+                                    translate}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                                    && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <select name="" id="" required [ngModelOptions]="{standalone: true}"
+                                      #preferredLang="ngModel" [(ngModel)]="userBean.userDTO.preferredLang">
+                                      <option value="EN">{{'reg_user_mngt.customs.user.lang.eng' | translate}}</option>
+                                      <option value="AR">{{'reg_user_mngt.customs.user.lang.ar' | translate}}</option>
+                                    </select>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || preferredLang.touched) && preferredLang.errors">
+                                      <small class="text-danger"
+                                        *ngIf="preferredLang.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+                                  <ng-container *ngIf="userBean.userDTO.status == 'LCG'">
+                                    <select name="" id="" disabled [ngModelOptions]="{standalone: true}"
+                                      #preferredLang="ngModel" [(ngModel)]="userBean.userDTO.preferredLang">
+                                      <option value="EN">{{'reg_user_mngt.customs.user.lang.eng' | translate}}</option>
+                                      <option value="AR">{{'reg_user_mngt.customs.user.lang.ar' | translate}}</option>
+                                    </select>
+                                  </ng-container>
+                                  <ng-container *ngIf="userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                                    || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)">
+                                    <select name="" id="" disabled [ngModelOptions]="{standalone: true}"
+                                      #preferredLang="ngModel" [(ngModel)]="userBean.userDTO.preferredLang">
+                                      <option value="EN">{{'reg_user_mngt.customs.user.lang.eng' | translate}}</option>
+                                      <option value="AR">{{'reg_user_mngt.customs.user.lang.ar' | translate}}</option>
+                                    </select>
+                                  </ng-container>
+                                </div>
+                              </div>
+                            </ng-container>
+
+                            <!-- COMMUNICATION MODE -->
+                            <ng-container *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                            && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG') ||
+                            (userBean.userDTO.status == 'LCG') || (userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                            || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT))">
+                              <div class="col-12 col-lg-3 mb-3 mt-0 mb-lg-0">
+                                <div class="form-group">
+                                  <label *ngIf="(accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                                && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT) || (userBean.editMode && (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT
+                                || accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT))"
+                                    class="control-label ellipsis"><span class="mandatory-field">*</span>
+                                    {{'reg_user_mngt.customs.user.communicationmode'}}</label>
+                                  <ng-container
+                                    *ngIf="accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT
+                                    && accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT && userBean.userDTO.status != 'LCG'">
+                                    <ng-multiselect-dropdown #commMode="ngModel" [required]="true"
+                                      [ngClass]="currentLang=='en' ? '' : 'multiListdropdownAR'" [placeholder]="''"
+                                      [settings]="dropdownMultipleSelectionSettings" [data]="selectItemListIndividual"
+                                      [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.commMode"
+                                      (onSelect)="onSelect($event)" (onDeSelect)="onDeSelect($event)"
+                                      (onSelectAll)="onSelectAll($event)">
+                                    </ng-multiselect-dropdown>
+                                    <div class="field-error-message"
+                                      *ngIf="(isSubmitted || commMode.touched) && commMode.errors">
+                                      <small class="text-danger"
+                                        *ngIf="commMode.errors.required">{{'validation.required'|
+                                        translate}}</small>
+                                    </div>
+                                  </ng-container>
+
+                                  <ng-container>
+                                    <ng-multiselect-dropdown #commMode="ngModel" [required]="true"
+                                      [ngClass]="currentLang=='en' ? '' : 'multiListdropdownAR'" [placeholder]="''"
+                                      [settings]="dropdownMultipleSelectionSettings" [data]="selectItemListIndividual"
+                                      [ngModelOptions]="{standalone: true}" [(ngModel)]="userBean.commMode"
+                                      (onSelect)="onSelect($event)" (onDeSelect)="onDeSelect($event)"
+                                      (onSelectAll)="onSelectAll($event)">
+                                    </ng-multiselect-dropdown>
+                                  </ng-container>
+
+                                </div>
+                              </div>
+                            </ng-container>
+
+
+                          </div>
+                        </form>
+                      </ng-container>
+
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="action-modal-search mt-3 mb-4">
+  <button type="button" (click)="submitForm()" class="btn btn-outline-primary">
+    {{'action.submit' | translate}}
+  </button>
+  <button type="button" class="btn btn-light btn-light-custom" style="min-width: 100px" (click)="reset()">
+    {{'action.cancel' | translate}}
+  </button>
+</div>

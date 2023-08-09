@@ -1,0 +1,1775 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html
+	xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cust="http://com.crimsonlogic.trade/customs"
+>
+
+<h:panelGrid width="670">
+	<h:panelGroup>
+		<h:outputText
+			value="*"
+			styleClass="mandatory"
+		/>
+		<h:outputText value=" #{bundle['customs.declaration.indicates.mandatory.fields']}" />
+	</h:panelGroup>
+	<h:panelGroup>
+		<h:panelGrid columns="2">
+			<rich:spacer
+				width="2"
+				height="15"
+			/>
+			<h:panelGrid
+				width="650"
+				styleClass="search-header"
+			>
+				<h:panelGroup>
+					<rich:spacer width="5" />
+					<h:outputText value="#{bundle['customs.declaration.clearing.agency']}" style="color:#008080"/>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:panelGrid>
+	</h:panelGroup>
+</h:panelGrid>
+
+
+<h:panelGrid styleClass="rich-tab-hukoomi">
+<h:panelGrid
+	columns="3"
+	width="670"
+	cellspacing="0"
+	columnClasses="col_indent,edit_label,edit_value"
+>
+
+	<h:outputText value="&#160;" />
+	<h:panelGroup>
+		<cust:outputLabel
+			for="clearingagency"
+			value=" #{bundle['customs.declaration.clearing.agency']}"
+		/>
+	</h:panelGroup>
+	<h:panelGroup>
+		<h:outputText
+			id="clearingagency"
+			value="#{declarationPartyBean.clearAgencyDTO.accountCode} - #{declarationPartyBean.clearAgencyDTO.partyName}"
+		/>
+	</h:panelGroup>
+
+	<h:outputText value="&#160;" />
+	<h:panelGroup rendered="#{(!declarationPartyBean.loggedInUserIsSupervisor) or (declarationPartyBean.baseData.documentStatus!='DRA')}">
+		<cust:outputLabel
+			for="clearingAgent"
+			value=" #{bundle['customs.declaration.clearing.agent']}"
+			
+		/>
+	</h:panelGroup>
+	<!--  <h:panelGroup>
+		
+		<h:outputText
+			id="clearingagent"
+			value="#{declarationPartyBean.clearAgentDTO.licenseNo} - #{declarationPartyBean.clearAgentDTO.partyName}"
+		/>
+	</h:panelGroup>-->
+	
+	<h:panelGroup
+		rendered="#{(!declarationPartyBean.loggedInUserIsSupervisor) or (declarationPartyBean.baseData.documentStatus!='DRA')}"
+	>
+		<!-- change login id to license number which is the agent code in TPR 17/02/2011 -->
+		<h:outputText
+			id="clearingAgent"
+			value="#{declarationPartyBean.clearAgentDTO.licenseNo} - #{declarationPartyBean.clearAgentDTO.partyName}"
+		/>
+	</h:panelGroup>
+
+	<!-- clearing agent for supervisor -->
+	<h:panelGroup rendered="#{(declarationPartyBean.loggedInUserIsSupervisor) and (declarationPartyBean.baseData.documentStatus=='DRA')}">
+		<cust:outputLabel
+			for="cca"
+			value=" #{bundle['customs.declaration.clearing.agent']}"
+			
+		/>
+	</h:panelGroup>
+	<a4j:region rendered="#{(declarationPartyBean.loggedInUserIsSupervisor) and (declarationPartyBean.baseData.documentStatus=='DRA')}" >
+	<h:panelGroup
+		id="ccaPanel"
+		rendered="#{(declarationPartyBean.loggedInUserIsSupervisor) and (declarationPartyBean.baseData.documentStatus=='DRA')}"
+	>
+		<h:inputText
+			id="cca"
+			value="#{declarationPartyBean.clearAgentDTO.licenseNo}"
+			styleClass="test-field-styles"
+			required="true"
+			maxlength="20"
+			size="20"
+		>
+			<a4j:support
+				ajaxSingle="true"
+				event="onblur"
+				action="#{declarationPartyBean.retrieveClearingAgentName}"
+				reRender="ccaPanel"
+			/>
+		</h:inputText>
+							-
+		<h:inputText
+			id="ccaName"
+			value="#{declarationPartyBean.clearAgentDTO.partyName}"
+			styleClass="test-field-styles"
+			readonly="true"
+			size="30"
+		/>
+		<rich:spacer width="1" />
+		<a4j:commandButton
+			id="ccaBtn"
+			value="#{bundle['customs.common.search']}"
+			oncomplete="showPopUp(this,'cca','../../jsf/common/EXPopUpUserByRoleReturnAccountId.jsf?role=CCA&amp;accountId=#{declarationPartyBean.loggedInUserAccountId}');"
+			styleClass="short-button-styles"
+		/>
+		<a4j:commandButton
+			id="refreshCCA"
+			value="Refresh"
+			styleClass="button-styles"
+			action="#{declarationPartyBean.retrieveClearingAgentName}"
+			style="display: none;"
+			reRender="ccaPanel"
+		/>
+		<br />
+		<a4j:outputPanel>
+			<rich:message
+				for="cca"
+				errorClass="error"
+			/>
+		</a4j:outputPanel>
+	</h:panelGroup>
+    </a4j:region>
+    <h:outputText value="&#160;" rendered = "#{!declarationPartyBean.baseData.hasCourierDec}" />
+		<h:panelGroup>
+			<cust:outputLabel
+				for="clearingagencyGlobalGuranteeFlag" id="clearingagencyGlobalGurantee_label"
+				value=" #{bundle['customs.declaration.party.using.agency.global.guarantee']}"
+				rendered = "#{!declarationPartyBean.baseData.hasCourierDec}"
+				required="true"
+			/>
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:selectOneRadio id="clearingagencyGlobalGuranteeFlag"
+							  value="#{declarationPartyBean.declarationCourierInfoDTO.accountType}"
+							  disabled="#{!declarationPartyBean.clearAgencyDTO.hasActiveGlobalGuarantee 
+							  or declarationPartyBean.declarationCourierInfoDTO.accountTypeOfTrader eq 'T' 
+							  or (!empty(declarationPartyBean.baseData.eTIRPaymentFlag) and declarationPartyBean.baseData.eTIRPaymentFlag eq 'Y')}"
+							  rendered = "#{!declarationPartyBean.baseData.hasCourierDec}"
+							  required="true">
+								<f:selectItem id="globalGuaranteeFromAgency_yes"
+									itemLabel="#{bundle['customs.common.yes']}" itemValue="A" itemDisabled="#{declarationPartyBean.baseData.declarationType eq 'IMS'}"/>
+								<f:selectItem id="globalGuaranteeFromAgency_no"
+									itemLabel="#{bundle['customs.common.no']}" itemValue="N" itemDisabled="#{declarationPartyBean.baseData.declarationType eq 'IMS'}"/>
+								
+								<a4j:support ajaxSingle="true" event="onclick"
+									action="#{declarationPartyBean.resetGlobalGuranteeFromFlag}" status="waitStatus"
+									reRender="traderGlobalGuaranteeFlag_exp_space,traderGlobalGuaranteeFlag_exp,traderGlobalGuaranteeFlag_imp_label,traderGlobalGuaranteeFlag_imp" />
+			</h:selectOneRadio>
+		</h:panelGroup>
+		
+	<h:panelGroup id="authNumberDetailSpace">
+	 <h:outputText value="&#160;" />
+	</h:panelGroup>	
+		
+	<h:panelGroup id="authNumberDetailLabel">
+		<h:outputText id="authNumber_label" for="authNumberLink"
+			value="#{bundle['customs.declaration.authorization.number']}"
+			rendered="#{!empty(declarationPartyBean.importerDTO.authNo) and declarationPartyBean.importerDTO.authNo ne '0'}" />
+	</h:panelGroup>
+
+	<h:panelGroup id="authNumberDetail">
+
+		<a4j:commandLink id="authNumberLink"
+			rendered="#{!empty(declarationPartyBean.importerDTO.authNo) and declarationPartyBean.importerDTO.authNo ne '0'}"
+			onclick="showPopUpMax('authNo','../../jsf/common/PopCCAAuthDetails.jsf?authNo=#{declarationPartyBean.importerDTO.authNo}',750,500);">
+		
+				<h:outputLabel id="authNumber" value="#{declarationPartyBean.importerDTO.authNo}"/>
+		</a4j:commandLink>
+	</h:panelGroup>
+		
+</h:panelGrid>
+</h:panelGrid>
+
+<h:panelGrid
+	id="traderTitle"
+	width="670"
+>
+	<h:panelGroup>
+		<h:panelGrid columns="2">
+			<rich:spacer
+				width="2"
+				height="15"
+			/>
+			<h:panelGrid
+				width="650"
+				styleClass="search-header"
+			>
+				<h:panelGroup>
+					<rich:spacer width="5" />
+					<h:outputText
+						value="#{bundle['customs.declaration.importerexporter']}"
+						rendered="#{declarationPartyBean.baseData.declarationType!='TRN'
+							or (declarationPartyBean.baseData.declarationType eq 'TRN'
+								and declarationPartyBean.baseData.entryPortType ne 'F'
+								and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+					style="color:#008080"/>
+					<h:outputText
+						value="#{bundle['customs.declaration.other.parties']}"
+						rendered="#{declarationPartyBean.baseData.declarationType eq 'TRN'
+							and !(declarationPartyBean.baseData.entryPortType ne 'F'
+								and declarationPartyBean.baseData.exitPortType eq 'F') and !(declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+					style="color:#008080"/>
+				</h:panelGroup>
+			</h:panelGrid>
+		</h:panelGrid>
+	</h:panelGroup>
+</h:panelGrid>
+
+<!-- NADEEBOPR -484 changes Start-->
+<h:panelGrid id="registeredTraderForTransitNote" columns="1" width="670"
+	style="border: 1px solid #e0e0e0;background: #f8f8f8;"
+	rendered="#{declarationPartyBean.baseData.declarationType eq 'TRN' and !(declarationPartyBean.baseData.entryPortType ne 'F' and declarationPartyBean.baseData.exitPortType eq 'F')
+	 and !(declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}">
+	<h:panelGroup styleClass="table-contents">
+		<rich:spacer width="10" />
+		<h:outputText
+			value="#{bundle['customs.common.search.notification.notelavel']}"
+			style="font-weight:bold" />
+		<cust:outputLabel
+			value="#{bundle['customs.declaration.party.registeredTraderForTransit.note']}" />
+	</h:panelGroup>
+	<rich:spacer height="5" />
+</h:panelGrid>
+<!-- Iassist #2385 changes End-->
+
+<h:panelGrid styleClass="rich-tab-hukoomi">
+<a4j:outputPanel id="traderdetailspanel">
+
+	<h:panelGrid
+		columns="3"
+		width="670"
+		cellspacing="0"
+		id="traderpanelGrid"
+		columnClasses="col_indent,edit_label,edit_value"
+		rendered="#{declarationPartyBean.baseData.declarationType!='TRN'
+					or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+	>
+	
+	<h:outputText
+			value="&#160;"
+			rendered="#{declarationPartyBean.baseData.hasCourierDec and ( (declarationPartyBean.baseData.declarationType=='IMP')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				)}"
+		/>
+		<h:panelGroup id="personalCourierPanel" rendered="#{declarationPartyBean.baseData.hasCourierDec and ( (declarationPartyBean.baseData.declarationType=='IMP')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				)}">
+				<cust:outputLabel  value="#{bundle['customs.declaration.courier.personal.declaration']}" required="true" for="personalCourierofImport" />
+				
+				
+											
+			</h:panelGroup>
+			
+			<h:panelGroup rendered="#{declarationPartyBean.baseData.hasCourierDec and ( (declarationPartyBean.baseData.declarationType=='IMP')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				)}" >
+				<h:selectOneRadio id="personalCourierofImport" required="true"  value="#{declarationPartyBean.importerDTO.isPersonalCourierDec}"  >
+					<f:selectItem id="selectItemPaymentType1" itemLabel="#{bundle['customs.tariff.dutiable.true']}"  itemValue="Y" />
+					<f:selectItem id="selectItemPaymentType2" itemLabel="#{bundle['customs.tariff.dutiable.false']}"  itemValue="N" />	
+					<a4j:support bypassUpdates="false" event="onclick" ajaxSingle="true"  />
+				</h:selectOneRadio>
+				
+				<rich:message for="personalCourierofImport" styleClass="error" />
+				
+			</h:panelGroup>
+			
+	
+		<!-- import mandatory -->
+		<h:outputText
+			value="&#160;"
+			rendered="#{(declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			    or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType=='IMS')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		/>
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			    or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType=='IMS')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		>
+			<cust:outputLabel
+				id="importerLabel"
+				for="importer"
+				value=" #{bundle['customs.declaration.importer']}"
+			/>
+		</h:panelGroup>
+		<a4j:region
+			renderRegionOnly="false"
+			rendered="#{(declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType=='IMS')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		>
+			<h:panelGroup id="importerPanel" rendered = "#{!declarationPartyBean.baseData.hasCourierDec 
+							and ( empty declarationPartyBean.baseData.qpostDeclaration or declarationPartyBean.baseData.qpostDeclaration ne 'Y'  )}">
+				<!-- rendered="#{(declarationPartyBean.baseData.declarationType=='IMP')||(declarationPartyBean.baseData.declarationType=='TIM')}" -->
+				
+				
+				<h:inputText
+					id="importer"
+					value="#{declarationPartyBean.importerDTO.accountCode}"
+					styleClass="test-field-styles"
+					required="true"
+					maxlength="20"
+					size="20"
+				>
+					<a4j:support
+						ajaxSingle="true"
+						event="onchange"
+						action="#{declarationPartyBean.retrieveImporterName}"
+						status="waitStatus"
+					reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,clearingagencyGlobalGuranteeFlag,traderGlobalGuaranteeFlag_exp_space,traderGlobalGuaranteeFlag_exp,traderGlobalGuaranteeFlag_imp_label,traderGlobalGuaranteeFlag_imp,importerPanel,importerActivitiesRowCol1,importerActivitiesRowCol2,importerActivitiesRowCol3,InspectionWithoutRepresentativePanel"
+					/>
+					<!--  event="onblur"  -->
+				</h:inputText>
+		-
+		<h:inputText
+					id="importerName"
+					value="#{declarationPartyBean.importerDTO.partyName}"
+					styleClass="test-field-styles"
+					readonly="true"
+					size="50"
+				/>
+				<rich:spacer width="1" />
+				<a4j:commandButton
+					id="importerBtn"
+					value="#{bundle['customs.common.search']}"
+					ajaxSingle="true"
+					oncomplete="showPopUp(this,'importer','../../jsf/declaration/EXPopUpImporter.jsf?accountCode=#{declarationPartyBean.importerDTO.accountCode}&amp;portType=#{declarationPartyBean.declarationPortType}&amp;decType=#{declarationPartyBean.declarationType}&amp;isImporter=Y');"
+					styleClass="short-button-styles"
+				/>
+				<a4j:commandButton
+					id="refreshImporter"
+					value="Refresh"
+					styleClass="button-styles"
+					action="#{declarationPartyBean.retrieveImporterName}"
+					style="display: none;"
+					status="waitStatus"
+					reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,clearingagencyGlobalGuranteeFlag,traderGlobalGuaranteeFlag_exp_space,traderGlobalGuaranteeFlag_exp,traderGlobalGuaranteeFlag_imp_label,traderGlobalGuaranteeFlag_imp,importerPanel,importerActivitiesRowCol1,importerActivitiesRowCol2,importerActivitiesRowCol3,InspectionWithoutRepresentativePanel"
+				/>
+
+				<!-- importerName,importerLabel limitToList="true" bypassUpdates="true"-->
+				<!-- 02/06/2010 individual indicator for importer start -->
+				<!--rich:spacer width="2"/>
+				<cust:outputLabel
+					id="individualLblIm"
+					for="individual"
+					value="#{bundle['customs.declaration.person.import']}"
+					style="color: #606060;font-weight: bold;"
+				/>
+				<h:selectBooleanCheckbox
+					id="individualIm"
+					value="#{declarationPartyBean.importerDTO.individualFlag}"
+				/-->
+				<!-- individual indicator for importer end -->
+				
+				<br />
+				<a4j:outputPanel>
+					<rich:message
+						for="importer"
+						errorClass="error"
+					/>
+				</a4j:outputPanel>
+			</h:panelGroup>
+			
+			<h:panelGroup id="importerPanel1" rendered = "#{declarationPartyBean.baseData.hasCourierDec or 
+				( !empty declarationPartyBean.baseData.qpostDeclaration and declarationPartyBean.baseData.qpostDeclaration eq 'Y'  )}">
+				<!-- rendered="#{(declarationPartyBean.baseData.declarationType=='IMP')||(declarationPartyBean.baseData.declarationType=='TIM')}" -->
+				<h:inputText
+					id="importer1"
+					value="#{declarationPartyBean.importerDTO.accountCode}"
+					styleClass="test-field-styles"
+					maxlength="20"
+					size="20"
+				>
+				<a4j:support
+						ajaxSingle="true"
+						event="onchange"
+						action="#{declarationPartyBean.retrieveImporterName}"
+						reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,importerPanel1,importerActivitiesRowCol1,importerActivitiesRowCol2,importerActivitiesRowCol3"
+					/>
+					<!--  event="onblur"  -->
+				</h:inputText>
+		-
+		<h:inputText
+					id="importerName1"
+					value="#{declarationPartyBean.importerDTO.partyName}"
+					styleClass="test-field-styles"
+					size="50"
+					
+				>
+				<cust:trimConverter />
+		</h:inputText>
+				
+				
+				
+				<rich:spacer width="1" />
+				<a4j:commandButton
+					id="importerBtn1"
+					value="#{bundle['customs.common.search']}"
+					ajaxSingle="true"
+					oncomplete="showPopUp(this,'importer1','../../jsf/declaration/PopUpImporterForCourier.jsf?accountCode=#{declarationPartyBean.importerDTO.accountCode}&amp;portType=#{declarationPartyBean.declarationPortType}&amp;decType=#{declarationPartyBean.declarationType}&amp;isImporter=Y');"
+					styleClass="short-button-styles"
+				/>
+				<a4j:commandButton
+					id="refreshImporter1"
+					value="Refresh"
+					styleClass="button-styles"
+					action="#{declarationPartyBean.retrieveImporterName}"
+					style="display: none;"
+					reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,importerPanel1,importerActivitiesRowCol1,importerActivitiesRowCol2,importerActivitiesRowCol3"
+					
+				/>
+				<!-- importerName,importerLabel limitToList="true" bypassUpdates="true"-->
+				<!-- 02/06/2010 individual indicator for importer start -->
+				<!--rich:spacer width="2"/>
+				<cust:outputLabel
+					id="individualLblIm"
+					for="individual"
+					value="#{bundle['customs.declaration.person.import']}"
+					style="color: #606060;font-weight: bold;"
+				/>
+				<h:selectBooleanCheckbox
+					id="individualIm"
+					value="#{declarationPartyBean.importerDTO.individualFlag}"
+				/-->
+				
+				
+				
+				<!-- individual indicator for importer end -->
+				
+				<br />
+				<a4j:outputPanel>
+					<rich:message
+						for="importer"
+						errorClass="error"
+					/>
+					<rich:message
+						for="importerName1"
+						errorClass="error"
+					/>
+				</a4j:outputPanel>
+			</h:panelGroup>
+		</a4j:region>
+		
+			<!-- Importer Activities Start Here -->
+		<h:panelGroup id="importerActivitiesRowCol1" rendered="#{(declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}">
+			<h:outputText value="&#160;" rendered="#{((declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			    or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')) and (declarationPartyBean.importerDTO.accountType == 'COM')}"/>
+		</h:panelGroup>
+		<h:panelGroup id="importerActivitiesRowCol2" rendered="#{(declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}">
+				<cust:outputLabel
+					id="importerActivitiesLbl"
+					for="importerActivitiesValue" style="color: #FF0000;"
+					value=" #{bundle['customs.ac.cr.activities']}"
+					rendered="#{((declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+				    or (declarationPartyBean.baseData.declarationType=='EXW')
+					or (declarationPartyBean.baseData.declarationType=='TIM')
+					or (declarationPartyBean.baseData.declarationType eq 'TRN'
+							and declarationPartyBean.baseData.entryPortType ne 'F'
+							and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')) and (declarationPartyBean.importerDTO.accountType == 'COM')}"
+				/>
+			</h:panelGroup>
+			<h:panelGroup id="importerActivitiesRowCol3" rendered="#{(declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}">
+				<h:outputText
+					id="importerActivitiesValue"
+					value="#{declarationPartyBean.importerDTO.mbtCrActivities}"
+					rendered="#{((declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')) and (declarationPartyBean.importerDTO.accountType == 'COM')}"
+				/>
+			</h:panelGroup>
+		<!-- Importer Activities End Here -->
+		<!-- exporter mandatory-->
+		
+		<h:outputText
+			value="&#160;"
+			rendered="#{ declarationPartyBean.baseData.hasCourierDec and ( declarationPartyBean.baseData.declarationType=='EXP'
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE' )
+			||(declarationPartyBean.baseData.declarationType=='REW'))
+			
+				  }"
+		/>
+		<h:panelGroup id="personalCourierPanelExp" rendered="#{declarationPartyBean.baseData.hasCourierDec and ( declarationPartyBean.baseData.declarationType=='EXP'
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE' )
+			||(declarationPartyBean.baseData.declarationType=='REW'))
+				 }">
+				<cust:outputLabel  value="#{bundle['customs.declaration.courier.personal.declaration']}" required="true" for="personalCourierofExporter" />
+				
+				
+											
+			</h:panelGroup>
+			
+			<h:panelGroup rendered="#{declarationPartyBean.baseData.hasCourierDec and ( declarationPartyBean.baseData.declarationType=='EXP'
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE' )
+			||(declarationPartyBean.baseData.declarationType=='REW'))
+				 }" >
+				<h:selectOneRadio id="personalCourierofExporter" required="true"  value="#{declarationPartyBean.exporterDTO.isPersonalCourierDec}"  >
+					<f:selectItem id="personalCourierofExporter_YES" itemLabel="#{bundle['customs.tariff.dutiable.true']}"  itemValue="Y" />
+					<f:selectItem id="personalCourierofExporter_NO" itemLabel="#{bundle['customs.tariff.dutiable.false']}"  itemValue="N" />	
+					<a4j:support bypassUpdates="false" event="onclick" ajaxSingle="true"  />
+				</h:selectOneRadio>
+				
+				<rich:message for="personalCourierofExporter" styleClass="error" />
+				
+			</h:panelGroup>
+			
+		<h:outputText
+			value="&#160;"
+			rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')
+			||(declarationPartyBean.baseData.declarationType=='REW')
+			||(declarationPartyBean.baseData.documentType eq 'F3')
+			or (declarationPartyBean.baseData.documentType eq 'F7')}"
+		/>
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')
+			||(declarationPartyBean.baseData.declarationType=='REW')
+			||(declarationPartyBean.baseData.documentType eq 'F3')
+			or (declarationPartyBean.baseData.documentType eq 'F7')}"
+		>
+			<cust:outputLabel
+				id="exporterLabel"
+				for="exporter"
+				value=" #{bundle['customs.declaration.exporter']}"
+			/>
+		</h:panelGroup>
+		<a4j:region
+			renderRegionOnly="false"
+			rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')
+			||(declarationPartyBean.baseData.declarationType=='REW')
+			||(declarationPartyBean.baseData.documentType eq 'F3')
+			or (declarationPartyBean.baseData.documentType eq 'F7')}"
+		>
+			<h:panelGroup id="exporterPanel">
+				<h:inputText
+					id="exporter"
+					value="#{declarationPartyBean.exporterDTO.accountCode}"
+					styleClass="test-field-styles"
+					required="true"
+					maxlength="20"
+					size="20"
+				>
+					<a4j:support
+						ajaxSingle="true"
+						event="onchange" status="waitStatus"
+						action="#{declarationPartyBean.retrieveExporterName}"
+						reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,clearingagencyGlobalGuranteeFlag,exporterPanel,exporterActivitiesRowCol1,exporterActivitiesRowCol2,exporterActivitiesRowCol3,traderGlobalGuaranteeFlag_exp_space,traderGlobalGuaranteeFlag_exp_label,traderGlobalGuaranteeFlag_exp,InspectionWithoutRepresentativePanel"
+					/>
+				</h:inputText>
+			-
+			<h:inputText
+					id="exporterName"
+					value="#{declarationPartyBean.exporterDTO.partyName}"
+					styleClass="test-field-styles"
+					readonly="true"
+					size="50"
+				/>
+				<rich:spacer width="1" />
+				<a4j:commandButton
+					id="exporterBtn"
+					ajaxSingle="true"
+					value="#{bundle['customs.common.search']}"
+					oncomplete="showPopUp(this,'exporter','../../jsf/declaration/EXPopUpExporter.jsf?accountCode=#{declarationPartyBean.exporterDTO.accountCode}&amp;portType=#{declarationPartyBean.declarationPortType}&amp;decType=#{declarationPartyBean.declarationType}&amp;isImporter=N');"
+					styleClass="short-button-styles"
+				/>
+				<a4j:commandButton
+					id="refreshExporter"
+					value="Refresh"
+					styleClass="button-styles"
+					action="#{declarationPartyBean.retrieveExporterName}"
+					style="display: none;" status="waitStatus"
+					reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,clearingagencyGlobalGuranteeFlag,exporterPanel,exporterActivitiesRowCol1,exporterActivitiesRowCol2,exporterActivitiesRowCol3,traderGlobalGuaranteeFlag_exp_space,traderGlobalGuaranteeFlag_exp_label,traderGlobalGuaranteeFlag_exp,InspectionWithoutRepresentativePanel"
+				/>
+				<!-- 02/06/2010 individual indicator for exporter start -->
+				<!--rich:spacer width="2"/>
+				<cust:outputLabel
+					id="individualLblEx"
+					for="individual"
+					value="#{bundle['customs.declaration.person.export']}"
+					style="color: #606060;font-weight: bold;"
+				/>
+				<h:selectBooleanCheckbox
+					id="individualEx"
+					value="#{declarationPartyBean.exporterDTO.individualFlag}"
+				/-->
+				<!-- individual indicator for exporter end -->
+				<br />
+				<a4j:outputPanel>
+					<rich:message
+						for="exporter"
+						errorClass="error"
+					/>
+				</a4j:outputPanel>
+			</h:panelGroup>
+		</a4j:region>
+		
+		<!-- Exporter Activities Start Here -->
+		<h:panelGroup id="exporterActivitiesRowCol1" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+					||(declarationPartyBean.baseData.declarationType=='TEX')
+					||(declarationPartyBean.baseData.declarationType=='REE')
+					||(declarationPartyBean.baseData.declarationType=='REW')
+					||(declarationPartyBean.baseData.documentType eq 'F3')
+					or (declarationPartyBean.baseData.documentType eq 'F7')}">
+			<h:outputText
+				value="&#160;"
+				rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+				||(declarationPartyBean.baseData.declarationType=='TEX')
+				||(declarationPartyBean.baseData.declarationType=='REE')
+				||(declarationPartyBean.baseData.declarationType=='REW')
+				||(declarationPartyBean.baseData.documentType eq 'F3')
+				or (declarationPartyBean.baseData.documentType eq 'F7')
+				) and (declarationPartyBean.exporterDTO.accountType == 'COM')}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup id="exporterActivitiesRowCol2" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+					||(declarationPartyBean.baseData.declarationType=='TEX')
+					||(declarationPartyBean.baseData.declarationType=='REE')
+					||(declarationPartyBean.baseData.declarationType=='REW')
+					||(declarationPartyBean.baseData.documentType eq 'F3')
+					or (declarationPartyBean.baseData.documentType eq 'F7')}" 
+>
+				<cust:outputLabel
+					id="exporterActivitiesLbl"
+					for="exporterActivitiesValue" style="color: #FF0000;"
+					value=" #{bundle['customs.ac.cr.activities']}"
+					rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+					||(declarationPartyBean.baseData.declarationType=='TEX')
+					||(declarationPartyBean.baseData.declarationType=='REE')
+					||(declarationPartyBean.baseData.declarationType=='REW')
+					||(declarationPartyBean.baseData.documentType eq 'F3')
+					or (declarationPartyBean.baseData.documentType eq 'F7')) and (declarationPartyBean.exporterDTO.accountType == 'COM')}"
+				/>
+			</h:panelGroup>
+			
+			<h:panelGroup id="exporterActivitiesRowCol3" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+					||(declarationPartyBean.baseData.declarationType=='TEX')
+					||(declarationPartyBean.baseData.declarationType=='REE')
+					||(declarationPartyBean.baseData.declarationType=='REW')
+					||(declarationPartyBean.baseData.documentType eq 'F3')
+					or (declarationPartyBean.baseData.documentType eq 'F7')}">
+				<h:outputText
+					id="exporterActivitiesValue"
+					value="#{declarationPartyBean.exporterDTO.mbtCrActivities}"
+					rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+					||(declarationPartyBean.baseData.declarationType=='TEX')
+					||(declarationPartyBean.baseData.declarationType=='REE')
+					||(declarationPartyBean.baseData.declarationType=='REW')
+					||(declarationPartyBean.baseData.documentType eq 'F3')
+					or (declarationPartyBean.baseData.documentType eq 'F7')) and (declarationPartyBean.exporterDTO.accountType == 'COM')}"
+				/>
+			</h:panelGroup>
+		<!-- Exporter Activities End Here -->
+
+		<!-- KSA start -->
+		<!-- ksa importer optional -->
+			<h:outputText
+			value="&#160;"
+			rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}"/>
+		
+			<h:panelGroup rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}">
+												<cust:outputLabel for="ksaImporterFlag" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}"
+													value=" #{bundle['customs.common.importer.type.ksa']}" />
+									</h:panelGroup>
+		<h:panelGroup style="vertical-align: top;" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}">
+												<h:selectOneRadio id="ksaImporterFlag"
+													value="#{declarationPartyBean.ksaImporterFlag}">
+													<f:selectItem id="ksaImporterFlag_Yes"
+														itemLabel="#{bundle['customs.declaration.yes']}"
+														itemValue="Y" />
+													<f:selectItem id="ksaImporterFlag_No"
+														itemLabel="#{bundle['customs.declaration.no']}"
+														itemValue="N" />
+													<a4j:support ajaxSingle="true" event="onclick" reRender="importerInputPanel,importerLabelWhiteSpacePanel,importerLabelPanel"  status="waitStatus"/>	
+												</h:selectOneRadio>
+		</h:panelGroup>
+
+		<!-- importer name/address optional-->
+		
+		<h:panelGroup id="importerLabelWhiteSpacePanel" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}">
+		<h:outputText
+			value="&#160;"
+			rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}"
+		/>
+		</h:panelGroup>
+		<h:panelGroup id="importerLabelPanel" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}">
+			<cust:outputLabel rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')) and (declarationPartyBean.ksaImporterFlag eq 'N') }"
+				for="importerOptional"
+				value=" #{bundle['customs.declaration.importer.name']}"
+			/>
+			<cust:outputLabel
+				id="ksaImporterLabel"
+				for="ksaImporter" rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')) and (declarationPartyBean.ksaImporterFlag eq 'Y')}"
+				value=" #{bundle['customs.declaration.importer.ksa']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup id="importerInputPanel" rendered="#{(declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')}">
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')) and (declarationPartyBean.ksaImporterFlag eq 'N') }"
+		>
+			<h:inputText
+				id="importerOptional"
+				value="#{declarationPartyBean.importerDTO.partyName}"
+				styleClass="test-field-styles"
+				maxlength="80"
+				size="78"
+				required="true"
+			>
+			</h:inputText>
+			<br />
+			<a4j:outputPanel>
+				<rich:message
+					for="importerOptional"
+					errorClass="error"
+				/>
+			</a4j:outputPanel>
+		</h:panelGroup>
+		
+		
+		<a4j:region >
+		<h:panelGroup id="ksaImporterPanel" rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE')) and (declarationPartyBean.ksaImporterFlag eq 'Y')}">
+			
+				<h:inputText 
+					id="ksaImporter"
+					value="#{declarationPartyBean.importerDTO.ksaPartyHqNumber}"
+					styleClass="test-field-styles"
+					required="true"
+					maxlength="20"
+					size="20"
+				>
+					<cust:regexValidator type="digits" />
+													<cust:trimConverter />
+					<a4j:support
+						ajaxSingle="true"
+						event="onchange"
+						action="#{declarationPartyBean.retrieveKsaImporterName()}"
+						reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,clearingagencyGlobalGuranteeFlag,traderGlobalGuaranteeFlag_exp_space,traderGlobalGuaranteeFlag_exp,traderGlobalGuaranteeFlag_imp_label,traderGlobalGuaranteeFlag_imp,ksaImporterPanel"
+					/>
+					
+				</h:inputText>
+			-
+			<h:inputText
+					id="ksaImporterName" value="#{declarationPartyBean.importerDTO.ksaPartyName}"
+					styleClass="test-field-styles"
+					readonly="true"
+					size="50"
+				/>
+				<rich:spacer width="1" />
+				<a4j:commandButton 
+					id="ksaImporterBtn"
+					ajaxSingle="true"
+					value="#{bundle['customs.common.search']}"
+					oncomplete="showPopUp(this,'ksaImporter','../../jsf/declaration/EXPopUpKSAImporter.jsf?hqImprNbr=#{declarationPartyBean.importerDTO.ksaPartyHqNumber}');"
+					styleClass="short-button-styles"
+				/>
+				<a4j:commandButton
+					id="refreshKsaImporter"
+					value="Refresh"
+					styleClass="button-styles"
+					action="#{declarationPartyBean.retrieveKsaImporterName()}"
+					reRender="authNumberDetailSpace,authNumberDetailLabel,authNumberDetail,clearingagencyGlobalGuranteeFlag,traderGlobalGuaranteeFlag_exp_space,traderGlobalGuaranteeFlag_exp,traderGlobalGuaranteeFlag_imp_label,traderGlobalGuaranteeFlag_imp,ksaImporterPanel"
+					style="display: none;"
+				/>
+				<br />
+				<a4j:outputPanel>
+					<rich:message
+						for="ksaImporter"
+						errorClass="error"
+					/>
+				</a4j:outputPanel>
+			</h:panelGroup>
+			</a4j:region>	
+		</h:panelGroup>
+		
+		<!-- KSA end -->
+		
+		
+		<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and (declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="importeraddressOptional"
+				value="#{bundle['customs.declaration.importer.address']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<h:inputTextarea
+				id="importeraddressOptional"
+				value="#{declarationPartyBean.importerDTO.partyAddress}"
+				styleClass="test-field-styles"
+				cols="80"
+				rows="3"
+				required="true"
+			>
+				<f:validateLength
+					minimum="0"
+					maximum="300"
+				/>
+			</h:inputTextarea>
+		</h:panelGroup>
+		
+		<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and (declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="importerphoneOptional"
+				value="#{bundle['customs.declaration.importer.ph']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<h:inputText
+				id="importerphoneOptional"
+				value="#{declarationPartyBean.importerDTO.partyPhone}"
+				styleClass="test-field-styles"
+				required="true"
+			>
+			<f:validateLength minimum="8" maximum="15" />
+			<cust:regexValidator type="telno" />	
+			</h:inputText>
+			<br />
+			<a4j:outputPanel>
+				<rich:message
+					for="importerphoneOptional"
+					errorClass="error"
+				/>
+			</a4j:outputPanel>
+		</h:panelGroup>
+		
+		<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="selectIDType"
+				value="#{bundle['customs.declaration.importer.idType']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<h:selectOneMenu
+						id="selectIDType"
+						value="#{declarationPartyBean.importerDTO.partyIdType}"
+						styleClass="test-field-styles"
+					>
+						<f:selectItems value="#{importerIdType.selectItemList}" />
+						<a4j:support event="onchange" ajaxSingle="true" action="#{declarationPartyBean.getIdType}" 
+									reRender="importerpartyNoOptional,type22,type33,type226">
+						</a4j:support>
+					</h:selectOneMenu>
+					<br />
+					<rich:message
+						for="selectIDType"
+						errorClass="error"
+					/>
+		</h:panelGroup>
+		 		
+		<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and (declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="importerpartyNoOptional"
+				value="#{bundle['customs.declaration.importer.idNo']}"
+			/>
+		</h:panelGroup>
+		
+		<h:panelGroup id="type226" 
+				rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+			||(declarationPartyBean.baseData.declarationType=='TEX')
+			||(declarationPartyBean.baseData.declarationType=='REE'))
+			and(declarationPartyBean.baseData.hasCourierDec)}" >
+							
+				<h:panelGroup id="type22" rendered="#{declarationPartyBean.idTypeFlag}">
+			
+					<h:inputText id="idnumber11" 
+								 value="#{declarationPartyBean.importerDTO.partyIdNo}">		
+							 <a4j:support event="onblur"													
+										ajaxSingle="true">
+										<a4j:actionparam value="this.value"
+											assignTo="#{declarationPartyBean.importerDTO.partyIdNo}"
+											noEscape="true" />
+									</a4j:support>													 
+													
+					<cust:regexValidator type="digitsWithExact" />
+			
+					</h:inputText>
+					<br />
+					<rich:message for="idnumber11" styleClass="error" />
+				</h:panelGroup>
+				
+				 <h:panelGroup id="type33" rendered="#{!declarationPartyBean.idTypeFlag}">
+				
+					<h:inputText id="idnumber22"  
+								 value="#{declarationPartyBean.importerDTO.partyIdNo}">
+								 <a4j:support event="onblur"													
+										ajaxSingle="true">
+										<a4j:actionparam value="this.value"
+											assignTo="#{declarationPartyBean.importerDTO.partyIdNo}"
+											noEscape="true" />
+									</a4j:support>	
+					<cust:regexValidator type="digits" />
+					</h:inputText>
+					
+					<br />
+					<rich:message for="idnumber22" styleClass="error" />
+				</h:panelGroup> 
+		</h:panelGroup> 
+		<!-- end importer name/address -->
+
+		<!-- exporter name/address optional for normal import, normal temp import and transit freezoen scenario1-->
+		<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="importerpartyaddOptional"
+				value=" #{bundle['customs.declaration.importer.address']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<h:inputTextarea
+				id="importerpartyaddOptional"
+				value="#{declarationPartyBean.importerDTO.partyAddress}"
+				styleClass="test-field-styles"
+				cols="80"
+				rows="3"
+				required="true"
+				
+			>
+				<f:validateLength
+					minimum="0"
+					maximum="300"
+				/>
+			</h:inputTextarea>
+			</h:panelGroup>
+		
+			<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="importerphOptional1"
+				value=" #{bundle['customs.declaration.importer.ph']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<h:inputText
+				id="importerphOptional1"
+				value="#{declarationPartyBean.importerDTO.partyPhone}"
+				styleClass="test-field-styles"
+				maxlength="15"
+				required="true"
+			>
+			<f:validateLength minimum="8" maximum="15" />
+			<cust:regexValidator type="telno" />				
+			</h:inputText>
+			<br />
+			<a4j:outputPanel>
+				<rich:message
+					for="importerphOptional1"
+					errorClass="error"
+				/>
+			</a4j:outputPanel>
+			</h:panelGroup>
+			
+			<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="selectIDType1"
+				value=" #{bundle['customs.declaration.importer.idType']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}">
+				<h:selectOneMenu
+						id="selectIDType1"
+						value="#{declarationPartyBean.importerDTO.partyIdType}"
+						styleClass="test-field-styles">
+						<f:selectItems value="#{importerIdType.selectItemList}" />
+						<a4j:support event="onchange" ajaxSingle="true" action="#{declarationPartyBean.getIdType}" 
+									reRender="importerIDNOOptional1">
+						</a4j:support>
+				</h:selectOneMenu>
+				<br />
+				<rich:message for="selectIDType1" errorClass="error"/>
+			</h:panelGroup>
+			
+			<h:outputText
+			value="&#160;"
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		/>
+		<h:panelGroup
+			rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}"
+		>
+			<cust:outputLabel
+				for="importerIDNOOptional1"
+				value=" #{bundle['customs.declaration.importer.idNo']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup id="importerIDNOOptional1" 
+				rendered="#{((declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW'))
+				and (declarationPartyBean.baseData.hasCourierDec)}" >
+							
+				<h:panelGroup id="qidflagid" rendered="#{declarationPartyBean.idTypeFlag}">
+			
+					<h:inputText id="idno11"  
+								 value="#{declarationPartyBean.importerDTO.partyIdNo}">		
+							 <a4j:support event="onblur"													
+										ajaxSingle="true">
+										<a4j:actionparam value="this.value"
+											assignTo="#{declarationPartyBean.importerDTO.partyIdNo}"
+											noEscape="true" />
+									</a4j:support>													 
+													
+					<cust:regexValidator type="digitsWithExact" />
+			
+					</h:inputText>
+					<br />
+					<rich:message for="idno11" styleClass="error" />
+				</h:panelGroup>
+				
+				 <h:panelGroup id="otherflagid" rendered="#{!declarationPartyBean.idTypeFlag}">
+				
+					<h:inputText id="idno12"  
+								 value="#{declarationPartyBean.importerDTO.partyIdNo}">
+								 <a4j:support event="onblur"													
+										ajaxSingle="true">
+										<a4j:actionparam value="this.value"
+											assignTo="#{declarationPartyBean.importerDTO.partyIdNo}"
+											noEscape="true" />
+									</a4j:support>	
+					<cust:regexValidator type="digits" />
+					</h:inputText>
+					
+					<br />
+					<rich:message for="idno12" styleClass="error" />
+				</h:panelGroup> 
+		</h:panelGroup> 
+		
+			
+		
+		<h:outputText
+			value="&#160;"
+			rendered="#{(declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		/>
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		>
+			<cust:outputLabel
+				for="exporterOptional1"
+				value=" #{bundle['customs.declaration.exporter.name']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')				
+			    or (declarationPartyBean.baseData.declarationType=='EXW') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		>
+			<h:inputText
+				id="exporterOptional1"
+				value="#{declarationPartyBean.exporterDTO.partyName}"
+				styleClass="test-field-styles"
+				maxlength="80"
+				size="78"
+				required="true"
+			>
+				<!-- #{!empty declarationPartyBean.importerDTO.partyName} -->
+			</h:inputText>
+			<br />
+			<a4j:outputPanel>
+				<rich:message
+					for="exporterOptional1"
+					errorClass="error"
+				/>
+			</a4j:outputPanel>
+		</h:panelGroup>
+		
+		<!--Exporter address is optional for Normal Declaraion-->
+		<h:outputText
+			value="&#160;"
+			rendered="#{(!declarationPartyBean.baseData.hasCourierDec) and (declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		/>
+		<h:panelGroup
+			rendered="#{(!declarationPartyBean.baseData.hasCourierDec) and (declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		>
+			<cust:outputLabel
+				for="exporteraddressOptional"
+				value="#{bundle['customs.declaration.exporter.address']}"
+				
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{(!declarationPartyBean.baseData.hasCourierDec) and (declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+		>
+			<h:inputTextarea
+				id="exporteraddressOptional"
+				value="#{declarationPartyBean.exporterDTO.partyAddress}"
+				styleClass="test-field-styles"
+				cols="80"
+				rows="3" >
+				<f:validateLength minimum="0" maximum="300" />
+			</h:inputTextarea>
+		</h:panelGroup>
+		
+		<!--Exporter address is Mandatory for Courier Declaraion-->
+		
+		<h:outputText
+			value="&#160;"
+			rendered="#{(declarationPartyBean.baseData.hasCourierDec) and (declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')}"
+		/>
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.hasCourierDec) and (declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')}"
+		>
+			<cust:outputLabel
+				for="exporteraddressMandatory"
+				value="#{bundle['customs.declaration.exporter.address']}"
+				
+			/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.hasCourierDec) and (declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')}"
+		>
+			<h:inputTextarea
+				id="exporteraddressMandatory"
+				value="#{declarationPartyBean.exporterDTO.partyAddress}"
+				styleClass="test-field-styles"
+				cols="80"
+				rows="3" 
+				required= "true">
+				<f:validateLength minimum="0" maximum="300" />
+			</h:inputTextarea>
+		</h:panelGroup>
+		
+		
+		<h:outputText  value="&#160;" rendered="#{(declarationPartyBean.baseData.hasCourierDec) and (declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3') or (declarationPartyBean.baseData.documentType eq 'F1')	}" />
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.hasCourierDec) and
+				(declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')	}" >
+		<cust:outputLabel for="exporterphone" value="#{bundle['customs.declaration.exporter.ph']}" 	/>
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{(declarationPartyBean.baseData.hasCourierDec) and 
+				(declarationPartyBean.baseData.documentType eq 'N1')
+				or (declarationPartyBean.baseData.documentType eq 'N3')
+				or (declarationPartyBean.baseData.documentType eq 'F1')}" >
+			<h:inputText id="exporterphone" value="#{declarationPartyBean.exporterDTO.partyPhone}" styleClass="test-field-styles"
+				maxlength="15" required="true" >
+				<f:validateLength minimum="8" maximum="15" />
+				<cust:regexValidator type="telno" />				
+			</h:inputText>
+			<br />
+			<a4j:outputPanel>
+				<rich:message for="exporterphone" errorClass="error" />
+			</a4j:outputPanel>
+			</h:panelGroup>
+			
+			
+			
+						
+		<!-- end exporter name/address -->
+		
+		<h:outputText value="&#160;"  id="traderGlobalGuaranteeFlag_imp_space"
+			rendered="#{((declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType=='IMS')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')) and !declarationPartyBean.baseData.hasCourierDec  }" />
+		
+		<h:panelGroup id="traderGlobalGuaranteeFlag_imp_label" >
+			<cust:outputLabel
+				for="traderGlobalGuaranteeFlag_imp_a" id="traderGlobalGuaranteeFlag_imp_label_a"
+				value="#{bundle['customs.declaration.party.using.trader.global.guarantee']}"
+				 rendered="#{((declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				  or (declarationPartyBean.baseData.declarationType=='IMS')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')) and !declarationPartyBean.baseData.hasCourierDec and (!empty declarationPartyBean.importerDTO.accountCode) 
+						 and  declarationPartyBean.baseData.declarationType ne 'IMS'}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup id="traderGlobalGuaranteeFlag_imp" >
+			<h:selectOneRadio id="traderGlobalGuaranteeFlag_imp_a"
+							   value="#{declarationPartyBean.declarationCourierInfoDTO.accountTypeOfTrader}"
+							  disabled="#{!declarationPartyBean.importerDTO.hasActiveGlobalGuarantee or declarationPartyBean.declarationCourierInfoDTO.accountType eq 'A' }"
+							  rendered="#{((declarationPartyBean.baseData.declarationType=='IMP') or (declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType=='IMS')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN'
+						and declarationPartyBean.baseData.entryPortType ne 'F'
+						and declarationPartyBean.baseData.exitPortType eq 'F') or (declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')) and !declarationPartyBean.baseData.hasCourierDec and (!empty declarationPartyBean.importerDTO.accountCode) 
+						  and  declarationPartyBean.baseData.declarationType ne 'IMS'}"
+							  	required="true">
+								<f:selectItem id="globalGuaranteeFromTrader_imp_yes"
+									itemLabel="#{bundle['customs.common.yes']}" itemValue="T" />
+								<f:selectItem id="globalGuaranteeFromTrader_imp_no"
+									itemLabel="#{bundle['customs.common.no']}" itemValue="N" />
+								
+								<a4j:support ajaxSingle="true" event="onclick"
+									action="#{declarationPartyBean.resetGlobalGuranteeFromFlag}" status="waitStatus"
+									reRender="clearingagencyGlobalGuranteeFlag" />
+			</h:selectOneRadio>
+				
+		</h:panelGroup>
+
+		<h:outputText value="&#160;" id="traderGlobalGuaranteeFlag_exp_space"
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+						||(declarationPartyBean.baseData.declarationType=='TEX')
+						||(declarationPartyBean.baseData.declarationType=='REE')
+						||(declarationPartyBean.baseData.declarationType=='REW')
+						||(declarationPartyBean.baseData.documentType eq 'F3')
+						or (declarationPartyBean.baseData.documentType eq 'F7') ) and !declarationPartyBean.baseData.hasCourierDec }" />
+		
+		<!-- SPECE ADJUST -->
+		<h:outputText value="&#160;" id="traderGlobalGuaranteeFlag_exp_space_adjust"
+			rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+						||(declarationPartyBean.baseData.declarationType=='TEX')
+						||(declarationPartyBean.baseData.declarationType=='REE')
+						||(declarationPartyBean.baseData.declarationType=='REW')
+						||(declarationPartyBean.baseData.documentType eq 'F3')
+						or (declarationPartyBean.baseData.documentType eq 'F7') ) and !declarationPartyBean.baseData.hasCourierDec }" />
+		<h:panelGroup id="traderGlobalGuaranteeFlag_exp_label" >
+			<cust:outputLabel
+				for="traderGlobalGuaranteeFlag_exp_a" 
+				value="#{bundle['customs.declaration.party.using.trader.global.guarantee']}"
+					rendered="#{ ((declarationPartyBean.baseData.declarationType=='EXP')
+								||(declarationPartyBean.baseData.declarationType=='TEX')
+								||(declarationPartyBean.baseData.declarationType=='REE')
+								||(declarationPartyBean.baseData.declarationType=='REW')
+								||(declarationPartyBean.baseData.documentType eq 'F3')
+								or (declarationPartyBean.baseData.documentType eq 'F7') )and !declarationPartyBean.baseData.hasCourierDec  and (!empty declarationPartyBean.exporterDTO.accountCode)  }"
+			/>
+		</h:panelGroup>
+		<h:panelGroup id="traderGlobalGuaranteeFlag_exp" >
+			<h:selectOneRadio id="traderGlobalGuaranteeFlag_exp_a"
+							  value="#{declarationPartyBean.declarationCourierInfoDTO.accountTypeOfTrader}"
+							  disabled="#{!declarationPartyBean.exporterDTO.hasActiveGlobalGuarantee or declarationPartyBean.declarationCourierInfoDTO.accountType eq 'A' }"
+							  rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+										||(declarationPartyBean.baseData.declarationType=='TEX')
+										||(declarationPartyBean.baseData.declarationType=='REE')
+										||(declarationPartyBean.baseData.declarationType=='REW')
+										||(declarationPartyBean.baseData.documentType eq 'F3')
+											or (declarationPartyBean.baseData.documentType eq 'F7') )and !declarationPartyBean.baseData.hasCourierDec and (!empty declarationPartyBean.exporterDTO.accountCode) }"
+							  	required="true">
+								<f:selectItem id="globalGuaranteeFromTrader_exp_yes"
+									itemLabel="#{bundle['customs.common.yes']}" itemValue="T" />
+								<f:selectItem id="globalGuaranteeFromTrader_exp_no"
+									itemLabel="#{bundle['customs.common.no']}" itemValue="N" />
+								
+								<a4j:support ajaxSingle="true" event="onclick"
+									action="#{declarationPartyBean.resetGlobalGuranteeFromFlag}" status="waitStatus"
+									reRender="clearingagencyGlobalGuranteeFlag" />
+			</h:selectOneRadio>
+				
+		</h:panelGroup>
+			
+		<h:outputText
+			value="&#160;"
+			rendered="#{ (	((declarationPartyBean.baseData.declarationType=='REE') )
+								and  !empty declarationPartyBean.baseData.exitPortCode and declarationPartyBean.baseData.exitPortCode eq 'DOH'
+								and declarationPartyBean.airCargoEnabled eq 'Yes' )}"
+		/>
+		
+		<h:panelGroup id="awb_personal_declaration_lbl_1" >
+			<cust:outputLabel
+				for="awb_personal_declaration_val" 
+				value="#{bundle_AWB['customs.declaration.party.awb.is.personal.declaration']}"
+					rendered="#{ (	(declarationPartyBean.baseData.declarationType=='REE') )
+								and  !empty declarationPartyBean.baseData.exitPortCode and declarationPartyBean.baseData.exitPortCode eq 'DOH'
+								and declarationPartyBean.airCargoEnabled eq 'Yes' }"
+			/>
+		</h:panelGroup>
+		
+		
+		<h:panelGroup id="awb_personal_declaration_val_1" >
+			<h:selectOneRadio id="awb_personal_declaration_val"
+							  value="#{declarationPartyBean.exporterDTO.airCargoPersonalDeclaration}"
+							  rendered="#{( (declarationPartyBean.baseData.declarationType=='REE') )
+								and  !empty declarationPartyBean.baseData.exitPortCode and declarationPartyBean.baseData.exitPortCode eq 'DOH'
+								and declarationPartyBean.airCargoEnabled eq 'Yes' }"
+							  	required="true">
+								
+								<f:selectItem id="awb_personal_declaration_val_yes"
+									itemLabel="#{bundle['customs.common.yes']}" itemValue="Y" />
+								<f:selectItem id="awb_personal_declaration_val_no"
+									itemLabel="#{bundle['customs.common.no']}" itemValue="N" />
+			</h:selectOneRadio>
+				
+		</h:panelGroup>
+		
+		<h:outputText
+			value="&#160;"
+			rendered="#{ (	((declarationPartyBean.baseData.declarationType=='REE') )
+								and  !empty declarationPartyBean.baseData.exitPortCode and declarationPartyBean.baseData.exitPortCode eq 'DOH'
+								and declarationPartyBean.airCargoEnabled eq 'Yes')}"
+		/>
+		
+		<h:panelGroup id="awb_transport_thru_qas_lbl_1" >
+			<cust:outputLabel
+				for="awb_transport_thru_qas_lbl" 
+				value="#{bundle_AWB['customs.declaration.party.awb.is.transport.thru.qas']}"
+					rendered="#{ (	(declarationPartyBean.baseData.declarationType=='REE') )
+								and  !empty declarationPartyBean.baseData.exitPortCode and declarationPartyBean.baseData.exitPortCode eq 'DOH'
+								and declarationPartyBean.airCargoEnabled eq 'Yes' }"
+			/>
+		</h:panelGroup>
+		
+		
+		<h:panelGroup id="awb_transport_thru_qas_lbl_val_1" >
+			<h:selectOneRadio id="awb_transport_thru_qas_lbl_val"
+							  value="#{declarationPartyBean.exporterDTO.transportThrouhgQAS}"
+							  rendered="#{ (	(declarationPartyBean.baseData.declarationType=='REE') )
+								and  !empty declarationPartyBean.baseData.exitPortCode and declarationPartyBean.baseData.exitPortCode eq 'DOH'
+								and declarationPartyBean.airCargoEnabled eq 'Yes' }"
+							  	required="true">
+								
+								<f:selectItem id="awb_transport_thru_qas_lbl_val_yes"
+									itemLabel="#{bundle['customs.common.yes']}" itemValue="Y" />
+								<f:selectItem id="awb_transport_thru_qas_lbl_val_no"
+									itemLabel="#{bundle['customs.common.no']}" itemValue="N" />
+			</h:selectOneRadio>
+				
+		</h:panelGroup>
+		
+		
+	</h:panelGrid>
+
+	<!-- start consignor/consignee section -->
+
+	<h:panelGrid
+		columns="3"
+		width="670"
+		cellspacing="0"
+		columnClasses="col_indent,edit_label,edit_value"
+		rendered="#{declarationPartyBean.baseData.declarationType=='TRN'
+					and !(declarationPartyBean.baseData.entryPortType ne 'F'
+					and declarationPartyBean.baseData.exitPortType eq 'F') and !(declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}"
+	>
+
+		<h:outputText value="&#160;" />
+		<h:panelGroup>
+			<cust:outputLabel
+				for="consignorname"
+				value="#{bundle['customs.declaration.consignor.name']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:inputText
+				id="consignorname"
+				value="#{declarationPartyBean.consignorDTO.partyName}"
+				styleClass="test-field-styles"
+				maxlength="80"
+				size="78"
+				required="true"
+			>
+			</h:inputText>
+		</h:panelGroup>
+
+		<h:outputText value="&#160;" />
+		<h:panelGroup>
+			<cust:outputLabel
+				for="consignoraddress"
+				value="#{bundle['customs.declaration.consignor.address']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:inputTextarea
+				id="consignoraddress"
+				value="#{declarationPartyBean.consignorDTO.partyAddress}"
+				styleClass="test-field-styles"
+				cols="80"
+				rows="3"
+				required="true"
+			>
+				<f:validateLength
+					minimum="0"
+					maximum="300"
+				/>
+			</h:inputTextarea>
+		</h:panelGroup>
+
+		<h:outputText value="&#160;" />
+		<h:panelGroup>
+			<cust:outputLabel
+				for="consigneename"
+				value=" #{bundle['customs.declaration.consignee.name']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:inputText
+				id="consigneename"
+				value="#{declarationPartyBean.consigneeDTO.partyName}"
+				styleClass="test-field-styles"
+				maxlength="80"
+				size="78"
+				required="true"
+			>
+			</h:inputText>
+		</h:panelGroup>
+
+		<h:outputText value="&#160;" />
+		<h:panelGroup>
+			<cust:outputLabel
+				for="consigneeaddress"
+				value="#{bundle['customs.declaration.consignee.address']}"
+			/>
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:inputTextarea
+				id="consigneeaddress"
+				value="#{declarationPartyBean.consigneeDTO.partyAddress}"
+				styleClass="test-field-styles"
+				cols="80"
+				rows="3"
+				required="true"
+			>
+				<f:validateLength
+					minimum="0"
+					maximum="300"
+				/>
+			</h:inputTextarea>
+		</h:panelGroup>
+
+	</h:panelGrid>
+	<rich:spacer height="5" />
+</a4j:outputPanel>
+</h:panelGrid>
+<rich:spacer height="10" />
+<!--Change for QA#1980 (inspect without the presence of a representative from the company ) -->
+<!--Panel Grid for impoter DTO  -->
+<!--Whole Change will not apply for QpostDeclaration  -->
+<a4j:outputPanel id="InspectionWithoutRepresentativePanel"
+ rendered="#{declarationPartyBean.baseData.qpostDeclaration ne 'Y'}">
+<h:panelGrid id="inspectionWithOutRepresentativePanelGrid" columns="3"
+	width="670" cellspacing="0" styleClass="rich-tab-hukoomi"
+	columnClasses="col_indent,header_edit_label,edit_value"
+		 rendered="#{((declarationPartyBean.baseData.declarationType=='IMP')
+	             or	(declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN')
+				or (declarationPartyBean.baseData.declarationType eq 'IMS'))
+				 and (!declarationPartyBean.baseData.hasCourierDec)
+				 and (!declarationPartyBean.importerDTO.individualFlag)}" >
+	<h:outputText value="&#160;" />
+	<h:panelGroup>
+		<h:outputLabel for="inspWithOutRepresentativeRadioIMP"
+			value="#{bundle['customs.declaration.party.inspectionWithoutRepresentative']}" />
+	</h:panelGroup>
+	<h:panelGroup style="vertical-align: top;">
+		<h:selectOneRadio id="inspWithOutRepresentativeRadioIMP" value="#{declarationPartyBean.importerDTO.inspectionWithoutRepresentative}">
+			<f:selectItem id="YesImpID"
+				itemLabel="#{bundle['customs.declaration.yes']}" itemValue="Y" />
+			<f:selectItem id="NoIMPID"
+				itemLabel="#{bundle['customs.declaration.no']}" itemValue="N" />
+		</h:selectOneRadio>
+	</h:panelGroup>
+</h:panelGrid>
+<h:panelGrid id="inspectionWitOutRepNoteIMP" columns="1" width="670"
+	style="border: 1px solid #e0e0e0;background: #f8f8f8;"
+	rendered="#{((declarationPartyBean.baseData.declarationType=='IMP')
+	             or	(declarationPartyBean.baseData.declarationType=='WHE')
+			     or (declarationPartyBean.baseData.declarationType=='EXW')
+				or (declarationPartyBean.baseData.declarationType=='TIM')
+				or (declarationPartyBean.baseData.declarationType eq 'TRN')
+				or (declarationPartyBean.baseData.declarationType eq 'IMS'))
+				 and (!declarationPartyBean.baseData.hasCourierDec)
+				 and (!declarationPartyBean.importerDTO.individualFlag)}">
+	<h:panelGroup styleClass="table-contents">
+		<rich:spacer width="10" />
+		<h:outputText
+			value="#{bundle['customs.common.search.notification.notelavel']}"
+			style="font-weight:bold" />
+		<cust:outputLabel
+			value="#{bundle['customs.declaration.party.inspectionWithoutRepresentative.note']}" />
+	</h:panelGroup>
+	<rich:spacer height="5" />
+</h:panelGrid>
+<!-- Panel Grid for Exporter type DEC -->
+
+<h:panelGrid id="inspectionWithOutRepresentativePanelExporterGrid" columns="3"
+	width="670" cellspacing="0" styleClass="rich-tab-hukoomi"
+	columnClasses="col_indent,header_edit_label,edit_value"
+	 rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+										||(declarationPartyBean.baseData.declarationType=='TEX')
+										||(declarationPartyBean.baseData.declarationType=='REE')
+										||(declarationPartyBean.baseData.declarationType=='REW'))
+				                         and (!declarationPartyBean.baseData.hasCourierDec)
+				                         and (!declarationPartyBean.exporterDTO.individualFlag)
+				                         and (declarationPartyBean.baseData.qpostDeclaration ne 'Y')}" >
+	<h:outputText value="&#160;" />
+	<h:panelGroup>
+	<h:outputLabel for="inspWithOutRepresentativeRadioEXP"
+			value="#{bundle['customs.declaration.party.inspectionWithoutRepresentative']}" />
+	</h:panelGroup>
+		<h:panelGroup style="vertical-align: top;" >
+		<h:selectOneRadio id="inspWithOutRepresentativeRadioEXP" 
+		value="#{declarationPartyBean.exporterDTO.inspectionWithoutRepresentative}">
+			<f:selectItem id="YesEXPID"
+				itemLabel="#{bundle['customs.declaration.yes']}" itemValue="Y" />
+			<f:selectItem id="NoEXPID"
+				itemLabel="#{bundle['customs.declaration.no']}" itemValue="N" />
+		</h:selectOneRadio>
+	</h:panelGroup>
+</h:panelGrid>
+<h:panelGrid id="inspectionWitOutRepNoteEXP" columns="1" width="670"
+	style="border: 1px solid #e0e0e0;background: #f8f8f8;"
+	 rendered="#{((declarationPartyBean.baseData.declarationType=='EXP')
+										||(declarationPartyBean.baseData.declarationType=='TEX')
+										||(declarationPartyBean.baseData.declarationType=='REE')
+										||(declarationPartyBean.baseData.declarationType=='REW'))
+				                         and (!declarationPartyBean.baseData.hasCourierDec)
+				                         and (!declarationPartyBean.exporterDTO.individualFlag)}">
+	<h:panelGroup styleClass="table-contents">
+		<rich:spacer width="10" />
+		<h:outputText
+			value="#{bundle['customs.common.search.notification.notelavel']}"
+			style="font-weight:bold" />
+		<cust:outputLabel
+			value="#{bundle['customs.declaration.party.inspectionWithoutRepresentative.note']}" />
+	</h:panelGroup>
+	<rich:spacer height="5" />
+</h:panelGrid>
+</a4j:outputPanel>
+<!--Change for QA#1980  end Here -->
+<!-- NADEEBOPR -484 changes Start-->
+<a4j:outputPanel rendered="#{declarationPartyBean.baseData.declarationType eq 'TRN' and !(declarationPartyBean.baseData.entryPortType ne 'F' and declarationPartyBean.baseData.exitPortType eq 'F')
+	 and !(declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}">
+<h:panelGrid id="registeredTraderForTransitNoteAuth" columns="1" width="670"
+	style="border: 1px solid #e0e0e0;background: #f8f8f8;"
+	rendered="#{declarationPartyBean.baseData.declarationType eq 'TRN' and !(declarationPartyBean.baseData.entryPortType ne 'F' and declarationPartyBean.baseData.exitPortType eq 'F')
+	 and !(declarationPartyBean.baseData.registeredTraderForTransit ne null and  declarationPartyBean.baseData.registeredTraderForTransit eq 'Y')}">
+	<h:panelGroup styleClass="table-contents">
+		<rich:spacer width="10" />
+		<h:outputText
+			value="* "
+			style="font-weight:bold" />
+		<cust:outputLabel
+			value="#{bundle['customs.declaration.party.registeredTraderForTransit.note.authorization']}" />
+	</h:panelGroup>
+	<rich:spacer height="5" />
+</h:panelGrid>
+</a4j:outputPanel>
+</html>

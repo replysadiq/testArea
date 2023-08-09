@@ -1,0 +1,1897 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cust="http://com.crimsonlogic.trade/customs"
+	xmlns:customs="http://com.crimsonlogic.trade/customs">
+<ui:composition template="../common/template_customs.xhtml">
+	<ui:define name="content">
+		<script type="text/javascript" src="../../scripts/electronic-declaration.js"></script>
+		<script type="text/javascript" src="../../scripts/tpr.js"></script>
+		
+		
+		<script type="text/javascript" >
+		function hideFocusKeeperFromPicklist1(picklist){
+		//alert('Picklist');
+	/* only apply to mozilla browser */
+	var browserName=navigator.appName;
+	if (browserName=="Netscape")
+	{ 
+		if(document.getElementById(picklist+'tlFocusKeeper')!=null){
+			document.getElementById(picklist+'tlFocusKeeper').style.display='none';
+		}
+		if(document.getElementById(picklist+'focusKeeper')!=null){
+			document.getElementById(picklist+'focusKeeper').style.display='none';
+		}
+	}
+}
+</script>
+
+
+			<!--<a4j:keepAlive beanName="accountSearchBean"></a4j:keepAlive> -->
+			<a4j:keepAlive beanName="accountBean"></a4j:keepAlive>
+			<a4j:keepAlive beanName="accountSearchBean" />
+			<a4j:keepAlive beanName="userSearchBean"></a4j:keepAlive>
+			<a4j:keepAlive beanName="userBean"></a4j:keepAlive>
+		<h:form id="userEditForm">
+		<h:panelGrid id="qatariIdmoiSearch1"  rendered="#{userBean.individualbyMoiFlag and accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+	<h:panelGrid id="vehicleRegistrationQatari" columns="3" width="100%" border="0" cellspacing="0"  
+		cellpadding="0" columnClasses="leftCurve,module-header,rightCurve"     >
+		<h:outputText value=" " />
+		<h:panelGroup>
+			<h:outputText value="#{bundle['customs.user.individual.inquiry']}" /> 
+		</h:panelGroup>	 
+	</h:panelGrid> 
+		<h:panelGrid  columns="4" styleClass="table-contents"  	width="740"  style="margin: 0px 10px 0px 10px;" footerClass="search-footer">
+							 
+							 
+						<h:panelGroup>
+							<cust:outputLabel id="documenttypelabel" for="documenttype" 
+								value="#{bundle['custom.user.individual.documenttype']}" />  
+									<h:selectOneRadio id="documenttype" label="#{bundle['customs.ana.user.actiontype']}" value="#{userBean.userDTO.documentTypeforIndividual}"  required="true" >
+											<f:selectItem itemLabel="#{bundle['customs.user.qatariid']}" itemValue="QID" />
+											<f:selectItem itemLabel="#{bundle['customs.user.passportno']}" itemValue="PNO" /> 
+										<a4j:support ajaxSingle="true" event="onchange" action="#{userBean.selectDocumentType}" 	reRender="userEditForm" />											
+									</h:selectOneRadio>               
+						</h:panelGroup>
+						<h:panelGroup/>  
+						<h:panelGroup/>  
+						<h:panelGroup/>  
+						 
+							 
+							 
+						<!-- first row --> 
+						 <h:panelGroup rendered="#{userBean.individualQIDbyMoiFlag and accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">								
+								<cust:outputLabel for="qatariIdMoi" value="#{bundle['customs.user.qatariid']}" />									
+							  
+								<h:inputText id="qatariIdMoi" value="#{userBean.qatariId}" maxlength="11" styleClass="test-field-styles" required="true">
+									<cust:trimConverter />
+									<cust:regexValidator type="digits" />
+									<f:validateLength minimum="11" maximum="11" /> 
+								</h:inputText>
+								<br />
+									<rich:message for="qatariIdMoi" styleClass="error" />
+						 </h:panelGroup>  
+						 <h:panelGroup/>  
+						 <h:panelGroup/>  
+						 <h:panelGroup/>  
+						 
+						 
+					   <h:panelGroup> 
+						 	<h:panelGrid 
+								columns="4"
+								styleClass="table-contents"
+							width="100%" 
+								footerClass="search-footer" 
+							rendered="#{userBean.individualQIDbyMoiFlag and accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"> 
+								 
+								<f:facet name="footer">
+								<h:panelGroup> 	
+									<a4j:commandButton id="searchMoi"
+												  
+												  action="#{userBean.goToCreate}"   value="#{bundle_vts['customs.vts.retrieve']}"
+													reRender="userEditForm" styleClass="button-styles" 
+													status="waitStatus">
+													<f:setPropertyActionListener value="true" target="#{userBean.individualUserMoi}" />
+									</a4j:commandButton> 
+							
+							 
+									<h:commandButton action="#{userSearchBean.backToSearch}" id="userRetrieveButtonCancel2" 
+											immediate="true" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+											 value="#{bundle['customs.common.cancel']}"  styleClass="button-styles" >
+							 			 <f:setPropertyActionListener target="#{userSearchBean.id}" value="2" />
+							 		 </h:commandButton>
+								 </h:panelGroup> 
+								</f:facet>
+								
+								</h:panelGrid> 
+						 </h:panelGroup>
+						 <h:panelGroup/>  
+						 <h:panelGroup/>  
+						 <h:panelGroup/>  
+			 </h:panelGrid>
+		</h:panelGrid> 
+			
+			
+			
+		
+		
+			<h:panelGrid width="740" border="0" cellspacing="0" cellpadding="0"	footerClass="module-footer"	headerClass="module-header"  rendered="#{!userBean.individualbyMoiFlag}" >
+				<!-- title bar -->
+				<h:panelGrid columns="3" width="100%" border="0" cellspacing="0"
+					cellpadding="0" columnClasses="leftCurve,module-header,rightCurve">
+					<h:outputText value=" " />
+					<h:outputText value="#{bundle['customs.user.heading.createuser']}" rendered="#{!userBean.editMode}" />
+					<h:outputText value="#{bundle['customs.user.heading.createupdate']}" rendered="#{userBean.editMode}"/>
+					<h:outputText value="" />
+				</h:panelGrid>
+				<!--  end of title bar -->
+				<!-- table for criteria and result -->
+				<h:panelGrid width="740"
+					style="border: solid 1px #a1a1a1; border-top: 0px; border-bottom: none;"	>
+					<!-- error messages -->
+					<rich:messages	globalOnly="true" styleClass="message_general" errorClass="error" infoClass="info"
+						warnClass="warning" showSummary="true"	showDetail="false"	errorMarkerClass="errorMarker"	
+						warnMarkerClass="warningMarker"	infoMarkerClass="infoMarker">
+						<f:facet name="errorMarker"><h:graphicImage url="../../imgs/errorIcon.png"  /></f:facet>
+						<f:facet name="infoMarker"><h:graphicImage url="../../imgs/infoIcon.png" />	</f:facet>
+						<f:facet name="warnMarker">	<h:graphicImage url="../../imgs/warningIcon.png" />	</f:facet>
+					</rich:messages>
+					<!-- end of error messages -->
+					
+					<h:panelGroup styleClass="table-contents">
+						<rich:spacer width="15" />
+						<h:outputText value="*" styleClass="mandatory" />
+						<h:outputText value="#{bundle['customs.common.mandatory']}" />
+					</h:panelGroup>
+					<!-- start of criteria table -->
+					<h:panelGrid id="section1" width="720" border="0" cellpadding="0" cellspacing="0">
+						<!-- Account Details -->
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" 
+						rendered="#{accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT}"
+						columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;">
+							<f:facet name="header">
+								<h:panelGroup styleClass="search-header">
+									<h:graphicImage alt="box" width="10" height="10"
+										url="../../imgs/bullet.gif">
+									</h:graphicImage>
+									<rich:spacer width="5" />
+									<h:outputText value="#{bundle['customs.ac.subheading.accountdetails']}" />
+									<rich:separator lineType="none" styleClass="separator"/>
+								</h:panelGroup>
+							</f:facet>
+							
+							<!-- ESTABLISHMENT ID -->
+							<h:outputText value="&#160;"/>
+							<h:outputLabel  value="#{bundle['customs.ac.establishmentid']}:"/>
+							<h:outputText value="#{accountBean.accountDTO.establishmentId}" />
+						    <h:outputLabel  value="#{bundle['customs.ac.accountcode']}:"/>
+							<h:outputText value="#{accountBean.accountDTO.accountCode}" />
+								
+							<!-- COMPANY NAME -->
+							<h:outputText value="&#160;"/>
+							<h:outputLabel  value="#{bundle['customs.ac.companyname']}:"/>
+							<h:outputText value="#{accountBean.accountDTO.companyName}" />
+						    <h:outputLabel  value="#{bundle['customs.ac.companynamear']}:"/>
+   						    <h:outputText value="#{accountBean.accountDTO.arabicCompanyName}" />
+     						    
+							 <!-- CR NUMBER -->
+							<h:outputText value="&#160;"/>
+							<h:outputLabel  value="#{bundle['customs.ac.crno']}:"/>
+							<h:outputText value="#{accountBean.accountDTO.crNo}" />
+						    <h:outputLabel  value="#{bundle['customs.ac.crexpirydate']}:"/>
+						    <h:outputText value="#{accountBean.accountDTO.crExpiryDate}">
+						    	<f:convertDateTime id="dateconver1" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+						    </h:outputText>
+							 
+						</h:panelGrid>
+						
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" 
+							rendered="#{accountBean.accountDTO.clearingAgenci
+						    		and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT 
+						    		or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)}"
+							columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;">
+							
+							<!-- COMPANY ACTIVITIES -->
+							<h:outputText value="&#160;"/>
+							<cust:outputLabel id="actHeader" value="#{bundle['customs.ac.activities']}"/>
+							<h:outputText id="act" value="#{accountBean.accountDTO.companyActivities}" />
+						    <cust:outputLabel id="clatypeHeader" value="#{bundle['customs.agency.clearingagencytype']}"/>
+						    <h:outputText id="clatype" value="#{accountBean.clearingAgency.agencyType}"  converter="agencyTypeConverter" />
+						    
+							<!-- LICENSE ISSUE DATE -->
+							<h:outputText value="&#160;" />
+							<cust:outputLabel  value="#{bundle['customs.agency.licissuedate']}" />
+							<h:outputText value="#{accountBean.clearingAgency.licenseIssueDate}"  >
+								<f:convertDateTime id="dateconver" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+							</h:outputText>
+							
+							<!-- LICENSE EXPIRY DATE -->
+						    <cust:outputLabel  value="#{bundle['customs.agency.licexpirydate']}" />
+						    <h:outputText value="#{accountBean.clearingAgency.licenseExpiryDate}" >
+						    	<f:convertDateTime id="dateconver" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+						    </h:outputText>
+						</h:panelGrid>
+						
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" 
+							rendered="#{ !accountBean.accountDTO.clearingAgenci
+						    		and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT 
+						    		or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)}"
+							columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;">
+								<h:outputText value="&#160;"/>
+								<cust:outputLabel id="actHeader2" value="#{bundle['customs.ac.activities']}"/>
+     						    <h:outputText id="act2" value="#{accountBean.accountDTO.companyActivities}" />
+							    <h:outputText value="&#160;"/>
+     						    <h:outputText value="&#160;"/>
+						</h:panelGrid>
+						<!-- End of Account Details -->
+						
+						<!-- User Details -->
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" 
+							columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;"	>
+							<f:facet name="header">
+								<h:panelGroup styleClass="search-header">
+									<h:graphicImage alt="box" width="10" height="10"
+										url="../../imgs/bullet.gif">
+									</h:graphicImage>
+									<rich:spacer width="5" />
+									<h:outputText	value="#{bundle['customs.user.heading.userdetails']}" />
+									<rich:separator lineType="none" styleClass="separator"/>
+								</h:panelGroup>
+							</f:facet>
+							 <h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT}"/>
+						      <cust:outputLabel for="userStatus" value="#{bundle['customs.user.details.userstatus']}" rendered="#{ accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT}"/>
+							  <h:outputText  id="userStatus" value="#{userBean.userDTO.status}" converter="accountStatusTypeConverter" style="font-weight:bold;" rendered="#{ accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT}"/>
+							  <h:outputText value="&#160;" rendered="#{ accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT}"/>
+							  <h:outputText value="&#160;" rendered="#{ accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT}"/>
+							  
+							  <h:outputText value="&#160;" rendered="#{(userBean.userDTO.status eq accountStatusTypeBean.BLACKLISTED or userBean.userDTO.status eq accountStatusTypeBean.SUSPENDED) and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)}"/>
+						      <cust:outputLabel for="startDate" value="#{bundle['customs.common.startdate']}" rendered="#{(userBean.userDTO.status eq accountStatusTypeBean.BLACKLISTED or userBean.userDTO.status eq accountStatusTypeBean.SUSPENDED) and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)}"/>
+							  <h:outputText id="startDate" value="#{userBean.statusStartDate}" rendered="#{(userBean.userDTO.status eq accountStatusTypeBean.BLACKLISTED or userBean.userDTO.status eq accountStatusTypeBean.SUSPENDED) and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)}">
+								<f:convertDateTime type="both" pattern="#{custConstants.DATE_PATTERN}" timeZone="#{custConstants.timeZone}" />
+							  </h:outputText>
+							  <cust:outputLabel for="endDate" value="#{bundle['customs.common.enddate']}" rendered="#{(userBean.userDTO.status eq accountStatusTypeBean.BLACKLISTED or userBean.userDTO.status eq accountStatusTypeBean.SUSPENDED) and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)}"/>
+							  <h:outputText id="endDate" value="#{userBean.statusEndDate}" rendered="#{(userBean.userDTO.status eq accountStatusTypeBean.BLACKLISTED or userBean.userDTO.status eq accountStatusTypeBean.SUSPENDED) and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT)}">
+								<f:convertDateTime type="both" pattern="#{custConstants.DATE_PATTERN}" timeZone="#{custConstants.timeZone}" />
+							  </h:outputText>
+							  
+							<!-- QATARI ID -->
+							 <h:outputText rendered="#{userBean.userDTO.documentTypeforIndividual ne 'PNO' or userBean.userDTO.documentTypeforIndividual eq null}"  value="&#160;"/>  
+							<cust:outputLabel for="qatariId" value="#{bundle['customs.user.qatariid']}" rendered="#{accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<cust:outputLabel for="qatariIdInd" value="#{bundle['customs.user.qatariid']}" rendered="#{userBean.userDTO.documentTypeforIndividual eq 'QID' and accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<h:panelGroup>
+								 <h:inputText id="qatariIdInd"	value="#{userBean.userDTO.qatariId}" maxlength="11" readonly="#{userBean.lookUpFlagMoi and userBean.userDTO.qatariId ne ''}"
+								rendered="#{userBean.userDTO.documentTypeforIndividual eq 'QID' and !userBean.editMode and accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+									<f:validateLength minimum="11" maximum="11" /> 
+									<cust:regexValidator type="digits" />
+								</h:inputText> 
+								<h:inputText id="qatariId"	value="#{userBean.userDTO.qatariId}" required="true" maxlength="11" rendered="#{!userBean.editMode and accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}">
+									<f:validateLength minimum="11" maximum="11" />
+									<cust:regexValidator type="digits" />
+								</h:inputText>
+								<h:outputText id="qatariId2" value="#{userBean.userDTO.qatariId}" rendered="#{userBean.editMode}"/>
+								<br/>
+								<rich:message for="qatariId" styleClass="error"/>
+								<rich:message for="qatariIdInd" styleClass="error"/>
+							</h:panelGroup>
+							
+							
+							<!-- PASSPORT NUMBER -->
+							<cust:outputLabel for="passportNo" rendered="#{userBean.userDTO.documentTypeforIndividual eq 'PNO' and accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+							 value="#{bundle['customs.user.passportno']}" />
+							<h:panelGroup rendered="#{userBean.userDTO.documentTypeforIndividual eq 'PNO' and accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<h:outputText id="passportNo2"	value="#{userBean.userDTO.passportNo}" rendered="#{userBean.editMode and userBean.userDTO.qatariId eq null}"/>
+								<h:inputText id="passportNo"  
+									value="#{userBean.userDTO.passportNo}" rendered="#{!userBean.editMode or userBean.userDTO.qatariId ne null}">
+									<f:validateLength minimum="4" maximum="15" />
+									<cust:regexValidator type="charsAndDigitsOnly" />
+								</h:inputText><br/>
+								<rich:message for="passportNo" styleClass="error"/>
+							</h:panelGroup>  
+							
+							<!-- FIRST NAME -->
+							<cust:outputLabel for="firstName"  value="#{bundle['customs.user.firstname']}" 
+								rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+							<cust:outputLabel for="firstName2"  value="#{bundle['customs.user.firstname']}" 
+								rendered="#{userBean.editMode  and  (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							<h:panelGroup>
+								<h:inputText id="firstName"	value="#{userBean.userDTO.firstName}" 
+									readonly="#{userBean.lookUpFlagMoi and userBean.userDTO.firstName ne null and !userBean.firstNameMoiEmptyFlag}" required="true"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}">
+									<f:validateLength minimum="2" maximum="25" />
+									<cust:regexValidator type="enAraCharsAndSpacesOnly" />
+								</h:inputText>
+								<h:outputText id="firstNamelcg" value="#{userBean.userDTO.firstName}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+								<!-- Creating users is not applicable for Commercial and Non-Commercial account so rendering validation is optional for INPUT -->
+								<h:outputText id="firstName2" value="#{userBean.userDTO.firstName}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}"/>
+								<br/>
+								<rich:message for="firstName" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- MIDDLE NAME -->
+							<h:outputText value="&#160;"/>
+							<cust:outputLabel for="middleName" value="#{bundle['customs.user.middlename']}" />
+							<h:panelGroup>
+								<h:inputText id="middleName" value="#{userBean.userDTO.middleName}" 
+									readonly="#{userBean.lookUpFlagMoi and userBean.userDTO.middleName ne null and !userBean.middleNameMoiEmptyFlag}" 
+									required="false"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}" >
+									<f:validateLength minimum="2" maximum="25" />
+									<cust:regexValidator type="enAraCharsAndSpacesOnly" />
+								</h:inputText>
+								<h:outputText id="middleNamelcg" value="#{userBean.userDTO.middleName}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+								<h:outputText id="middleName2" value="#{userBean.userDTO.middleName}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}"/>
+								<br/>
+								<rich:message for="middleName" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- LAST NAME -->
+							<cust:outputLabel for="lastName" value="#{bundle['customs.user.lastname']}" 
+								rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+							<cust:outputLabel for="lastName2" value="#{bundle['customs.user.lastname']}" 
+								rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							<h:panelGroup>
+								<h:inputText id="lastName"	value="#{userBean.userDTO.lastName}" 
+									readonly="#{userBean.lookUpFlagMoi and userBean.userDTO.lastName ne null and !userBean.lastNameMoiEmptyFlag}" 
+									required="true"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}">
+									<f:validateLength minimum="2" maximum="25" />
+									<cust:regexValidator type="enAraCharsAndSpacesOnly" />
+								</h:inputText>
+								<h:outputText id="lastNamelcg" value="#{userBean.userDTO.lastName}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+								<h:outputText id="lastName2" value="#{userBean.userDTO.lastName}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}"/>
+								<br/>
+								<rich:message for="lastName" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- added Arabic Name -->  
+																	
+								<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+										
+								<cust:outputLabel for="arabicName"	value="#{bundle['customs.user.arabicName']}" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}">
+									</cust:outputLabel>
+								<h:panelGroup>
+									<h:inputText id="arabicName"	value="#{userBean.userDTO.arabicName}" 
+									rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status ne 'LCG'}">
+										<!--<customs:trimConverter trimAll="true" />-->
+										<customs:regexValidator type="AraCharsAndSpacesOnly" />
+										<f:validateLength minimum="1" maximum="150" />    
+									</h:inputText> 
+									<h:outputText id="arabicNamelcg" value="#{userBean.userDTO.arabicName}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+									<rich:message for="arabicName" styleClass="error"/>
+								</h:panelGroup>				
+								
+							
+							   <!--end of Arabic Name -->
+										
+																																		
+													
+						</h:panelGrid>	
+							
+							
+									
+												
+						<a4j:outputPanel id="AgentInfoRegion" rendered="#{accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}">
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" rendered="#{userBean.showAgentInfoStyle}"
+						    columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;"	>
+							<!-- PASSPORT NUMBER -->
+							<h:outputText value="&#160;"/>
+							<cust:outputLabel for="passportno"  value="#{bundle['customs.user.passportno']}"  />
+							<h:panelGroup>
+							<h:inputText id="passportno"	value="#{userBean.userDTO.passportNo}" required="true">
+								<f:validateLength minimum="3" maximum="11" />
+								<cust:regexValidator type="charsAndDigitsOnly" />
+							</h:inputText><br/>
+							<rich:message for="passportno" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- NATIONALITY -->
+							<cust:outputLabel for="nationality"  value="#{bundle['customs.user.nationality']}"   />
+							<h:panelGroup>
+							<h:selectOneMenu id="nationality" value="#{userBean.userDTO.nationalityId}"  required="true" style="height : 22px; width : 150px" >	
+						      	<f:selectItems value="#{countrySelectItemList.selectCodeItemList}"/>
+							</h:selectOneMenu> <br/>
+							<rich:message for="nationality" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- EDUCATION -->
+							<h:outputText value="&#160;"/>
+							<cust:outputLabel for="education"  value="#{bundle['customs.user.education']}"  />
+							<h:panelGroup>
+							<h:inputText id="education"	value="#{userBean.userDTO.education}" required="true">
+								<f:validateLength minimum="3" maximum="50" />
+								<cust:regexValidator type="enAraCharsAndDigitsOnly" />
+							</h:inputText><br/>
+							<rich:message for="education" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- DATE OF BIRTH -->
+							<cust:outputLabel for="dateOfBirth"  value="#{bundle['customs.user.dateofbirth']}"  />
+							<h:panelGroup>
+							<rich:calendar id="dateOfBirth" inputSize="16"
+								value="#{userBean.userDTO.dateOfBirth}" required="true"
+								datePattern="#{userBean.dateFormat}" 
+							/> <br/>
+							<rich:message for="dateOfBirth" styleClass="error"/>
+							</h:panelGroup>
+						</h:panelGrid>
+						</a4j:outputPanel>
+						
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" 
+						    columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;"	>
+							<!-- GENDER -->
+							<h:outputText  value="&#160;"/>							
+							<cust:outputLabel for="gender"  value="#{bundle['customs.user.gender']}" 
+								rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+							<cust:outputLabel for="gender2"  value="#{bundle['customs.user.gender']}" 
+								rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							<h:panelGroup>
+								<h:selectOneRadio id="gender" value="#{userBean.userDTO.gender}" required="true" 
+										disabled="#{userBean.lookUpFlagMoi and userBean.userDTO.gender ne  null and !userBean.gendeMoiEmptyFlag}" 
+										rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+												and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}" >
+										<f:selectItem itemLabel="#{bundle['customs.user.male']}" itemValue="M"  />
+									    <f:selectItem itemLabel="#{bundle['customs.user.female']}" itemValue="F" />
+							    </h:selectOneRadio>
+							    <h:selectOneRadio id="gender2" value="#{userBean.userDTO.gender}" disabled="true" readonly="true"
+							    	rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" >
+										<f:selectItem itemLabel="#{bundle['customs.user.male']}" itemValue="M"  />
+									    <f:selectItem itemLabel="#{bundle['customs.user.female']}" itemValue="F" />
+							    </h:selectOneRadio> 
+								<h:selectOneRadio id="genderlcg" value="#{userBean.userDTO.gender}" disabled="true" readonly="true"
+							    	rendered="#{userBean.userDTO.status eq 'LCG'}" >
+										<f:selectItem itemLabel="#{bundle['customs.user.male']}" itemValue="M"  />
+									    <f:selectItem itemLabel="#{bundle['customs.user.female']}" itemValue="F" />
+							    </h:selectOneRadio> 
+								
+								<rich:message for="gender" styleClass="error"/>
+							</h:panelGroup>
+			 	 
+							<!-- LOCATION ID -->
+							<cust:outputLabel  for="locationId" value="#{bundle['customs.user.worklocation']}" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}" >
+							<h:selectOneMenu id="locationId" value="#{accountBean.accountDTO.locationId}"  style="height : 22px; width : 150px" required="true"
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status ne 'LCG'}">
+								<f:selectItems value="#{portSelectItemList.selectPortOfQatarItemList}"/>
+							<!--	<f:selectItems value="#{accountBean.selectPortList}"/>-->
+									<a4j:support ajaxSingle="true" event="onchange" action="#{accountBean.accountDetailsList}" 
+									reRender="modelCodePanel,catCodePanel,departmentpanel,companyname1,companynamear1,AgentRoleRegion,assignedPortId" /> 
+							</h:selectOneMenu>
+							<h:selectOneMenu id="locationIdlcg" value="#{accountBean.accountDTO.locationId}"  style="height : 22px; width : 150px" disabled="true"
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status eq 'LCG'}">
+								<f:selectItems value="#{portSelectItemList.selectPortOfQatarItemList}"/>
+									<a4j:support ajaxSingle="true" event="onchange" action="#{accountBean.accountDetailsList}" 
+									reRender="modelCodePanel,catCodePanel,departmentpanel,companyname1,companynamear1" /> 
+							</h:selectOneMenu>
+							<br/>
+							<rich:message for="locationId" styleClass="error"/>
+							</h:panelGroup>
+							<!-- PASSPORT NUMBER -->
+							<!-- <cust:outputLabel for="passportNo" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+							 value="#{bundle['customs.user.passportno']}" />
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<h:outputText id="passportNo2"	value="#{userBean.userDTO.passportNo}" rendered="#{userBean.editMode and userBean.userDTO.qatariId eq null}"/>
+								<h:inputText id="passportNo"  
+									value="#{userBean.userDTO.passportNo}" rendered="#{!userBean.editMode or userBean.userDTO.qatariId ne null}">
+									<f:validateLength minimum="4" maximum="15" />
+									<cust:regexValidator type="charsAndDigitsOnly" />
+								</h:inputText><br/>
+								<rich:message for="passportNo" styleClass="error"/>
+							</h:panelGroup> -->
+						 	  <h:outputLabel rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}" />
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>   
+							
+							
+							
+							
+							<!-- PERSON TYPE moi FOR INDIVIDUAL --> 
+									<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"></h:panelGroup>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}">
+									<cust:outputLabel for="personTypeInd"  rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"  value="#{bundle['customs.user.persontype']}"  />
+							</h:panelGroup>
+							
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}" > 
+     						    <h:selectOneMenu id="personTypeInd"
+     						    	disabled="#{userBean.lookUpFlagMoi and userBean.userDTO.personType ne null and !userBean.personTypeMoiEmptyFlag}"
+     						    	rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}" 
+     						    					value="#{userBean.userDTO.personType}"  required="true" style="height : 22px; width : 150px" >	
+							      	<f:selectItem itemLabel="#{bundle['customs.common.selectone']}" />
+									<f:selectItem itemLabel="#{bundle['customs.user.persontype.qatari']}" itemValue="0"/>
+									<f:selectItem itemLabel="#{bundle['customs.user.persontype.gcc']}" itemValue="1"/>
+									<f:selectItem itemLabel="#{bundle['customs.user.persontype.diplomat']}" itemValue="2"/>
+									<f:selectItem itemLabel="#{bundle['customs.user.persontype.resident']}" itemValue="3"/>
+									<f:selectItem itemLabel="#{bundle['customs.user.persontype.tempresident']}" itemValue="4"/>  
+								</h:selectOneMenu> 
+							 <br/>
+							<rich:message for="personTypeInd" styleClass="error"/>
+							</h:panelGroup>
+							
+							
+							
+							<!-- DATE OF BIRTH FOR INDIVIDUAL -->  		
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+									<cust:outputLabel for="dateOfBirthInd"  rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"  value="#{bundle['customs.user.dateofbirth']}"  />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+ 
+							  <h:outputText value="#{userBean.userDTO.dateOfBirth}" 
+     						     rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}" >
+     						    	<f:convertDateTime id="birthDateConverMoi" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+     						    </h:outputText>
+     						  <!--   <rich:calendar id="dateOfBirthInd" inputSize="16" 
+     						     rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.lookUpFlagMoi  and userBean.userDTO.dateOfBirth eq 'null'}"
+								value="#{userBean.userDTO.dateOfBirth}" required="true"  
+								datePattern="#{userBean.dateFormat}" 
+							/>  -->
+							 <br/>
+							<rich:message for="dateOfBirthInd" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- Qatari  Expiry Date FOR INDIVIDUAL-->
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}" ></h:panelGroup>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<cust:outputLabel  value="#{bundle['customs.user.qidexpirydate']}" 
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}" />
+							 </h:panelGroup>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+     						    <h:outputText value="#{userBean.userDTO.qatariIdExpiryDate}" 
+     						     rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'  }" >
+     						    	<f:convertDateTime id="qidExpiryDateConverMoi" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+     						    </h:outputText>
+     						   <!--  <rich:calendar id="qatariIdExpiryDateInd" inputSize="16"  
+     						    rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.qatariIdExpiryDate eq 'null'}"
+								value="#{userBean.userDTO.qatariIdExpiryDate}" required="true"   
+								datePattern="#{userBean.dateFormat}" 
+							/>  -->
+							<br/>
+     						 </h:panelGroup>
+								 
+								
+									<!-- RP  Expiry Date FOR INDIVIDUAL--> 
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}">
+								<cust:outputLabel  value="#{bundle['customs.user.rpexpirydate']}" 
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}" />
+							 </h:panelGroup>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}">
+     						    <h:outputText value="#{userBean.userDTO.rpExpiryDate}" 
+     						     rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'  }" >
+     						    	<f:convertDateTime id="rpExpiryDateConverMoi" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+     						    </h:outputText>
+     						   <!--  <rich:calendar id="qatariIdExpiryDateInd" inputSize="16"  
+     						    rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.qatariIdExpiryDate eq 'null'}"
+								value="#{userBean.userDTO.qatariIdExpiryDate}" required="true"   
+								datePattern="#{userBean.dateFormat}" 
+							/>  -->
+							<br/>
+     						 </h:panelGroup>	
+								 
+								 <h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"></h:panelGroup>
+								 <h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"></h:panelGroup>
+								 <h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"></h:panelGroup>
+								 <h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"></h:panelGroup>
+								 <h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT and userBean.userDTO.documentTypeforIndividual eq 'QID'}"></h:panelGroup>
+							
+							<cust:outputLabel  value="" rendered="#{accountBean.accountDTO.accountType != accountTypeBean.CUSTOMS_ACCOUNT
+							                                   and accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<h:outputText value="" rendered="#{accountBean.accountDTO.accountType != accountTypeBean.CUSTOMS_ACCOUNT
+							                                   and accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							
+							<!-- row for individual nationality -->
+							<!-- NATIONALITY -->
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}" />
+							<cust:outputLabel for="nationality2" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+							 value="#{bundle['customs.user.nationality']}" />
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<h:selectOneMenu id="nationality2"	value="#{userBean.userDTO.nationalityId}"  
+								disabled="#{userBean.lookUpFlagMoi and userBean.userDTO.nationalityId ne null and !userBean.nationalityMoiEmptyFlag}" 
+								required="true" style="height : 22px; width : 150px" >
+									<f:selectItems value="#{countrySelectItemList.selectCodeItemList}"/>
+								</h:selectOneMenu><br/>
+								<rich:message for="nationality2" styleClass="error"/>
+							</h:panelGroup>
+							
+							<cust:outputLabel  value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}" />
+							<h:outputText value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/> 
+							<!-- end of individual nationality row -->
+							
+							<!-- row for individual Activities -->
+							<!-- INDIVIDUAL ACTIIVITIES -->
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+						    <cust:outputLabel  for="indActivities" value="#{bundle['customs.ac.activities']}" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+						    <h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+							  	<h:selectManyCheckbox id="indActivities" label="#{bundle['customs.ac.activities']}" required="true" value="#{userBean.listOfActivities}">
+									<f:selectItems value="#{commercialActivityTypeBean.selectItemListIndividual}" />
+								</h:selectManyCheckbox>
+								<rich:message for="indActivities" styleClass="error"/>
+							 </h:panelGroup>
+							 <h:outputText value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							 <h:outputText value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<!-- end of individual Activities -->
+							<!--Excise Tax CR Changes  -->
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<cust:outputLabel for="exciseTaxExemptionsIndividual"
+									value="#{bundle['customs.ac.excise.tax.exemptions.individual.user.enabled']}" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<h:selectOneRadio id="exciseTaxExemptionsIndividual" disabled ='true'
+									value="#{userBean.userDTO.exciseTaxExemption}" required="true">
+									<f:selectItem
+										itemLabel="#{bundle['customs.common.booleanType.Y']}"
+										itemValue="Y" />
+									<f:selectItem
+										itemLabel="#{bundle['customs.common.booleanType.N']}"
+										itemValue="N" />
+								</h:selectOneRadio>
+								<rich:message for="exciseTaxExemptionsIndividual" styleClass="error" />
+							</h:panelGroup>
+							<h:outputText value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<h:outputText value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<cust:outputLabel for="exciseTaxSTDPriceIndividual"
+									value="#{bundle['customs.ac.excise.tax.std.price.individual.user.enabled']}" />
+							</h:panelGroup>
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<h:selectOneRadio id="exciseTaxSTDPriceIndividual" disabled ='true'
+									value="#{userBean.userDTO.exciseTaxSTDPriceEnabled}" required="true">
+									<f:selectItem
+										itemLabel="#{bundle['customs.common.booleanType.Y']}"
+										itemValue="Y" />
+									<f:selectItem
+										itemLabel="#{bundle['customs.common.booleanType.N']}"
+										itemValue="N" />
+								</h:selectOneRadio>
+								<rich:message for="exciseTaxSTDPriceIndividual" styleClass="error" />
+							</h:panelGroup>
+							<h:outputText value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							<h:outputText value="" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							
+							<!--end Excise Tax CR Changes  -->
+							<!-- COMPANY -->
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}"/>
+							<h:panelGroup>
+								<cust:outputLabel  for="companyname" value="#{bundle['customs.ac.customsoffice']}" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+							</h:panelGroup>
+							<h:panelGroup  >
+							<h:selectOneMenu id="companyname1" value="#{accountBean.accountDTO.companyName}"  style="height : 22px; width : 150px" required="true"
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status ne 'LCG' and loginBean.locale.language ne 'ar'}">
+								<f:selectItems value="#{accountBean.selectModelList}" />
+								<a4j:support ajaxSingle="true" event="onchange" action="#{accountBean.departmentsList}"  
+									reRender="modelCodePanel,catCodePanel,departmentpanel,companyname1,AgentRoleRegion,assignedPortId" /> 
+							</h:selectOneMenu>
+							<h:selectOneMenu id="customsofficelcg" value="#{accountBean.accountDTO.companyName}"  style="height : 22px; width : 150px" disabled="true"
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status eq 'LCG' and loginBean.locale.language ne 'ar'}">
+								<f:selectItems value="#{accountBean.selectModelList}" />
+								<a4j:support ajaxSingle="true" event="onchange" action="#{accountBean.departmentsList}" 
+									reRender="modelCodePanel,catCodePanel,departmentpanel,companyname1" /> 
+							</h:selectOneMenu>
+							
+							<h:selectOneMenu id="companynamear1" value="#{accountBean.accountDTO.arabicCompanyName}"  style="height : 22px; width : 150px" required="true"
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status ne 'LCG' and loginBean.locale.language eq 'ar'}">
+								<f:selectItems value="#{accountBean.selectModelList}" />
+								<a4j:support ajaxSingle="true" event="onchange" action="#{accountBean.departmentsList}" 
+									reRender="modelCodePanel,catCodePanel,departmentpanel,companynamear1,AgentRoleRegion,assignedPortId" /> 
+							</h:selectOneMenu>
+							<h:selectOneMenu id="customsofficearlcg" value="#{accountBean.accountDTO.arabicCompanyName}"  style="height : 22px; width : 150px" disabled="true"
+								 rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status eq 'LCG' and loginBean.locale.language eq 'ar'}">
+								<f:selectItems value="#{accountBean.selectModelList}" />
+								<a4j:support ajaxSingle="true" event="onchange" action="#{accountBean.departmentsList}"  
+									reRender="modelCodePanel,catCodePanel,departmentpanel,companynamear1" /> 
+							</h:selectOneMenu>
+							
+							<br/>
+							<rich:message for="companyname" styleClass="error"/>
+								</h:panelGroup>
+							
+							<!-- DESIGNATION -->
+							<cust:outputLabel rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}"
+							     for="designation"  value="#{bundle['customs.user.designation']}" />
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}">
+								<h:inputText id="designation"	value="#{userBean.userDTO.designation}" required="true">
+									<f:validateLength minimum="3" maximum="25" />
+									<cust:regexValidator type="enAraCharsAndSpacesOnly" />
+								</h:inputText><br/>
+								<rich:message for="designation" styleClass="error"/>
+								<h:outputText id="designationlcg" value="#{userBean.userDTO.designation}"  rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+							</h:panelGroup>
+							
+							<!-- DEPARTMENT testing -->
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}"/>
+							<h:panelGroup>
+							<cust:outputLabel for="departmentC"  value="#{bundle['customs.user.department']}" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}" />
+								<cust:outputLabel for="departmentN"  value="#{bundle['customs.user.department']}" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+							</h:panelGroup>
+							<h:panelGroup id="departmentpanel">
+								<h:inputText id="departmentN" required="true" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}"
+								value="#{userBean.userDTO.department}" >
+									<f:validateLength minimum="3" maximum="25" />
+									<cust:regexValidator type="enAraCharsAndSpacesOnly" />
+								</h:inputText>
+								<h:selectOneMenu id="departmentC" value="#{userBean.userDTO.department}" style="height : 22px; width : 150px" required="true" 
+								rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT  and userBean.userDTO.status ne 'LCG'}">
+									<f:selectItems	value="#{accountBean.selectDepartmentItemList}" />
+								</h:selectOneMenu>
+								<h:selectOneMenu id="departmentlcg" value="#{userBean.userDTO.department}"	disabled="true" 
+								rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT  and userBean.userDTO.status eq 'LCG'}">
+									<f:selectItems	value="#{accountBean.selectDepartmentItemList}" />
+								</h:selectOneMenu>
+								<br/>
+								<rich:message for="departmentN" styleClass="error" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+								<rich:message for="departmentC" styleClass="error" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+							</h:panelGroup>
+							
+						
+						</h:panelGrid>
+							 
+						<h:panelGrid columns="4" styleClass="table-contents" width="720"   rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}" 
+						    columnClasses="col_indent,search_label_171,search_val,no_style" style="margin: 0px 10px 0px 10px;"	>
+								<!-- columnClasss : col_indent -->
+								<h:outputText value="&#160;"/>
+								
+								<!-- EMPLOYEE ID -->
+								<!-- columnClasss : search_label_171 -->
+								<cust:outputLabel for="employeeId"  value="#{bundle['customs.user.employeeid']}" 
+								    rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+								<cust:outputLabel  value="#{bundle['customs.user.loginid']}" 
+								    rendered="#{accountBean.accountDTO.accountType != accountTypeBean.CUSTOMS_ACCOUNT}"/>
+								<!-- columnClasss : search_val -->    
+								<h:panelGroup>
+									<h:inputText id="employeeId"	value="#{userBean.userDTO.loginId}" required="true" rendered="#{!userBean.editMode}">
+										<f:validateLength minimum="1" maximum="5" />
+										<cust:regexValidator type="digits" />
+									</h:inputText>
+									<h:outputText id="loginId2" value="#{userBean.userDTO.loginId}" rendered="#{userBean.editMode}"/>
+									<br/>
+									<rich:message for="employeeId" styleClass="error"/>
+								</h:panelGroup>
+							
+								<!-- columnClasss : no_style -->
+								<h:outputText value="#{bundle['customs.user.employeeid.info']}"/>							    
+						</h:panelGrid>
+							
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" 
+						    columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;"	>
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+							<!--  <cust:outputLabel rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"
+							     for="employeeId"  value="#{bundle['customs.user.employeeid']}" />
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}">
+								<h:inputText id="employeeId"	value="#{userBean.userDTO.employeeId}" required="true">
+									<f:validateLength minimum="3" maximum="11" />
+									<cust:regexValidator type="digits" />
+								</h:inputText><br/>
+								<rich:message for="employeeId" styleClass="error"/>
+							</h:panelGroup>
+							-->
+							<!-- STATUS -->
+							<cust:outputLabel for="status" value="#{bundle['customs.user.status']}" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}" />
+							<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT and userBean.userDTO.status ne 'LCG'}">
+								<h:selectOneMenu id="status" value="#{userBean.userDTO.status}"  required="true" style="height : 22px; width : 150px" >	
+							      	<f:selectItem itemLabel="#{bundle['customs.common.selectone']}" />
+									<f:selectItem itemLabel="#{bundle['customs.user.status.active']}" itemValue="ACT"/>
+									<f:selectItem itemLabel="#{bundle['customs.user.status.inactive']}" itemValue="INA"/>
+									<!--<f:selectItem itemLabel="#{bundle['customs.account.statustype.LCG']}" itemValue="LCG"/>-->
+								</h:selectOneMenu>
+								
+								 <br/>
+								<rich:message for="status" styleClass="error"/>
+								
+							</h:panelGroup>
+							<h:outputText id="statuslcg" value="#{bundle['customs.account.statustype.LCG']}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+							<h:outputText value="&#160;" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"/>
+						</h:panelGrid>	
+								
+						<h:panelGrid columns="5" styleClass="table-contents" width="720" 
+					    	columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;"	
+					    	rendered="#{userBean.hasAgent and (accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT 
+					    		or accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT) }" >
+						    	<!-- LICENSE ISSUE DATE -->
+								<h:outputText value="&#160;" />
+								<cust:outputLabel  value="#{bundle['customs.agency.licissuedate']}" />
+     						    <h:outputText value="#{userBean.agentDTO.licenseIssueDate}"  >
+     						    	<f:convertDateTime id="dateconver" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+     						    </h:outputText>
+     						    <!-- LICENSE EXPIRY DATE -->
+							    <cust:outputLabel  value="#{bundle['customs.agency.licexpirydate']}" />
+     						    <h:outputText value="#{userBean.agentDTO.licenseExpiryDate}" >
+     						    	<f:convertDateTime id="dateconver" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+     						    </h:outputText>
+						</h:panelGrid>
+						<!-- End of User Details -->
+						
+						<!-- Contact Details -->
+						<h:panelGrid columns="5" styleClass="table-contents" width="720"
+							columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;"	>
+							<f:facet name="header">
+								<h:panelGroup styleClass="search-header">
+									<h:graphicImage alt="box" width="10" height="10"
+										url="../../imgs/bullet.gif">
+									</h:graphicImage>
+									<rich:spacer width="5" />
+									<h:outputText	value="#{bundle['customs.user.heading.contactdetails']}" />
+									<rich:separator lineType="none" styleClass="separator"/>
+								</h:panelGroup>
+							</f:facet>
+							
+							<!-- LANGUAGE -->
+							<h:outputText value="&#160;" />
+							<cust:outputLabel for="Language"  value="#{bundle['customs.user.preferLanguage']}"
+								rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+							<cust:outputLabel for="Language2"  value="#{bundle['customs.user.preferLanguage']}" 
+								rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							<h:panelGroup>
+								<h:selectOneRadio id="Language" value="#{userBean.userDTO.preferredLang}" required="true"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}" >
+									<f:selectItem itemLabel="#{bundle['customs.user.lang.eng']}" itemValue="EN"  />
+									<f:selectItem itemLabel="#{bundle['customs.user.lang.ar']}" itemValue="AR" />
+							    </h:selectOneRadio>
+								<h:selectOneRadio id="Languagelcg" value="#{userBean.userDTO.preferredLang}" disabled="true" readonly="true"
+									rendered="#{userBean.userDTO.status eq 'LCG'}" >
+									<f:selectItem itemLabel="#{bundle['customs.user.lang.eng']}" itemValue="EN"  />
+									<f:selectItem itemLabel="#{bundle['customs.user.lang.ar']}" itemValue="AR" />
+							    </h:selectOneRadio>		
+								<h:selectOneRadio id="Language2" value="#{userBean.userDTO.preferredLang}" disabled="true" readonly="true"
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" >
+									<f:selectItem itemLabel="#{bundle['customs.user.lang.eng']}" itemValue="EN"  />
+									<f:selectItem itemLabel="#{bundle['customs.user.lang.ar']}" itemValue="AR" />
+							    </h:selectOneRadio>							    
+								<rich:message for="Language" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- COMMUNICATION MODE -->
+							<cust:outputLabel for="commmode"  value="#{bundle['customs.user.communicationmode']}"
+								rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+							<cust:outputLabel for="commmode2"  value="#{bundle['customs.user.communicationmode']}" 
+								rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							<h:panelGroup >
+								<a4j:outputPanel>
+								<h:selectManyCheckbox id="commmode" value="#{userBean.commMode}" required="true"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}" >
+									<f:selectItems value="#{communicationBean.itemList}"/>
+									<a4j:support ajaxSingle="true" event="onclick" action="#{userBean.handleCommMode}" reRender="faxnoa,emaila,mobileNoa"/>
+								</h:selectManyCheckbox>
+								<h:selectManyCheckbox id="commmodelcg" value="#{userBean.commMode}" disabled="true" readonly="true" 
+									rendered="#{userBean.userDTO.status eq 'LCG'}" >
+									<f:selectItems value="#{communicationBean.itemList}"/>
+								</h:selectManyCheckbox>
+								<h:selectManyCheckbox id="commmode2" value="#{userBean.commMode}" disabled="true" readonly="true" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" >
+									<f:selectItems value="#{communicationBean.itemList}"/>
+								</h:selectManyCheckbox>
+								<rich:message for="commmode" styleClass="error"/>
+							    </a4j:outputPanel>
+							</h:panelGroup>
+						</h:panelGrid>
+							
+						<h:panelGrid columns="5" styleClass="table-contents" width="720"
+							columnClasses="col_indent,search_label,search_val,search_label,search_val" style="margin: 0px 10px 0px 10px;"	>
+							<!-- TELEPHONE NUMBER -->
+							<h:outputText value="&#160;"/>
+							<cust:outputLabel for="telNo"  value="#{bundle['customs.user.phoneno']}"
+								rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+							<cust:outputLabel for="telNo2"  value="#{bundle['customs.user.phoneno']}" 
+								rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							<h:panelGroup>
+								<h:inputText id="telNo"	value="#{userBean.userDTO.telNo}" required="true"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}" >
+									<f:validateLength minimum="8" maximum="25" />
+									<cust:regexValidator type="telno" />
+								</h:inputText>
+								<h:outputText id="telNlcg" value="#{userBean.userDTO.telNo}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+								<h:outputText id="telNo2" value="#{userBean.userDTO.telNo}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}"/>
+								<br/>
+								<rich:message for="telNo" styleClass="error"/>
+							</h:panelGroup>
+							
+							<!-- MOBILE NUMBER -->
+							<a4j:outputPanel id="mobileNoa">
+								<cust:outputLabel for="mobileNo"  value="#{bundle['customs.user.mobileno']}"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+								<cust:outputLabel for="mobileNo2"  value="#{bundle['customs.user.mobileno']}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							</a4j:outputPanel>
+							 <!--As per refund request Cr UAT feedback, for Individual Accounts mobileNo updated as Mandatory field  -->
+							<h:panelGroup>
+								<h:inputText id="mobileNo"	value="#{userBean.userDTO.mobileNo}" required="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}" >
+									<f:validateLength minimum="8" maximum="25" />
+									<cust:regexValidator type="telno" />
+								</h:inputText>
+								<h:outputText id="mobileNolcg" value="#{userBean.userDTO.mobileNo}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+								<h:outputText id="mobileNo2" value="#{userBean.userDTO.mobileNo}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}"/>									
+								<br/>
+								<rich:message for="mobileNo" styleClass="error"/>
+						    </h:panelGroup>
+							
+							<!-- EMAIL ADDRESS -->
+							<h:outputText value="&#160;"/>
+							<a4j:outputPanel id="emaila">
+								<cust:outputLabel for="email" value="#{bundle['customs.user.email']}" />
+							</a4j:outputPanel>
+							<h:panelGroup>
+								<h:inputText id="email"	value="#{userBean.userDTO.email}" required="#{userBean.userDTO.commEmail}" 
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT  and userBean.userDTO.status ne 'LCG'}">
+									<f:validateLength minimum="3" maximum="50" />
+									<cust:regexValidator type="email" />
+								</h:inputText>
+								<h:outputText id="emaillcg" value="#{userBean.userDTO.email}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+								<h:outputText id="email2" value="#{userBean.userDTO.email}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}"/>									
+								<br/>
+							<rich:message for="email" styleClass="error"/>
+							</h:panelGroup>
+                           <!--added for refund request Cr UAT feedback-->							
+							<a4j:outputPanel id="addressInd" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<cust:outputLabel for="address" value="#{bundle['customs.ac.address']}" 
+								                  rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"/>
+							</a4j:outputPanel>
+							<h:panelGroup>
+								<h:inputTextarea rows="4" id="address" value="#{userBean.userDTO.address}" required="true"
+								    rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+									style=" width : 150px">
+									<f:validateLength maximum="500" />
+								</h:inputTextarea>
+								<br/>
+							<rich:message for="address" styleClass="error"/>
+							</h:panelGroup>
+							<h:outputText value="&#160;"/>
+							<!--end for refund request Cr UAT feedback-->
+							<!-- Added rendered condition by Amrita to disable fax notification-->	
+							<!-- FAX NUMBER -->
+							<!-- Added rendered condition by Amrita for disabling fax notification -->
+							<a4j:outputPanel id="faxnoa" rendered = "#{userBean.userDTO.faxRequired}">
+								<cust:outputLabel for="faxno" value="#{bundle['customs.user.faxno']}"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT}" />
+								<cust:outputLabel for="faxno2" value="#{bundle['customs.user.faxno']}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}" />
+							</a4j:outputPanel>
+							<h:panelGroup rendered = "#{userBean.userDTO.faxRequired}">
+								<h:inputText id="faxno"	value="#{userBean.userDTO.faxNo}" required="#{userBean.userDTO.commFax}"
+									rendered="#{accountBean.accountDTO.accountType != accountTypeBean.COMMERCIAL_ACCOUNT 
+									and accountBean.accountDTO.accountType != accountTypeBean.NONCOMMERCIAL_ACCOUNT and userBean.userDTO.status ne 'LCG'}" >
+									<f:validateLength minimum="8" maximum="25" />
+									<cust:regexValidator type="telno" />
+								</h:inputText>
+								<h:outputText id="faxNolcg" value="#{userBean.userDTO.faxNo}" rendered="#{userBean.userDTO.status eq 'LCG'}"/>
+								<h:outputText id="faxno2" value="#{userBean.userDTO.faxNo}" 
+									rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+									or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)}"/>								
+								<br/>
+								<rich:message for="faxno" styleClass="error"/>
+							</h:panelGroup>
+							<!-- end of second row -->
+						</h:panelGrid>	
+						
+						<!-- contact Details -->
+					
+						
+						
+						
+						<!--   Navoditaaaaaaaaaa-->
+						<!-- Renewal History Details -->
+						<h:panelGrid width="720" border="0" cellpadding="0" 
+						rendered="#{!empty userBean.historyList}" cellspacing="0" style="margin: 0px 10px 0px 10px;">
+							<h:panelGrid width="100%">
+								<h:panelGroup>
+									<h:graphicImage url="../../imgs/bullet.gif" width="10" height="10" /><rich:spacer width="5" height="15" />
+									<h:outputText value="#{bundle['customs.agency.heading.renewal']}" styleClass="table-header" />
+								</h:panelGroup>
+								<h:panelGroup>
+									<rich:separator lineType="none" styleClass="separator" width="100%" />
+								</h:panelGroup>	
+						 	</h:panelGrid>
+						 	<a4j:commandButton id="activateClearingAgent_ppp" value="#{bundle_auto['customs.sa.agency.license.activate']}"
+			rendered="#{userBean.agentDTO.activeDeactiveAction eq 'A'}"
+			 onclick="Richfaces.showModalPanel('pnlAgentActivationSubmit')"
+			styleClass="button-styles"  ajaxSingle="true" />
+		
+		<a4j:commandButton id="deactivateClearingAgent_ppp" value="#{bundle_auto['customs.sa.agency.license.deactive']}"
+			rendered="#{userBean.agentDTO.activeDeactiveAction eq 'D'}"
+			 onclick="Richfaces.showModalPanel('pnlAgentDectivationSubmit')"
+			styleClass="button-styles"  ajaxSingle="true" />
+			
+							<rich:dataTable rowKeyVar="rowKey" id="simplehistoryList" rows="10" value="#{userBean.historyList}" var="result" 
+							rowClasses="table-row-light, table-row-dark" width="100%" 
+							headerClass="table-heading" styleClass="tabular-details" border="0" cellspacing="1" cellpadding="0">
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="#{bundle['customs.tariff.sno']}" />
+									</f:facet>
+					                <h:outputText value="#{rowKey+1}" />
+								</rich:column>
+								
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="#{bundle_auto['customs.sa.agency.license.number']}"  />
+									</f:facet>
+									<h:outputText value="#{userBean.agentDTO.licenseNo}">
+				</h:outputText>
+								</rich:column>
+								
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="#{bundle['customs.agency.renewaldatefrom']}" />
+									</f:facet>
+									<h:outputText value="#{result.renewalDateFrom}">
+										<f:convertDateTime id="dateconver1" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+									</h:outputText>
+								</rich:column>
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="#{bundle['customs.agency.renewaldateto']}" />
+									</f:facet>
+									<h:outputText value="#{result.renewalDateTo}" >
+										<f:convertDateTime id="dateconver1" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+									</h:outputText>
+								</rich:column>
+								
+								
+								<!-- Added By navodita for Agency History CR on 7th june 2012 -->
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="#{bundle['customs.agency.renewaldate']}" />
+									</f:facet>
+									<h:outputText value="#{result.licRenewalDate}" >
+										<f:convertDateTime id="dateconver1" type="date" dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}" timeZone="#{customsConstants.timeZone}"/>
+									</h:outputText>
+								</rich:column>
+								
+								
+								
+								
+								<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="#{bundle['customs.agency.licFeePaid']}" />
+									</f:facet>
+									<h:outputText value="#{result.licFeePaid}" >
+									</h:outputText>
+								</rich:column>
+								
+								<!-- End 7th June 2012 -->
+								
+								<rich:column style="text-align:center;">
+				<f:facet name="header">
+					<h:outputText value="#{bundle_auto['customs.sa.agency.lecense.payment.transaction']}" />
+				</f:facet>
+				<h:outputText value="#{result.receiptNo}">
+				</h:outputText>
+			</rich:column>
+								
+								<rich:column style="text-align:center;">
+				<f:facet name="header">
+					<h:outputText value="#{bundle_auto['customs.sa.agency.lecense.status']}" />
+				</f:facet>
+				<h:outputText  value="#{bundle['customs.account.statustype.PND']}" rendered="#{result.status eq 'PND'}"  />
+				<h:outputText  value="#{bundle['customs.declaration.status.PPY']}" rendered="#{result.status eq 'Pending Payment'}"  />
+				<h:outputText  value="#{bundle['customs.user.status.active']}" rendered="#{result.status eq 'APP'}"  />
+				<h:outputText  value="#{bundle_auto['customs.sa.agency.license.deactived']}" rendered="#{result.status eq 'D'}"  />
+				<h:outputText  value="#{bundle['customs.account.statustype.INA']}" rendered="#{result.status eq 'I'}"  />
+				<h:outputText  value="#{bundle['customs.common.status.exp']}" rendered="#{result.status eq 'E'}"  />
+			</rich:column>
+			
+			<rich:column style="text-align:center;">
+									<f:facet name="header">
+										<h:outputText value="#{bundle['customs.common.remarks']}" />
+									</f:facet>
+									<h:outputText value="#{result.remarks}" >
+									</h:outputText>
+								</rich:column>
+								
+							</rich:dataTable>
+							
+							<!-- <h:panelGrid columns="2" width="100%" border="0"
+		styleClass="table-contents" columnClasses="edit_label,edit_value"
+		footerClass="search-footer">
+	<h:panelGroup>
+									<h:outputLabel 	value="#{bundle['customs.user.ports.assignedtowork']}:" />
+									<span class="mandatory">*</span> 
+								</h:panelGroup>
+							     <h:panelGroup>
+							     <a4j:region>
+									<rich:pickList id="agentAssigedPorts_update" 
+										disabled="#{userBean.agentDTO.activeDeactiveAction eq 'A'}"
+									 	value="#{userBean.clearingAgentAssignedPorts}"
+										copyAllControlLabel="#{bundle['customs.common.addall']}"
+										copyControlLabel="#{bundle['customs.common.add']}"
+										removeAllControlLabel="#{bundle['customs.common.removeall']}"
+										removeControlLabel="#{bundle['customs.common.remove']}" required="true"
+										style="padding-left: none;"
+										onclick="hideFocusKeeperFromPicklist('userEditForm:agentAssigedPorts_update');">
+										<f:selectItems value="#{portSelectItemList.selectPortOfQatar}" />
+										
+										<a4j:support event="onlistchange" action="#{accountBean.UpdateDocument}" reRender="agentAssigedPorts_update" />
+										
+									</rich:pickList>
+									<br/>
+									<rich:message for="agentAssigedPorts_update" styleClass="error"/>
+									</a4j:region>
+								</h:panelGroup>
+								<rich:spacer width="5" height="5" />
+								<a4j:commandButton id="agencyAssigedPorts_update_btn" value="#{bundle_auto['customs.sa.agent.license.assigned.ports.update']}"
+			rendered="#{userBean.agentDTO.activeDeactiveAction eq 'D'}"
+			onclick="Richfaces.showModalPanel('pnlAgentPortsUpdateSubmit')" ajaxSingle="true" 
+			styleClass="button-styles"  />
+	</h:panelGrid> -->
+	
+						</h:panelGrid>
+						<!-- Renewal History Details -->
+						
+						<!--   Navoditaaaaaaaaaa-->
+						
+						<!-- Roles  Assigned  --> 			 
+				  	    <h:panelGrid columns="3" styleClass="table-contents" width="720" style="margin: 0px 10px 0px 10px;"
+							columnClasses="col_indent,search_label,edit_val"
+							rendered="#{accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}">
+							<f:facet name="header">
+							    <h:panelGroup styleClass="search-header">
+								  <h:graphicImage alt="box" width="10" height="10"
+									url="../../imgs/bullet.gif">
+								</h:graphicImage>
+								<rich:spacer width="5" height="15" />
+								<h:outputText
+									value="#{bundle['customs.user.heading.roles']}" />
+								<rich:separator lineType="none" styleClass="separator" />
+							   </h:panelGroup>
+						   </f:facet>
+						   <!-- First Row -->
+						   <h:outputText value="&#160;"/>
+				           <cust:outputLabel  for="selectedRoles" value="#{bundle['customs.user.roleassigned']}"/>
+					 		<!--<h:panelGroup>
+					 		    <a4j:outputPanel id="AgentRoleRegion">
+						      	<h:selectManyCheckbox id="selectedRoles" 
+								           label="#{bundle['customs.user.roleassigned']}:" value="#{userBean.userDTO.selectedRoles}" 
+								           required="true" layout="pageDirection">
+									<f:selectItems value="#{userBean.selectItemListForRole}" />	
+									<a4j:support ajaxSingle="true" event="onclick" 									<rich:colorPicker>
+										
+									</rich:colorPicker>
+									action="#{userBean.handleAgentInfo}" reRender="AgentInfoRegion,AgentRoleRegion,H2HRegion,H2HDetailRegion"/>							
+								</h:selectManyCheckbox>
+								
+								</a4j:outputPanel>
+														</h:panelGroup>-->
+								 				
+							 <h:panelGroup  >
+								<rich:pickList id="AgentRoleRegion"    style="float: middle" listsHeight="200"
+								sourceListWidth="150" targetListWidth="150"  rendered="#{userBean.userDTO.status ne 'LCG'}"
+								disabled="#{accountBean.locationFlag}"
+								 	value="#{userBean.userDTO.selectedRoles}"
+									copyAllControlLabel="#{bundle['customs.common.addall']}"
+									copyControlLabel="#{bundle['customs.common.add']}"
+									removeAllControlLabel="#{bundle['customs.common.removeall']}"
+									removeControlLabel="#{bundle['customs.common.remove']}" 
+									onclick="hideFocusKeeperFromPicklist1('userEditForm:AgentRoleRegion');
+									hideFocusKeeperFromPicklist1('userEditForm:assignedPortId');
+									hideFocusKeeperFromPicklist1('userEditForm:assignedPortIdNonCommercial');">
+								   <f:selectItems value="#{userBean.selectItemListForRole}" />	
+								   <a4j:support ajaxSingle="true" event="onclick" action="#{userBean.handleAgentInfo}" reRender="AgentInfoRegion,AgentRoleRegion,H2HRegion,H2HDetailRegion"/>						
+								</rich:pickList>
+								<br/>
+								<rich:pickList id="AgentRoleRegionlcg"    style="float: middle" listsHeight="200" disabled="true"
+								sourceListWidth="150" targetListWidth="150"  rendered="#{userBean.userDTO.status eq 'LCG'}"
+								 	value="#{userBean.userDTO.selectedRoles}"
+									copyAllControlLabel="#{bundle['customs.common.addall']}"
+									copyControlLabel="#{bundle['customs.common.add']}"
+									removeAllControlLabel="#{bundle['customs.common.removeall']}"
+									removeControlLabel="#{bundle['customs.common.remove']}" 
+									onclick="hideFocusKeeperFromPicklist1('userEditForm:AgentRoleRegionlcg');
+									hideFocusKeeperFromPicklist1('userEditForm:assignedPortIdlcg');
+									hideFocusKeeperFromPicklist1('userEditForm:assignedPortIdNonCommercial');">
+								   <f:selectItems value="#{userBean.selectItemListForRole}" />	
+								   <a4j:support ajaxSingle="true" event="onclick" action="#{userBean.handleAgentInfo}" reRender="AgentInfoRegion,AgentRoleRegion,H2HRegion,H2HDetailRegion"/>						
+								</rich:pickList>
+								
+							</h:panelGroup>
+							
+					  </h:panelGrid>
+					  <!-- End of Roles Assigned -->
+					 
+					  <!-- Ports  Assigned  -->
+					    <h:panelGrid columns="5" styleClass="table-contents" width="720" style="margin: 0px 10px 0px 10px;"
+							columnClasses="col_indent,search_label,search_value,search_label,search_value"
+							rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"
+						    footerClass="search-footer">
+					        	<f:facet name="header">
+								<h:panelGroup styleClass="search-header">
+									<h:graphicImage alt="box" width="10" height="10"
+										url="../../imgs/bullet.gif">
+									</h:graphicImage>
+									<rich:spacer width="5" height="15" />
+									<h:outputText
+										value="#{bundle['customs.user.heading.ports']}" />
+									<rich:separator lineType="none" styleClass="separator" />
+								</h:panelGroup>
+							</f:facet>
+							 <h:outputText value="&#160;" />
+							 <cust:outputLabel for="assignedPortId" required="true" value="#{bundle['customs.user.ports.assignedtowork']}" />
+						     <h:panelGroup>
+								<rich:pickList id="assignedPortId"  style="float: middle" listsHeight="250"
+								sourceListWidth="150" targetListWidth="150" rendered="#{userBean.userDTO.status ne 'LCG'}"
+								disabled="#{accountBean.locationFlag}"
+								 	value="#{userBean.assignedPorts}"
+									copyAllControlLabel="#{bundle['customs.common.addall']}"
+									copyControlLabel="#{bundle['customs.common.add']}"
+									removeAllControlLabel="#{bundle['customs.common.removeall']}"
+									removeControlLabel="#{bundle['customs.common.remove']}" required="true"
+									
+									onclick="hideFocusKeeperFromPicklist1('userEditForm:assignedPortId');hideFocusKeeperFromPicklist1('userEditForm:AgentRoleRegion');">
+								    <f:selectItems value="#{portSelectItemList.selectPortOfQatar}"/>
+								</rich:pickList>
+									<rich:pickList id="assignedPortIdlcg"  style="float: middle" listsHeight="250" disabled="true"
+								sourceListWidth="150" targetListWidth="150" rendered="#{userBean.userDTO.status eq 'LCG'}"
+								 	value="#{userBean.assignedPorts}"
+									copyAllControlLabel="#{bundle['customs.common.addall']}"
+									copyControlLabel="#{bundle['customs.common.add']}"
+									removeAllControlLabel="#{bundle['customs.common.removeall']}"
+									removeControlLabel="#{bundle['customs.common.remove']}" required="true"
+									onclick="hideFocusKeeperFromPicklist1('userEditForm:assignedPortIdlcg'); hideFocusKeeperFromPicklist1('userEditForm:AgentRoleRegionlcg');">
+								    <f:selectItems value="#{portSelectItemList.selectPortOfQatar}"/>
+								</rich:pickList>
+								<br/>
+								<rich:message for="assignedPortId" styleClass="error" />
+							</h:panelGroup>
+							 <h:outputText value="&#160;" />
+							 <h:outputText value="&#160;" />
+						</h:panelGrid>
+						
+						<!-- UPLOAD PICTURE (SIGNATURE) START -->
+						 <a4j:region id="signRegion" rendered="#{userBean.editMode and (accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT)}"> 
+						<!-- <a4j:outputPanel id="fileListPanel"> -->
+						<h:panelGrid id="uploadSignPnl" columns="2" styleClass="table-contents" width="720" style="margin: 0px 10px 0px 10px;"
+							columnClasses="col_indent,search_label,search_value,search_label,search_value"
+							rendered="#{accountBean.accountDTO.accountType == accountTypeBean.CUSTOMS_ACCOUNT}"
+						    footerClass="search-footer">
+					        	<f:facet name="header">
+								<h:panelGroup styleClass="search-header">
+									<h:graphicImage alt="box" width="10" height="10"
+										url="../../imgs/bullet.gif">
+									</h:graphicImage>
+									<rich:spacer width="5" height="15" />
+									<h:outputText
+										value="#{bundle['customs.user.upload.picture.signature']}" />
+									<rich:separator lineType="none" styleClass="separator" />
+								</h:panelGroup>
+							</f:facet>
+							 <h:outputText value="&#160;" />
+							<h:panelGrid columns="2" width="100%">
+								<cust:outputLabel  value="#{bundle['customs.user.signature']}" />
+								<h:panelGroup>
+										<rich:fileUpload id="deployFile"
+												fileUploadListener="#{userBean.signatureFileUploadListener}"
+												clearAllControlLabel="#{bundle['customs.common.clear_all']}"
+												maxFilesQuantity="1" immediateUpload="false"
+												acceptedTypes="jpg,jpeg,png"
+												ontyperejected="jsfileError1();"
+												listHeight="50px"
+												onuploadcomplete="document.getElementById('this:forFileUploadEvent').click();"
+												addControlLabel="#{bundle['customs.common.add']}"
+												doneLabel="#{bundle['customs.common.done']}"
+												uploadControlLabel="#{bundle['customs.tariff.batch_upload']}"
+												cancelEntryControlLabel="#{bundle['customs.common.cancel']}"
+												clearControlLabel="#{bundle['customs.common.clear']}"
+												stopControlLabel="#{bundle['customs.common.stop']}"
+												stopEntryControlLabel="#{bundle['customs.common.stop']}"
+												required="true">
+												<a4j:support event="onclear" reRender="deployFile" />
+
+											</rich:fileUpload>
+												 <a4j:jsFunction
+													name="jsfileError1"
+													action="#{userBean.signatureShowFileError('userEditForm:deployFile')}"
+													reRender="uploadSignPnl"
+												/>
+											</h:panelGroup>
+											<br />
+										<rich:message
+											for="deployFile"
+											errorClass="error"
+										/>
+								
+								<cust:outputLabel  value="#{bundle['customs.user.uploaded.signature']}" />
+								<h:panelGroup>
+								<a4j:htmlCommandLink id="downloadLink"
+												action="#{userBean.signatureDocDownload}"
+												value="#{userBean.signDocmodel.fileName}"
+												immediate="true"
+												>
+								</a4j:htmlCommandLink>
+							  </h:panelGroup>
+							   <h:outputText value="&#160;" />
+							  <h:panelGroup>
+							  <a4j:commandButton value="#{bundle['customs.declaration.upload']}" status="waitStatus"
+										styleClass="button-styles" action="#{userBean.signatureAddFile}"
+										reRender="uploadSignPnl" immediate="true"
+								/>
+							</h:panelGroup>
+							</h:panelGrid>
+							 <h:outputText value="&#160;" />
+							 <h:outputText value="&#160;" />
+						</h:panelGrid>
+						</a4j:region>
+						<!-- </a4j:outputPanel> -->
+						<!-- UPLOAD PICTURE (SIGNATURE) ENDS -->
+						
+						<!-- for non commercial user Account - oga cr-->
+						 <h:panelGrid columns="3" id="nonCommPorts1" styleClass="table-contents" width="720" style="margin: 0px 10px 0px 10px;"
+							columnClasses="col_indent,search_label,search_value,search_label,search_value"
+							rendered="#{ accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT and 
+							( accountBean.accountDTO.ogaId ne null or !empty accountBean.accountDTO.ogaId ) }"
+						    footerClass="search-footer">
+					        	<f:facet name="header">
+								<h:panelGroup styleClass="search-header">
+								 <h:graphicImage alt="box" width="10" height="10"
+										url="../../imgs/bullet.gif">
+									</h:graphicImage>  
+									<rich:spacer width="5" height="15" />
+									<h:outputText
+										value="#{bundle['customs.user.heading.ports']}" />
+									<rich:separator lineType="none" styleClass="separator" />
+								</h:panelGroup>
+							</f:facet>
+							 <h:outputText value="&#160;" />							 
+							 <cust:outputLabel for="assignedPortIdNonCommercial" required="true" value="#{bundle['customs.user.ports.assignedtowork']}" />
+						     <h:panelGroup>
+								<rich:pickList id="assignedPortIdNonCommercial"  style="float: middle" listsHeight="250"
+									sourceListWidth="150" targetListWidth="150"  
+										rendered="#{ accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT}" 
+								 	value="#{userBean.assignedPorts}"
+									copyAllControlLabel="#{bundle['customs.common.addall']}"
+									copyControlLabel="#{bundle['customs.common.add']}"
+									removeAllControlLabel="#{bundle['customs.common.removeall']}"
+									removeControlLabel="#{bundle['customs.common.remove']}" required="true"
+									onclick="hideFocusKeeperFromPicklist1('userEditForm:assignedPortIdNonCommercial');
+									          hideFocusKeeperFromPicklist1('userEditForm:AgentRoleRegion');
+									          hideFocusKeeperFromPicklist1('userEditForm:AgentRoleRegionlcg');" >
+								   <f:selectItems value="#{userBean.ogaPortQatarSelectList}"/>
+								</rich:pickList>
+								<br/>
+								<rich:message for="assignedPortIdNonCommercial" styleClass="error" />
+							</h:panelGroup>
+							 <h:outputText value="&#160;" /> 
+							  <h:outputText value="&#160;" /> 
+						</h:panelGrid>  
+					<!-- End of Ports Assigned -->	 
+
+                      <!-- Host to Host Option  --> 
+					  <a4j:outputPanel id="H2HRegion">			 
+					  	    <h:panelGrid columns="5" styleClass="table-contents" width="720" style="margin: 0px 10px 0px 10px;"
+								columnClasses="col_indent,search_label,search_val,search_label,search_val" 
+								rendered="#{userBean.showH2HInfoStyle and accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}">
+								<f:facet name="header">
+								    <h:panelGroup styleClass="search-header">
+									  <h:graphicImage alt="box" width="10" height="10"
+										url="../../imgs/bullet.gif">
+									</h:graphicImage>
+									<rich:spacer width="5" height="15" />
+									<h:outputText
+										value="#{bundle['customs.user.h2hOption']}" />
+									<rich:separator lineType="none" styleClass="separator" />
+								   </h:panelGroup>
+							   </f:facet>
+							   <!-- First Row -->
+							   <h:outputText value="&#160;" />
+					           <cust:outputLabel  for="h2hRequired" value="#{bundle['customs.user.h2hOptionRequiredLabel']}" />
+						 		<h:panelGroup>
+							      	<h:selectOneRadio immediate="true" id="h2hRequired" label="#{bundle['customs.ac.settlementenabled']}" 
+							      	   value="#{userBean.h2hRequired}" required="true">
+								        	<f:selectItems value="#{booleanTypeBean.itemList}" />
+								        	<a4j:support ajaxSingle="true" event="onclick" action="#{userBean.handleH2HDetail}" reRender="H2HDetailRegion"/>
+								    </h:selectOneRadio>
+								</h:panelGroup>
+								<h:outputText value="" />
+								<h:outputText value="" />
+						      <!-- End of First Row -->
+						   </h:panelGrid>
+						   <a4j:outputPanel id="H2HDetailRegion">
+						   <h:panelGrid columns="5" styleClass="table-contents" width="720" style="margin: 0px 10px 0px 10px;"
+								columnClasses="col_indent,search_label,search_val,search_label,search_val"
+								rendered="#{userBean.showH2HInfoStyle and userBean.h2hRequired==booleanTypeBean.YES}">
+						        <h:outputText value="&#160;" />
+					            <cust:outputLabel  for="h2hMode" value="#{bundle['customs.user.h2hType']}" />
+						 		<h:panelGroup>
+								    <h:selectOneRadio id="h2hMode" layout="pageDirection"
+									           label="#{bundle['customs.user.roleassigned']}:" value="#{userBean.userDTO.h2hMode}" 
+									            required="true">
+									     <!--Commented below as per Etrade application, we are not using below-->      
+									    <!-- <f:selectItem itemLabel="#{bundle['customs.user.mhub.web']}" itemValue="WEB" />    
+									    <f:selectItem itemLabel="#{bundle['customs.user.mhub.mq']}" itemValue="MQ" />  -->
+									    <f:selectItem itemLabel="#{bundle['customs.user.mhub.sftp']}" itemValue="SFTP" />  
+									</h:selectOneRadio>
+								</h:panelGroup>
+								<h:outputText value="" />
+								<h:outputText value="" />
+						   </h:panelGrid>	
+						   </a4j:outputPanel>
+					  </a4j:outputPanel> 
+					   <!-- End of Host to Host Option  -->
+						
+					</h:panelGrid>
+					<!-- end of criteria table -->
+					
+					<!--  Added for CR(9) implementation on 26/06/2012 -->
+					
+			      	<!--  Start UserAccount action history list -->
+			      	<h:panelGrid width="720" border="0" cellpadding="0" cellspacing="0" 
+			      			style="margin: 0px 10px 0px 10px;"
+			      			rendered="#{not empty userBean.userActionDTOList}" >
+
+						<!--<h:panelGrid width="100%">
+							<h:panelGroup>
+								<h:graphicImage url="../../imgs/bullet.gif" width="10"
+									height="10" />
+								<rich:spacer width="5" height="15" />
+								<h:outputText
+									value="#{bundle['customs.common.history.details']}"
+									styleClass="table-header" />
+							</h:panelGroup>
+							<h:panelGroup>
+								<rich:separator lineType="none" styleClass="separator"
+									width="100%" />
+							</h:panelGroup>
+						</h:panelGrid>
+						
+						--><rich:simpleTogglePanel
+								switchType="client"
+								label="#{bundle['customs.common.account.history']}"
+								opened="false"
+								headerClass="toggle_panel_hdr"
+								style="border-style:none;"	>
+							
+							<f:facet name="header">
+								<h:panelGroup styleClass="search-header">
+									<h:graphicImage
+										alt="box"
+										width="10"
+										height="10"
+										url="../../imgs/bullet.gif"	>
+									</h:graphicImage>
+								<rich:spacer width="5"	height="15"	/>
+								<h:outputText value="#{bundle['customs.common.history.details']}" />
+			
+								<rich:separator	lineType="none"		styleClass="separator"	/>
+			</h:panelGroup>
+		</f:facet>
+		<f:facet name="openMarker">+</f:facet>
+		<f:facet name="closeMarker">-</f:facet>
+						
+						<h:panelGrid columns="2" styleClass="table-contents" width="100%">
+							<h:panelGroup>
+							</h:panelGroup>
+							<rich:datascroller id="searchScrollTop1" for="historyList"
+								align="right" styleClass="dataScroll" maxPages="5">
+								<a4j:support event="onpagechange" />
+							</rich:datascroller>
+						</h:panelGrid>
+						<!--<<<<<<<<<<<<<< User Account History Data Table >>>>>>>>>>> -->
+						<rich:dataTable rowKeyVar="rowKey" id="historyList"
+							value="#{userBean.userActionDTOList}" var="historyResult"
+							rows="10" rendered="#{not empty userBean.userActionDTOList}"
+							rowClasses="table-row-light, table-row-dark" width="100%"
+							headerClass="table-heading" styleClass="tabular-details"
+							border="0" cellspacing="1" cellpadding="0">
+
+							<rich:column style="text-align:center;">
+								<f:facet name="header">
+									<h:outputText id="noHeader"
+										value="#{bundle['customs.common.s/no']}" />
+								</f:facet>
+								<h:outputText value="#{rowKey+1}" />
+							</rich:column>
+							<rich:column style="text-align:center;">
+								<f:facet name="header">
+									<h:outputText id="LblaccountUsrAction"
+										value="#{bundle['customs.common.action']}" />
+								</f:facet>
+								<h:outputText id="accountUsrAction"
+									value="#{historyResult.actionType}"  rendered="#{historyResult.actionType ne 'REG'}"
+									converter="accountStatusTypeConverter">
+								</h:outputText>
+								<!--  Added by Narendra for Suggested by Prasanth 0n 30/112012 -->
+								<h:outputText value="#{bundle['customs.common.user.re_instated']}" rendered="#{historyResult.actionType eq 'REG'}" />
+							</rich:column>
+							<rich:column style="text-align:center;" >
+								<f:facet name="header">
+									<h:outputText id="LblactionDate"
+										value="#{bundle['customs.common.actiondate']}" />
+								</f:facet>
+								<h:outputText id="actionDate"
+									value="#{historyResult.actionDate}">
+									<f:convertDateTime dateStyle="medium" type="both" pattern="#{custConstants.DATE_PATTERN_WITH_SEC}" 
+										timeZone="#{custConstants.timeZone}" />
+									<!--<f:convertDateTime id="dateconverTo" type="date"
+										dateStyle="medium" pattern="#{customsConstants.DATE_PATTERN}"
+										timeZone="#{customsConstants.timeZone}" />
+								--></h:outputText>
+							</rich:column>
+							<rich:column style="text-align:center;">
+								<f:facet name="header">
+									<h:outputText value="#{bundle['customs.declaration.reason']}" />
+								</f:facet>
+								<h:outputText value="#{historyResult.reason}"  converter="#{reasonTypes}"/>
+							</rich:column>
+							<rich:column style="text-align:center;">
+								<f:facet name="header">
+									<h:outputText value="#{bundle['customs.ac.remarks']}" />
+								</f:facet>
+								<h:outputText value="#{historyResult.remarks}" />
+							</rich:column>
+							<rich:column style="text-align:center;">
+								<f:facet name="header">
+									<h:outputText value="#{bundle['customs.account.performed.by']}" />
+								</f:facet>
+								<h:outputText value="#{historyResult.createdBy}" />
+								-
+								<h:outputText value="#{historyResult.createdBy}"
+									converter="#{userWithLoginIdCommonConverter}" />
+							</rich:column>
+
+						</rich:dataTable>
+						
+							 <h:outputText
+								value="#{bundle['customs.common.user.no.history.found']}"
+								styleClass="message_no_record"
+								 rendered="#{empty userBean.userActionDTOList}" />
+					</rich:simpleTogglePanel>
+						<!--  End Account action history list -->
+			      	</h:panelGrid>
+					<!-- end of criteria table -->
+				</h:panelGrid>
+					<f:facet name="footer">
+						<h:panelGroup>							  
+							<center>
+							
+								<!-- <h:commandButton action="#{userSearchBean.backToSearch}" id="userRetrieveButtonCancel" 
+								immediate="true" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+								 value="#{bundle['customs.common.cancel']}" 
+						 		 styleClass="button-styles" >
+						 		 <f:setPropertyActionListener target="#{userSearchBean.id}" value="2" />
+						 		 </h:commandButton> -->
+								<h:commandButton action="#{userSearchBean.backToSearch}" id="userRetrieveButtonCancel"
+								immediate="true" rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}"
+								 value="#{bundle['customs.common.cancel']}"   
+						 		 styleClass="button-styles" >
+							 		 <f:setPropertyActionListener target="#{userSearchBean.id}" value="2" /> 
+						 		 </h:commandButton>
+						 		 <h:commandButton action="#{accountBean.viewUserAccount}" id="userSearchButton2"
+								immediate="true" rendered="#{accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}"
+								 value="#{bundle['customs.common.cancel']}" 
+						 		 styleClass="button-styles" />
+						 		<f:verbatim>&nbsp;</f:verbatim>
+						 		<h:commandButton id="saveUserButton"
+							 		  action="#{userBean.saveUser}"
+							 		  rendered="#{userBean.hasUpdate and userBean.userDTO.status ne 'LCG'}"
+									  value="#{bundle['customs.common.save']}"
+									  styleClass="button-styles" >
+								</h:commandButton>
+									  <f:verbatim>&nbsp;</f:verbatim>
+								<rich:spacer width="40" />	  
+								<!-- <h:panelGroup rendered="#{accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}">	  
+									<h:commandButton  id="suspendUserButton"
+											action="#{userBean.viewUserAction}"
+								 		    value="#{bundle['customs.user.suspenduser']}"
+										    styleClass="button-styles"
+										    rendered="#{userBean.editMode and userBean.userDTO.status == accountStatusTypeBean.REGISTERED and userBean.hasSuspend }"
+										    onclick="if (confirmAction('#{bundle['customs.user.confirm.suspend.user']}')) { this.style.display='none'; } else { return false; }" immediate="true" > 
+										    <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.SUSPENDED}" />
+									</h:commandButton>
+										<f:verbatim>&nbsp;</f:verbatim>
+									<h:commandButton id="reinsitateUserButton"
+											action="#{userBean.viewUserAction}"
+								 		    value="#{bundle['customs.user.reinstateuser']}"
+										    styleClass="button-styles"
+										    rendered="#{userBean.editMode and (userBean.userDTO.status == accountStatusTypeBean.SUSPENDED 
+										        or userBean.userDTO.status == accountStatusTypeBean.BLACKLISTED ) and userBean.hasReinstate }"
+										    onclick="if (confirmAction('#{bundle['customs.user.confirm.reinstate.user']}')) { this.style.display='none'; } else { return false; }" immediate="true" > 
+										    <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.REGISTERED}" />
+									</h:commandButton>
+										 <f:verbatim>&nbsp;</f:verbatim>
+								 	<h:commandButton id="blacklistUserButton"
+								 		  action="#{userBean.viewUserAction}"
+										  value="#{bundle['customs.user.blacklistuser']}"
+										  styleClass="button-styles" 
+										  rendered="#{accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT and userBean.editMode 
+										      and (userBean.userDTO.status == accountStatusTypeBean.REGISTERED or userBean.userDTO.status == accountStatusTypeBean.SUSPENDED ) and userBean.hasBlacklist }"
+										  onclick="if (confirmAction('#{bundle['customs.user.confirm.blacklist.user']}')) { this.style.display='none'; } else { return false; }" immediate="true" >
+										  <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.BLACKLISTED}" />
+									</h:commandButton>
+									    <f:verbatim>&nbsp;</f:verbatim>
+								 	<h:commandButton id="inactiveUserButton"
+								 		  action="#{userBean.viewUserAction}"
+										  value="#{bundle['customs.user.inactiveuser']}"
+										  styleClass="button-styles" 
+										  rendered="#{userBean.editMode and userBean.userDTO.status != accountStatusTypeBean.INACTIVE and
+										              (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+										              or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT) and userBean.hasInactive }"
+										  onclick="if (confirmAction('#{bundle['customs.user.confirm.inactive.user']}')) { this.style.display='none'; } else { return false; }" immediate="true" >
+										  <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.INACTIVE}" />
+									</h:commandButton>
+						 		<f:verbatim>&nbsp;</f:verbatim>
+									 Added for Batch 2 CR activate user	
+									<h:commandButton id="activeUserButton"
+								 		  action="#{userBean.viewUserAction}"
+										  value="#{bundle['customs.user.activeuser']}"
+										  styleClass="button-styles" 
+										  rendered="#{userBean.editMode and userBean.userDTO.status == accountStatusTypeBean.INACTIVE and
+										              (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+										              or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)  }"
+										  onclick="if (confirmAction('#{bundle['customs.user.confirm.active.user']}')) { this.style.display='none'; } else { return false; }" immediate="true" >
+										    <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.ACTIVE}" />
+						 		 </h:commandButton>
+								 
+							
+								</h:panelGroup> -->
+								
+								<h:panelGroup rendered="#{accountBean.accountDTO.accountType != accountTypeBean.INDIVIDUAL_ACCOUNT}">	  
+									<h:commandButton  id="suspendUserButton" 
+								 		    value="#{bundle['customs.user.suspenduser']}"
+										    styleClass="button-styles"
+										    rendered="#{userBean.editMode and userBean.userDTO.status == accountStatusTypeBean.REGISTERED and userBean.hasSuspend }"
+										    onclick="Richfaces.showModalPanel('pnlsuspendUser');return false;"  immediate="true" > 
+										   
+									</h:commandButton>
+										<f:verbatim>&nbsp;</f:verbatim>
+									<h:commandButton id="reinsitateUserButton" 
+								 		    value="#{bundle['customs.user.reinstateuser']}"
+										    styleClass="button-styles"
+										    rendered="#{userBean.editMode and (userBean.userDTO.status == accountStatusTypeBean.SUSPENDED 
+										        or userBean.userDTO.status == accountStatusTypeBean.BLACKLISTED ) and userBean.hasReinstate }"
+										    onclick="Richfaces.showModalPanel('pnlreinsitateUser');return false;"  immediate="true" >  
+									</h:commandButton>
+										 <f:verbatim>&nbsp;</f:verbatim>
+								 	<h:commandButton id="blacklistUserButton"
+								 		  action="#{userBean.viewUserAction}"
+										  value="#{bundle['customs.user.blacklistuser']}"
+										  styleClass="button-styles" 
+										  rendered="#{accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT and userBean.editMode 
+										      and (userBean.userDTO.status == accountStatusTypeBean.REGISTERED or userBean.userDTO.status == accountStatusTypeBean.SUSPENDED ) and userBean.hasBlacklist }"
+										  onclick="Richfaces.showModalPanel('pnlblacklistUser');return false;"  immediate="true" > 
+									</h:commandButton>
+									    <f:verbatim>&nbsp;</f:verbatim>
+								 	<h:commandButton id="inactiveUserButton" 
+										  value="#{bundle['customs.user.inactiveuser']}"
+										  styleClass="button-styles" 
+										  rendered="#{userBean.editMode and userBean.userDTO.status != accountStatusTypeBean.INACTIVE and
+										              (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+										              or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT) and userBean.hasInactive }"
+										  onclick="Richfaces.showModalPanel('pnlinactiveUser');return false;"  immediate="true" > 
+									</h:commandButton>
+						 		<f:verbatim>&nbsp;</f:verbatim>
+									 <!-- Added for Batch 2 CR activate user	-->
+									<h:commandButton id="activeUserButton" 
+										  value="#{bundle['customs.user.activeuser']}"
+										  styleClass="button-styles" 
+										  rendered="#{userBean.editMode and userBean.userDTO.status == accountStatusTypeBean.INACTIVE and
+										              (accountBean.accountDTO.accountType == accountTypeBean.COMMERCIAL_ACCOUNT 
+										              or accountBean.accountDTO.accountType == accountTypeBean.NONCOMMERCIAL_ACCOUNT)  }"
+										  onclick="Richfaces.showModalPanel('pnlactiveUser');return false;"  immediate="true" > 
+						 		 </h:commandButton>
+								 
+							
+								</h:panelGroup>
+								<!--Added for Refund Request CR  -->
+								<h:panelGroup rendered="#{accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT}">
+									<h:commandButton action="#{userBean.goToBankDetails}" 
+									    rendered="#{((accountBean.accountDTO.accountType == accountTypeBean.INDIVIDUAL_ACCOUNT) and (userBean.editMode == true))}"
+										id="goToIndBankDetails" value="#{bundle['customs.account.refund.request.add.bank.details.add.update.view']}"
+										styleClass="button-styles"
+										onclick="Richfaces.showModalPanel('waitModalPanel');return true">
+									</h:commandButton>
+								</h:panelGroup>
+								<!--end Refund Request CR  -->
+							</center>
+						</h:panelGroup>
+					</f:facet>
+				<!--  end of table for criteria and result -->
+			</h:panelGrid>
+			
+			
+
+
+
+			<rich:modalPanel id="pnlAgentActivationSubmit" width="450"
+				styleClass="modalPanel" resizeable="false">
+				<h2>
+					<h:outputText
+						value="#{bundle['customs.feedback.submit.feedback.confirm']}" />
+				</h2>
+
+				<p class="modalaction" align="center">
+					<a4j:commandButton id="yesIdAgentActivationSubmit"
+						action="#{userBean.activateAgent}"
+						styleClass="button-styles" status="waitStatus"
+						value="#{bundle['customs.common.yes']}"
+						oncomplete="Richfaces.hideModalPanel('pnlAgentActivationSubmit')">
+					</a4j:commandButton>
+					<rich:spacer width="5" />
+					<a4j:commandButton id="noIdAgentActivationSubmit" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						oncomplete="Richfaces.hideModalPanel('pnlAgentActivationSubmit')">
+					</a4j:commandButton>
+				</p>
+			</rich:modalPanel>
+
+			<rich:modalPanel id="pnlAgentDectivationSubmit" width="450"
+				styleClass="modalPanel" resizeable="false">
+				<h2>
+					<h:outputText
+						value="#{bundle['customs.feedback.submit.feedback.confirm']}" />
+				</h2>
+
+				<p align="center">
+					<a4j:commandButton id="yesIdAgentDectivationSubmit"
+						action="#{userBean.deactivateAgent}"
+						styleClass="button-styles" status="waitStatus"
+						value="#{bundle['customs.common.yes']}"
+						oncomplete="Richfaces.hideModalPanel('pnlAgentDectivationSubmit')">
+					</a4j:commandButton>
+					<rich:spacer width="5" />
+					<a4j:commandButton id="noIdAgentDectivationSubmit" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						oncomplete="Richfaces.hideModalPanel('pnlAgentDectivationSubmit')">
+					</a4j:commandButton>
+				</p>
+			</rich:modalPanel>
+
+
+			<rich:modalPanel id="pnlAgentPortsUpdateSubmit" width="450"
+				styleClass="modalPanel" resizeable="false">
+				<h2>
+					<h:outputText
+						value="#{bundle['customs.feedback.submit.feedback.confirm']}" />
+				</h2>
+
+				<p align="center">
+					<a4j:commandButton id="yesIdAgentPortsUpdateSubmit"
+						action="#{userBean.updateAgentPorts}" 
+						styleClass="button-styles" status="waitStatus"
+						value="#{bundle['customs.common.yes']}"
+						oncomplete="Richfaces.hideModalPanel('pnlAgentPortsUpdateSubmit')">
+					</a4j:commandButton>
+					<rich:spacer width="5" />
+					<a4j:commandButton id="noIdAgentPortsUpdateSubmit" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						oncomplete="Richfaces.hideModalPanel('pnlAgentPortsUpdateSubmit')">
+					</a4j:commandButton>
+				</p>
+			</rich:modalPanel>
+
+		
+			
+		</h:form>
+		
+	  <rich:modalPanel id="pnlsuspendUser" width="300" styleClass="modalPanel"	resizeable="false">
+			<h2><h:outputText	value="#{bundle['customs.user.confirm.suspend.user']}" /></h2>
+			<p></p>
+			<h:form>
+				<p class="modalaction">
+					<h:commandButton id="yesId"
+						styleClass="button-styles" value="#{bundle['customs.common.yes']}"
+						action="#{userBean.viewUserAction}"
+						onclick="Richfaces.hideModalPanel('pnlsuspendUser')"> 
+						 <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.SUSPENDED}" />
+					</h:commandButton>
+					<rich:spacer width="5" /> 
+					<h:commandButton id="noId" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						onclick="Richfaces.hideModalPanel('pnlsuspendUser')" />
+				</p>
+			</h:form>
+		</rich:modalPanel>
+		<rich:modalPanel id="pnlreinsitateUser" width="300" styleClass="modalPanel"	resizeable="false">
+			<h2><h:outputText	value="#{bundle['customs.user.confirm.reinstate.user']}" /></h2>
+			<p></p>
+			<h:form>
+				<p class="modalaction">
+					<h:commandButton id="yesId"
+						styleClass="button-styles" value="#{bundle['customs.common.yes']}"
+						action="#{userBean.viewUserAction}"
+						onclick="Richfaces.hideModalPanel('pnlreinsitateUser')"> 
+						 <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.REGISTERED}" />
+					</h:commandButton>
+					<rich:spacer width="5" />
+					 <h:commandButton id="noId" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						onclick="Richfaces.hideModalPanel('pnlreinsitateUser')" />
+				</p>
+			</h:form>
+		</rich:modalPanel>
+		<rich:modalPanel id="pnlblacklistUser" width="300" styleClass="modalPanel"	resizeable="false">
+			<h2><h:outputText	value="#{bundle['customs.user.confirm.blacklist.user']}" /></h2>
+			<p></p>
+			<h:form>
+				<p class="modalaction">
+					<h:commandButton id="yesId"
+						styleClass="button-styles" value="#{bundle['customs.common.yes']}"
+						action="#{userBean.viewUserAction}"
+						onclick="Richfaces.hideModalPanel('pnlblacklistUser')"> 
+						 <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.BLACKLISTED}" />
+					</h:commandButton>
+					<rich:spacer width="5" />
+					<h:commandButton id="noId" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						onclick="Richfaces.hideModalPanel('pnlblacklistUser')" />
+				</p>
+			</h:form>
+		</rich:modalPanel>
+		<rich:modalPanel id="pnlinactiveUser" width="300" styleClass="modalPanel"	resizeable="false">
+			<h2><h:outputText	value="#{bundle['customs.user.confirm.inactive.user']}" /></h2>
+			<p></p>
+			<h:form>
+				<p class="modalaction">
+					<h:commandButton id="yesId"
+						styleClass="button-styles" value="#{bundle['customs.common.yes']}"
+						action="#{userBean.viewUserAction}"
+						onclick="Richfaces.hideModalPanel('pnlinactiveUser')">
+						 <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.INACTIVE}" /> 
+					</h:commandButton>
+					<rich:spacer width="5" />
+					<h:commandButton id="noId" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						onclick="Richfaces.hideModalPanel('pnlinactiveUser')" />
+				</p>
+			</h:form>
+		</rich:modalPanel>
+		<rich:modalPanel id="pnlactiveUser" width="300" styleClass="modalPanel"	resizeable="false">
+			<h2><h:outputText	value="#{bundle['customs.user.confirm.active.user']}" /></h2>
+			<p></p>
+			<h:form>
+				<p class="modalaction">
+					<h:commandButton id="yesId"
+						styleClass="button-styles" value="#{bundle['customs.common.yes']}"
+						action="#{userBean.viewUserAction}"
+						onclick="Richfaces.hideModalPanel('pnlactiveUser')"> 
+						 <f:setPropertyActionListener target="#{userBean.actionType}" value="#{accountStatusTypeBean.ACTIVE}" />
+					</h:commandButton>
+					<rich:spacer width="5" /> 
+					<h:commandButton id="noId" type="button"
+						styleClass="button-styles" value="#{bundle['customs.common.no']}"
+						onclick="Richfaces.hideModalPanel('pnlactiveUser')" />
+				</p>
+			</h:form>
+		</rich:modalPanel>
+	</ui:define>
+</ui:composition>
+</html>

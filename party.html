@@ -1,0 +1,1808 @@
+<app-authorization-popup></app-authorization-popup>
+<ng-container *ngIf="currentPartyData">
+  <form id="partyFrm" #partyFrm="ngForm">
+    <div class="tab-pane-disapled tab-pane-1-disapled">
+      <div class="tab-content-2">
+        <div class="tab-pane" id="account-management">
+          <div class="tab-content-2">
+            <div class="tab-pane" id="account-management">
+
+              <div class="row">
+                <div class="col">
+                  <div class="collapse show" id="partAccordian">
+                    <div class="row">
+                      <div class="col-md-12 grid-margin stretch-card">
+                        <div class="card">
+                          <div class="card-body">
+                            <div class="row">
+                              <div class="col">
+                                <div class="collapse show" id="multiCollapseExample1">
+                                  <div class="row">
+                                    <div class="col-md-12 grid-margin">
+                                      <!-- <div class="card"> -->
+                                      <!-- <div class="card-body"> -->
+                                      <h3 class="title-card-form">
+                                        {{
+                                        'declaration.party.customs.declaration.clearing.agency'
+                                        | translate
+                                        }}
+                                      </h3>
+                                      <div class="mt-3 mt-lg-5">
+                                        <div class="row">
+                                          <!-- <div class="col-12 col-lg-6 mb-3 mb-lg-0"><div class="form-group "><label class="control-label">Authorization number</label><div class="col-12"><input formControlName="authorizationNumber"  type="text" class="form-control" value="" /></div></div></div> -->
+                                          <div class="col-12 col-lg-4  mb-3 mb-lg-0">
+                                            <div class="form-group">
+                                              <label class="control-label"><span class="mandatory-field">*</span>
+                                                {{'declaration.party.customs.declaration.clearing.agency'
+                                                | translate}}</label>
+                                              <input [attr.disabled]="true" required type="text" class="form-control"
+                                                [(ngModel)]="currentPartyData.clearingAgency"
+                                                [ngModelOptions]="{standalone: true}">
+                                            </div>
+                                          </div>
+
+                                          <ng-container
+                                            *ngIf="((!currentPartyData.loggedInUserIsSupervisor) && (currentPartyData.baseData.documentStatus!='DRA')) || (notProvisional && !headerSaveResponse?.hasTransferCCA)">
+                                            <div class="col-12 col-lg-4  mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.clearing.agent'
+                                                  | translate}}</label>
+                                                <div class="search-input-custom">
+                                                  <img class="btn btn-outline-primary mt-0"
+                                                    (click)="selectClearingAgent()"
+                                                    src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                                    class="input-search-icon" alt="">
+                                                  <input [attr.disabled]="true" required type="text"
+                                                    class="form-control" value=""
+                                                    [(ngModel)]="currentPartyData.clearAgentDTO.licenseNo"
+                                                    [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <div class="col-12 col-lg-4  mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.clearing.agency'
+                                                  | translate}}</label>
+                                                <input [attr.disabled]="true" type="text" class="form-control" value=""
+                                                  [(ngModel)]="currentPartyData.clearAgentDTO.partyName"
+                                                  [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                              </div>
+                                            </div>
+                                          </ng-container>
+
+
+                                          <ng-container
+                                            *ngIf="((currentPartyData.loggedInUserIsSupervisor) && (currentPartyData.baseData.documentStatus=='DRA')) || (notProvisional && headerSaveResponse?.hasTransferCCA)">
+                                            <div class="col-12 col-lg-4  mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.clearing.agent.number'
+                                                  | translate}}</label>
+                                                <div class="search-input-custom">
+                                                  <img class="btn btn-outline-primary mt-0"
+                                                    (click)="selectClearingAgent()"
+                                                    src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                                    class="input-search-icon" alt="">
+                                                  <input type="text" (change)="getClearingAgentNameByCode()" required
+                                                    class="form-control" value="" [readOnly]="declarationNoView"
+                                                    [(ngModel)]="currentPartyData.clearAgentDTO.licenseNo"
+                                                    [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                                </div>
+                                              </div>
+                                            </div>
+
+                                            <div class="col-12 col-lg-4  mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.clearing.agent.name'
+                                                  | translate}}</label>
+                                                <input type="text" [attr.disabled]="true" class="form-control" value=""
+                                                  [(ngModel)]="currentPartyData.clearAgentDTO.partyName"
+                                                  [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                              </div>
+                                            </div>
+                                          </ng-container>
+
+                                          <!-- <div class="col-12 col-lg-8 mb-3 mb-lg-0"> -->
+
+                                          <!-- <ng-container
+                                              *ngIf="((!currentPartyData.loggedInUserIsSupervisor) && (currentPartyData.baseData.documentStatus!='DRA')) || (notProvisional && !headerSaveResponse?.hasTransferCCA)">
+                                              <div class="form-group row">
+                                                <label class="control-label"><span
+                                                    class="alert-red">*</span>{{'declaration.party.customs.declaration.clearing.agent'
+                                                  | translate}}
+
+                                                </label>
+
+                                                <div class="col-12 col-lg-6">
+                                                  <div class="form-group">
+                                                    <div class="search-input-custom">
+                                                    <img class="btn btn-outline-primary mt-0" (click)="selectClearingAgent()" src="assets/dashboard/images/magnifying-glass-solid.svg" class="input-search-icon" alt="">
+                                                    <input [attr.disabled]="true" required type="text"
+                                                      class="form-control" value=""
+                                                      [(ngModel)]="currentPartyData.clearAgentDTO.licenseNo"
+                                                      [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="col-12 col-lg-6">
+                                                  <div class="form-group">
+                                                    <input [attr.disabled]="true" type="text" class="form-control"
+                                                      value="" [(ngModel)]="currentPartyData.clearAgentDTO.partyName"
+                                                      [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </ng-container> -->
+
+                                          <!-- <ng-container
+                                              *ngIf="((currentPartyData.loggedInUserIsSupervisor) && (currentPartyData.baseData.documentStatus=='DRA')) || (notProvisional && headerSaveResponse?.hasTransferCCA)">
+                                              <div class="form-group row">
+                                                <label class="control-label"><span class="alert-red">*</span>
+                                                  {{'declaration.party.customs.declaration.clearing.agent'
+                                                  | translate}}
+                                                </label>
+                                                <div class="col-12 col-lg-6">
+                                                  <div class="form-group">
+                                                    <div class="search-input-custom">
+                                                      <img class="btn btn-outline-primary mt-0"
+                                                        (click)="selectClearingAgent()"
+                                                        src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                                        class="input-search-icon" alt="">
+                                                      <input type="text" (change)="getClearingAgentNameByCode()"
+                                                        required class="form-control" value=""
+                                                        [readOnly]="declarationNoView"
+                                                        [(ngModel)]="currentPartyData.clearAgentDTO.licenseNo"
+                                                        [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                                <div class="col-12 col-lg-6">
+                                                  <div class="form-group">
+                                                    <input type="text" [attr.disabled]="true" class="form-control"
+                                                      value="" [(ngModel)]="currentPartyData.clearAgentDTO.partyName"
+                                                      [ngModelOptions]="{standalone: true}" id="clearingAgent" />
+                                                  </div>
+                                                </div>
+                                                <div *ngIf="!declarationNoView" class="col-12 col-xl-2 col-lg-8 d-none">
+                                                  <div class="form-group">
+                                                    <button type="button" class="btn btn-outline-primary mt-0"
+                                                      (click)="selectClearingAgent()">
+                                                      {{'action.research' | translate }}
+                                                    </button>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </ng-container> -->
+                                          <!-- </div> -->
+                                          <ng-container *ngIf="!currentPartyData.baseData.hasCourierDec">
+                                            <div class="col-12 col-lg-4">
+                                              <div class="form-group row">
+                                                <label class="control-label">
+                                                  <span class="alert-red">*</span>
+                                                  {{'declaration.party.customs.declaration.party.using.agency.global.guarantee'
+                                                  | translate}}</label>
+                                                <ng-container *ngIf="!notProvisional;else showViewGblGarenty1">
+                                                  <div class="col-12"
+                                                    [ngClass]="!currentPartyData.clearAgencyDTO.hasActiveGlobalGuarantee
+                                                  || currentPartyData.declarationCourierInfoDTO.accountTypeOfTrader == 'T'
+                                                  || ((currentPartyData.baseData.eTIRPaymentFlag != null && currentPartyData.baseData.eTIRPaymentFlag!= '') && currentPartyData.baseData.eTIRPaymentFlag == 'Y') ? 'disabled-element' : ''">
+                                                    <div class="form-check my-0">
+                                                      <div class="d-flex">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input required (change)="onGlobalGuarentyChange('A')"
+                                                              [attr.disabled]="currentPartyData.baseData.declarationType == 'IMS' || notProvisional ? true : null"
+                                                              [(ngModel)]="currentPartyData.declarationCourierInfoDTO.accountType"
+                                                              [ngModelOptions]="{standalone: true}" name="accountType"
+                                                              class="form-check-input" type="radio" id="yes"
+                                                              value="A" />
+
+                                                            {{'declaration.party.customs.common.yes' |
+                                                            translate}}
+                                                            <i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input required (change)="onGlobalGuarentyChange('N')"
+                                                              [attr.disabled]="currentPartyData.baseData.declarationType == 'IMS' || notProvisional ? true : null"
+                                                              name="accountType" [ngModelOptions]="{standalone: true}"
+                                                              [(ngModel)]="currentPartyData.declarationCourierInfoDTO.accountType"
+                                                              class="form-check-input" type="radio" id="no" value="N" />
+
+                                                            {{'declaration.party.customs.common.no' |
+                                                            translate}}<i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </ng-container>
+                                                <ng-template #showViewGblGarenty1>
+                                                  <div class="col-12">
+                                                    <ng-container
+                                                      *ngIf="currentPartyData.declarationCourierInfoDTO.accountType == 'A'">{{'declaration.party.customs.common.yes'
+                                                      | translate}}</ng-container>
+                                                    <ng-container
+                                                      *ngIf="currentPartyData.declarationCourierInfoDTO.accountType != 'A'">{{'declaration.party.customs.common.no'
+                                                      | translate}}</ng-container>
+                                                  </div>
+                                                </ng-template>
+                                              </div>
+                                            </div>
+                                          </ng-container>
+
+                                          <ng-container
+                                            *ngIf="(currentPartyData.importerDTO.authNo) && currentPartyData.importerDTO.authNo != '0'">
+
+                                            <div class="col-12 col-lg-4">
+                                              <div class="form-group">
+                                                <label
+                                                  class="control-label">{{'declaration.party.customs.declaration.authorization.number'
+                                                  | translate}}
+                                                </label>
+                                                <div class="col-12 col-lg-3">
+                                                  <div class="form-group">
+                                                    <a href="javascript:void(0)"
+                                                      (click)="openPopup(currentPartyData.importerDTO.authNo)"
+                                                      class="font-weight-normal highlightText">
+                                                      {{currentPartyData.importerDTO.authNo}}
+                                                    </a>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </ng-container>
+                                        </div>
+                                      </div>
+                                      <hr />
+
+                                      <ng-container
+                                        *ngIf="currentPartyData.baseData.declarationType!='TRN'
+                                          || (currentPartyData.baseData.declarationType == 'TRN'
+                                            && currentPartyData.baseData.entryPortType != 'F'
+                                            && currentPartyData.baseData.exitPortType == 'F')  || (currentPartyData.baseData.registeredTraderForTransit != null &&  currentPartyData.baseData.registeredTraderForTransit == 'Y')">
+                                        <h3 class="title-card-form">
+                                          {{'declaration.party.customs.declaration.importerexporter' | translate}}
+                                        </h3>
+                                      </ng-container>
+
+
+
+                                      <ng-container
+                                        *ngIf="currentPartyData.baseData.declarationType == 'TRN'
+                                          && !(currentPartyData.baseData.entryPortType != 'F'
+                                            && currentPartyData.baseData.exitPortType == 'F')  && !(currentPartyData.baseData.registeredTraderForTransit != null && currentPartyData.baseData.registeredTraderForTransit == 'Y')">
+                                        <h3 class="title-card-form">
+                                          {{'declaration.party.customs.declaration.other.parties' | translate}}
+                                        </h3>
+                                      </ng-container>
+
+                                      <!-- TODO : prod sync uncomment -->
+                                      <!-- NADEEBOPR -484 changes Start-->
+                                      <div
+                                        *ngIf="currentPartyData.baseData.declarationType == 'TRN' && !(currentPartyData.baseData.entryPortType != 'F' && currentPartyData.baseData.exitPortType == 'F')
+                                      && !(currentPartyData.baseData.registeredTraderForTransit != null &&  currentPartyData.baseData.registeredTraderForTransit == 'Y')"
+                                        class="alert col-12 alert-info mt-2 mb-4" style="font-weight: bold;"
+                                        role="alert">
+                                        {{'declaration.party.customs.common.search.notification.notelavel' | translate}}
+                                        &nbsp; : &nbsp;
+                                        {{'declaration.party.customs.declaration.party.registeredTraderForTransit.note'
+                                        | translate}}
+                                      </div>
+
+                                      <!-- start of IMPORTER / EXPORTER / OTHER PARTIES -->
+                                      <ng-container
+                                        *ngIf="currentPartyData.baseData.declarationType!='TRN'
+                                          || (currentPartyData.baseData.declarationType == 'TRN'
+                                            && currentPartyData.baseData.entryPortType != 'F'
+                                            && currentPartyData.baseData.exitPortType == 'F')  || (currentPartyData.baseData.registeredTraderForTransit != null &&  currentPartyData.baseData.registeredTraderForTransit == 'Y')">
+
+                                        <div class="mt-3 mt-lg-5">
+                                          <div class="row">
+                                            <div class="col-12">
+                                              <!-- IMPORTER START -->
+                                              <ng-container
+                                                *ngIf="currentPartyData.baseData.hasCourierDec && ( (currentPartyData.baseData.declarationType=='IMP') || (currentPartyData.baseData.declarationType=='TIM'))">
+                                                <div class="form-group">
+                                                  <label class="control-label"> <span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.courier.personal.declaration'
+                                                    | translate}}</label>
+                                                  <div class="form-check my-0">
+                                                    <div class="d-flex">
+                                                      <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                          <input required
+                                                            [ngClass]="{'disabled-element': notProvisional}"
+                                                            [(ngModel)]="currentPartyData.importerDTO.isPersonalCourierDec"
+                                                            [ngModelOptions]="{standalone: true}"
+                                                            name="isPersonalCourierDec" class="form-check-input"
+                                                            type="radio" id="yes" value="Y" />
+
+                                                          {{'declaration.party.customs.common.yes'
+                                                          |
+                                                          translate}}
+                                                          <i class="input-frame"></i>
+                                                        </label>
+                                                      </div>
+
+
+                                                      <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                          <input required
+                                                            [ngClass]="{'disabled-element': notProvisional}"
+                                                            [(ngModel)]="currentPartyData.importerDTO.isPersonalCourierDec"
+                                                            [ngModelOptions]="{standalone: true}"
+                                                            name="isPersonalCourierDec" class="form-check-input"
+                                                            type="radio" id="no" value="N" />
+
+                                                          {{'declaration.party.customs.common.no' |
+                                                          translate}}<i class="input-frame"></i>
+                                                        </label>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </ng-container>
+                                            </div>
+
+                                            <ng-container
+                                              *ngIf="(currentPartyData.baseData.declarationType=='IMP')
+                                                    || (currentPartyData.baseData.declarationType=='TIM')
+                                                    || (currentPartyData.baseData.declarationType=='WHE')
+                                                    || (currentPartyData.baseData.declarationType=='EXW')
+                                                    || (currentPartyData.baseData.declarationType=='IMS')
+                                                    || (currentPartyData.baseData.declarationType == 'TRN'
+                                                        && currentPartyData.baseData.entryPortType != 'F'
+                                                        && currentPartyData.baseData.exitPortType == 'F') || (currentPartyData.baseData.registeredTraderForTransit != null &&  currentPartyData.baseData.registeredTraderForTransit == 'Y')">
+
+                                              <ng-container
+                                                *ngIf="currentPartyData.baseData.hasCourierDec
+                                                        || ( (currentPartyData.baseData.qpostDeclaration != null && currentPartyData.baseData.qpostDeclaration != '') && currentPartyData.baseData.qpostDeclaration == 'Y'  )">
+                                                <div class="col-12 col-lg-6">
+
+                                                  <div class="form-group row">
+                                                    <label class="control-label col-12 "> <span
+                                                        class="alert-red">*</span>
+                                                      {{'declaration.party.customs.declaration.impnum' | translate}}</label>
+
+                                                    <div class="col-12 col-lg-6">
+                                                      <div class="form-group">
+                                                        <div class="search-input-custom">
+                                                          <img class="btn btn-outline-primary mt-0"
+                                                            (click)="onClickSearchImporter()"
+                                                            src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                                            class="input-search-icon" alt="">
+                                                          <input (change)="getImpExpNameByCode(true)" type="text"
+                                                            required class="form-control"
+                                                            [(ngModel)]="currentPartyData.importerDTO.accountCode"
+                                                            [ngModelOptions]="{standalone: true}"
+                                                            id="importerAccountCode" />
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-12 col-lg-6">
+                                                      <div class="form-group">
+                                                        <input type="text" [attr.disabled]="true" class="form-control"
+                                                          value="" [(ngModel)]="currentPartyData.importerDTO.partyName"
+                                                          [ngModelOptions]="{standalone: true}" />
+                                                      </div>
+                                                    </div>
+                                                    <!-- <div class="col-12 col-lg-2 d-none">
+                                                      <button type="button" class="btn btn-outline-primary mt-0"
+                                                        (click)="
+                                                      onClickSearchImporter()
+                                                    ">
+                                                        {{'action.research' | translate }}
+                                                      </button>
+                                                    </div> -->
+                                                    <!-- <div class="field-error-message d-flex justify-content-center"
+                                                          *ngIf="isInvalid ">
+                                                          <div class="text-danger">
+                                                            {{
+                                                            validationErrorText
+                                                            | translate
+                                                            }}
+                                                          </div>
+                                                        </div> -->
+                                                  </div>
+                                                </div>
+
+                                              </ng-container>
+
+
+
+                                              <ng-container
+                                                *ngIf="!currentPartyData.baseData.hasCourierDec
+                                                    && ( (currentPartyData.baseData.qpostDeclaration==null || currentPartyData.baseData.qpostDeclaration == '') || currentPartyData.baseData.qpostDeclaration  != 'Y'  )">
+                                                <div class="col-12 col-lg-8">
+                                                  <div class="form-group row">
+                                                    <label class="control-label col-6 "><span
+                                                        class="alert-red">*</span>
+                                                      {{'declaration.party.customs.declaration.impnum'
+                                                      | translate}}</label>
+
+                                                      <label class="control-label col-6 "><span
+                                                        class="alert-red">*</span>
+                                                      {{'declaration.party.customs.declaration.importer.name'
+                                                      | translate}}</label>
+
+                                                    <div class="col-12 col-lg-6">
+                                                      <div class="form-group">
+                                                        <div class="search-input-custom">
+                                                          <img *ngIf="!notProvisional" class="btn btn-outline-primary mt-0"
+                                                            (click)="onClickSearchImporter()"
+                                                            src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                                            class="input-search-icon" alt="">
+                                                          <input type="text"
+                                                            [attr.disabled]="notProvisional ? true : null" required
+                                                            class="form-control" (change)="getImpExpNameByCode(true)"
+                                                            [(ngModel)]="currentPartyData.importerDTO.accountCode"
+                                                            [ngModelOptions]="{standalone: true}"
+                                                            id="importerAccountCode" />
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                    <div class="col-12 col-lg-6">
+                                                      <div class="form-group">
+
+                                                        <input type="text" [attr.disabled]="true" class="form-control"
+                                                          value="" [(ngModel)]="currentPartyData.importerDTO.partyName"
+                                                          [ngModelOptions]="{standalone: true}" />
+                                                      </div>
+                                                    </div>
+                                                    <!-- <div
+                                                      class="col-12 col-xl-2 col-lg-8 d-none">
+                                                      <button type="button" class="btn btn-outline-primary mt-0"
+                                                        (click)="
+                                                      onClickSearchImporter()
+                                                    ">
+                                                        {{'action.research' | translate }}
+                                                      </button>
+                                                    </div> -->
+                                                    <!-- <div class="field-error-message d-flex justify-content-center"
+                                                          *ngIf="isInvalid ">
+                                                          <div class="text-danger">
+                                                            {{
+                                                            validationErrorText
+                                                            | translate
+                                                            }}
+                                                          </div>
+                                                        </div> -->
+                                                  </div>
+                                                </div>
+                                              </ng-container>
+
+
+
+                                              <!-- IMPORTER END -->
+
+
+                                              <!-- IMPORTER ACTIVITIES -->
+                                              <ng-container
+                                                *ngIf="
+                                                  ((currentPartyData.baseData.declarationType=='IMP') || (currentPartyData.baseData.declarationType=='WHE')
+			     || (currentPartyData.baseData.declarationType=='EXW')
+				|| (currentPartyData.baseData.declarationType=='TIM')
+				|| (currentPartyData.baseData.declarationType == 'TRN'
+						&& currentPartyData.baseData.entryPortType != 'F'
+						&& currentPartyData.baseData.exitPortType == 'F') || (currentPartyData.baseData.registeredTraderForTransit != null &&  currentPartyData.baseData.registeredTraderForTransit == 'Y')) && (currentPartyData.importerDTO.accountType == 'COM')">
+                                                <div class="col-12 col-lg-4">
+
+                                                  <div class="form-group row">
+
+                                                    <label
+                                                      class="control-label col-6">  {{'declaration.party.customs.ac.cr.activities'
+                                                      |
+                                                      translate}}
+                                                    </label>
+                                                    <div class="col-12">
+                                                      <div class="form-group">
+                                                        <div class="search-input-custom">
+                                                          <img  title="{{currentPartyData.importerDTO.mbtCrActivities}}" src="assets/dashboard/images/info-circle.svg" class="input-search-icon" alt="">
+                                                          <input type="text" [attr.disabled]="true" class="form-control"
+                                                          value="{{currentPartyData.importerDTO.mbtCrActivities ? getValue(currentPartyData.importerDTO.mbtCrActivities): ''}}" />
+
+                                                        </div>
+
+
+
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+
+                                              </ng-container>
+                                            </ng-container>
+
+
+                                            <!-- EXPORTER START -->
+
+                                            <div class="col-12">
+                                              <ng-container *ngIf="currentPartyData.baseData.hasCourierDec && ( currentPartyData.baseData.declarationType=='EXP'
+                                                    ||(currentPartyData.baseData.declarationType=='TEX')
+                                                    ||(currentPartyData.baseData.declarationType=='REE' )||(currentPartyData.baseData.declarationType=='REW') )
+                                                       ">
+                                                <div class="form-group">
+                                                  <label class="control-label"> <span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.courier.personal.declaration'
+                                                    | translate}}</label>
+                                                  <div class="form-check my-0">
+                                                    <div [ngClass]="{'disabled-element': notProvisional}"
+                                                      class="d-flex">
+                                                      <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                          <input required
+                                                            [ngClass]="{'disabled-element': notProvisional}"
+                                                            [(ngModel)]="currentPartyData.exporterDTO.isPersonalCourierDec"
+                                                            [ngModelOptions]="{standalone: true}"
+                                                            name="isPersonalCourierDecEXP" class="form-check-input"
+                                                            type="radio" id="yes" value="Y" />
+
+                                                          {{'declaration.party.customs.common.yes'
+                                                          |
+                                                          translate}}
+                                                          <i class="input-frame"></i>
+                                                        </label>
+                                                      </div>
+
+
+                                                      <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                          <input required
+                                                            [ngClass]="{'disabled-element': notProvisional}"
+                                                            [(ngModel)]="currentPartyData.exporterDTO.isPersonalCourierDec"
+                                                            name="isPersonalCourierDecEXP" class="form-check-input"
+                                                            type="radio" [ngModelOptions]="{standalone: true}" id="no"
+                                                            value="N" />
+
+                                                          {{'declaration.party.customs.common.no' |
+                                                          translate}}<i class="input-frame"></i>
+                                                        </label>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </ng-container>
+                                            </div>
+
+                                            <ng-container *ngIf="(currentPartyData.baseData.declarationType=='EXP')
+                                                  ||(currentPartyData.baseData.declarationType=='TEX')
+                                                  ||(currentPartyData.baseData.declarationType=='REE')
+                                                  ||(currentPartyData.baseData.declarationType=='REW')
+                                                  ||(currentPartyData.baseData.documentType == 'F3')
+                                                  || (currentPartyData.baseData.documentType == 'F7')">
+                                              <div class="col-12 col-lg-6">
+
+                                                <div class="form-group row">
+                                                  <label class="control-label col-12"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.exporter'
+                                                    |
+                                                    translate}}
+                                                    <!-- <span class="alert-red">*</span> -->
+                                                  </label>
+                                                  <div class="col-12 col-lg-6">
+                                                    <div class="form-group">
+                                                      <div class="search-input-custom">
+                                                        <img *ngIf="!notProvisional" class="btn btn-outline-primary mt-0"
+                                                          (click)="onClickSearchExporter()"
+                                                          src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                                          class="input-search-icon" alt="">
+                                                        <input (change)="getImpExpNameByCode(false)" required
+                                                          [attr.disabled]="notProvisional ? true : null" type="text"
+                                                          class="form-control" value=""
+                                                          [(ngModel)]="currentPartyData.exporterDTO.accountCode"
+                                                          [ngModelOptions]="{standalone: true}"
+                                                          id="exporterAccountCode" />
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                  <div class="col-12 col-lg-6">
+                                                    <div class="form-group">
+                                                      <input type="text" [attr.disabled]="true" class="form-control"
+                                                        value="" [(ngModel)]="currentPartyData.exporterDTO.partyName"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        id="exporterCompanyName" />
+                                                    </div>
+                                                  </div>
+                                                  <!-- <div *ngIf="!notProvisional" class="col-12 col-lg-2 d-none">
+                                                    <button type="button" class="btn btn-outline-primary mt-0" (click)="
+                                                      onClickSearchExporter()
+                                                    ">
+                                                      {{'action.research' | translate }}
+                                                    </button>
+                                                  </div> -->
+                                                  <!-- <div class="field-error-message" *ngIf="
+                                                    formSubmitted &&
+                                                    partyForm
+                                                      .get('exporterName')
+                                                      .hasError('required')
+                                                  ">
+                                                  <div class="text-danger">
+                                                    {{
+                                                    validationErrorText
+                                                    | translate
+                                                    }}
+                                                  </div>
+                                                </div> -->
+                                                </div>
+                                              </div>
+
+
+                                              <!-- EXPORTER ACTIVITIES -->
+                                              <ng-container
+                                                *ngIf="
+                                                    (currentPartyData.baseData.declarationType=='EXP')
+                                                    ||(currentPartyData.baseData.declarationType=='TEX')
+                                                    ||(currentPartyData.baseData.declarationType=='REE')
+                                                    ||(currentPartyData.baseData.declarationType=='REW')
+                                                    ||(currentPartyData.baseData.documentType == 'F3')
+                                                    || (currentPartyData.baseData.documentType == 'F7') && (currentPartyData.exporterDTO.accountType == 'COM')">
+                                                <div class="col-12 col-lg-6">
+
+                                                  <div class="form-group row">
+                                                    <label
+                                                      class="control-label">{{'declaration.party.customs.ac.cr.activities'
+                                                      |
+                                                      translate}}
+                                                    </label>
+
+                                                    <div class="col-12">
+                                                      <div class="form-group">
+                                                        <div class="search-input-custom">
+                                                          <img  title="{{currentPartyData.exporterDTO.mbtCrActivities}}" src="assets/dashboard/images/info-circle.svg" class="input-search-icon" alt="">
+                                                          <input type="text" [attr.disabled]="true" class="form-control"
+                                                          value="{{currentPartyData.exporterDTO.mbtCrActivities ? getValue(currentPartyData.exporterDTO.mbtCrActivities): ''}}" />
+
+                                                        </div>
+
+
+
+                                                      </div>
+                                                    </div>
+
+
+                                                  </div>
+                                                </div>
+                                              </ng-container>
+                                            </ng-container>
+                                            <!-- EXPORT END -->
+
+
+                                            <!-- KSA -->
+                                            <ng-container *ngIf="(currentPartyData.baseData.declarationType=='EXP')
+                                                  ||(currentPartyData.baseData.declarationType=='TEX')
+                                                  ||(currentPartyData.baseData.declarationType=='REE')">
+                                              <div class="col-12 col-lg-6">
+
+                                                <div class="form-group row">
+                                                  <label
+                                                    class="control-label col-12">{{'declaration.party.customs.common.importer.type.ksa'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <div class="col-12 col-lg-3">
+                                                    <div class="form-group">
+
+                                                      <div class="form-check my-0">
+                                                        <div [ngClass]="{'disabled-element': notProvisional}"
+                                                          class="d-flex">
+                                                          <div class="form-check form-check-inline">
+                                                            <label class="form-check-label">
+                                                              <input [ngClass]="{'disabled-element': notProvisional}"
+                                                                [(ngModel)]="currentPartyData.ksaImporterFlag"
+                                                                [ngModelOptions]="{standalone: true}"
+                                                                name="ksaImporterFlag" class="form-check-input"
+                                                                type="radio" id="yes" value="Y" />
+
+                                                              {{'declaration.party.customs.common.yes' |
+                                                              translate}}
+                                                              <i class="input-frame"></i>
+                                                            </label>
+                                                          </div>
+
+                                                          <div class="form-check form-check-inline">
+                                                            <label class="form-check-label">
+                                                              <input [ngClass]="{'disabled-element': notProvisional}"
+                                                                [(ngModel)]="currentPartyData.ksaImporterFlag"
+                                                                [ngModelOptions]="{standalone: true}"
+                                                                name="ksaImporterFlag" class="form-check-input"
+                                                                type="radio" id="no" value="N" />
+
+                                                              {{'declaration.party.customs.common.no' |
+                                                              translate}}
+                                                              <i class="input-frame"></i>
+                                                            </label>
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+
+                                            </ng-container>
+
+
+                                            <!-- importer name/address optional-->
+                                            <ng-container *ngIf="((currentPartyData.baseData.declarationType=='EXP')
+                                                  ||(currentPartyData.baseData.declarationType=='TEX')
+                                                  ||(currentPartyData.baseData.declarationType=='REE'))">
+
+                                              <ng-container *ngIf="(currentPartyData.ksaImporterFlag == 'N')">
+                                                <div class="col-12 col-lg-6">
+                                                  <div class="form-group row">
+                                                    <label class="control-label"> <span class="alert-red">*</span>
+                                                      {{'declaration.party.customs.declaration.importer.name' |
+                                                      translate}}
+                                                    </label>
+                                                    <div class="col-12">
+                                                      <div class="form-group">
+                                                        <input type="text"
+                                                          [attr.disabled]="notProvisional ? true : null" required
+                                                          class="form-control" value=""
+                                                          [(ngModel)]="currentPartyData.importerDTO.partyName"
+                                                          [ngModelOptions]="{standalone: true}"
+                                                          id="exporterAccountCode" />
+                                                      </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </ng-container>
+
+                                              <ng-container *ngIf="(currentPartyData.ksaImporterFlag == 'Y')">
+                                                <div class="col-12 col-lg-6">
+                                                  <div class="form-group">
+                                                    <!-- <label class="control-label">Importer</label> -->
+                                                    <label class="control-label"> <span class="alert-red">*</span>
+                                                      {{'declaration.party.customs.declaration.importer.ksa'
+                                                      |
+                                                      translate}}
+                                                    </label>
+                                                    <div class="row">
+                                                      <div class="col-12 col-lg-6">
+                                                        <div class="form-group">
+                                                          <div class="search-input-custom">
+                                                            <img *ngIf="!notProvisional" class="btn btn-outline-primary mt-0"
+                                                              (click)="onClickKsaImporter()"
+                                                              src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                                              class="input-search-icon" alt="">
+                                                            <input type="text" (change)="getKSAPartyByCode()"
+                                                              [attr.disabled]="notProvisional ? true : null" required
+                                                              class="form-control" value=""
+                                                              [(ngModel)]="currentPartyData.importerDTO.ksaPartyHqNumber"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              id="importerAccountCode" />
+                                                          </div>
+                                                        </div>
+                                                      </div>
+                                                      <div class="col-12 col-lg-6">
+                                                        <div class="form-group">
+                                                          <input type="text" [attr.disabled]="true" class="form-control"
+                                                            value=""
+                                                            [(ngModel)]="currentPartyData.importerDTO.ksaPartyName"
+                                                            [ngModelOptions]="{standalone: true}"
+                                                            id="importerCompanyName" />
+                                                        </div>
+                                                      </div>
+                                                      <!-- <div *ngIf="!notProvisional" class="col-12 col-lg-2 d-none">
+                                                        <button type="button" class="btn btn-outline-primary mt-0"
+                                                          (click)="
+                                                              onClickKsaImporter()
+                                                        ">
+                                                          {{'action.research' | translate }}
+                                                        </button>
+                                                      </div> -->
+                                                    </div>
+                                                    <!-- <div class="field-error-message d-flex justify-content-center"
+                                                          *ngIf="isInvalid ">
+                                                          <div class="text-danger">
+                                                            {{
+                                                            validationErrorText
+                                                            | translate
+                                                            }}
+                                                          </div>
+                                                        </div>
+                                                        <div class="field-error-message" *ngIf="
+                                                        formSubmitted &&
+                                                        partyForm
+                                                          .get('exporterName')
+                                                          .hasError('required')
+                                                      ">
+                                                          <div class="text-danger">
+                                                            {{
+                                                            validationErrorText
+                                                            | translate
+                                                            }}
+                                                          </div>
+                                                        </div> -->
+                                                  </div>
+                                                </div>
+                                              </ng-container>
+
+                                            </ng-container>
+
+
+                                            <!-- KSA END -->
+
+
+                                            <ng-container *ngIf="((currentPartyData.baseData.declarationType=='EXP')
+                                              ||(currentPartyData.baseData.declarationType=='TEX')
+                                              ||(currentPartyData.baseData.declarationType=='REE'))
+                                              && (currentPartyData.baseData.hasCourierDec)">
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label class="control-label"> <span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.importer.address'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <textarea type="text" [attr.disabled]="notProvisional ? true : null"
+                                                    required class="form-control" value=""
+                                                    [(ngModel)]="currentPartyData.importerDTO.partyAddress"
+                                                    [ngModelOptions]="{standalone: true}" id="exporterAccountCode"
+                                                    rows="3"></textarea>
+                                                </div>
+                                              </div>
+
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label class="control-label"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.importer.ph'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <input type="text" [attr.disabled]="notProvisional ? true : null"
+                                                    required class="form-control" value=""
+                                                    [(ngModel)]="currentPartyData.importerDTO.partyPhone"
+                                                    name="impPartyPhone" #impPartyPhone="ngModel"
+                                                    [ngModelOptions]="{standalone: false}"
+                                                    (blur)="validateTelNumber(currentPartyData.importerDTO.partyPhone, impPartyPhone)"
+                                                    id="exporterAccountCode" />
+                                                  <div class="color-red"
+                                                    *ngIf="impPartyPhone.invalid && impPartyPhone.errors.pattern">
+                                                    {{'validation.DIGITS_PLUS_AND_HYPHEN' | translate}} </div>
+                                                </div>
+                                              </div>
+
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label
+                                                    class="control-label">{{'declaration.party.customs.declaration.importer.idType'
+                                                    | translate}}</label>
+                                                  <select [attr.disabled]="notProvisional ? true : null"
+                                                    [(ngModel)]="currentPartyData.importerDTO.partyIdType"
+                                                    [ngModelOptions]="{standalone: true}" (change)="getIdType()">
+                                                    <ng-container
+                                                      *ngFor="let item of extraPageData.importerListSelectItemList">
+                                                      <option [value]="item.code">{{ selectedLang == 'en' ?
+                                                        item.enName : item.arName }}
+                                                      </option>
+                                                    </ng-container>
+                                                  </select>
+                                                </div>
+                                              </div>
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label class="control-label">
+                                                    {{'declaration.party.customs.declaration.importer.idNo'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <ng-container *ngIf="extraPageData.idTypeFlag">
+                                                    <input [attr.disabled]="notProvisional ? true : null" type="text"
+                                                      class="form-control" value=""
+                                                      [(ngModel)]="currentPartyData.importerDTO.partyIdNo"
+                                                      [ngModelOptions]="{standalone: true}" id="exporterAccountCode" />
+
+                                                  </ng-container>
+                                                  <ng-container *ngIf="!extraPageData.idTypeFlag">
+                                                    <input [attr.disabled]="notProvisional ? true : null" type="text"
+                                                      class="form-control" value=""
+                                                      [(ngModel)]="currentPartyData.importerDTO.partyIdNo"
+                                                      [ngModelOptions]="{standalone: true}" id="exporterAccountCode" />
+                                                  </ng-container>
+                                                </div>
+                                              </div>
+
+
+
+
+                                            </ng-container>
+
+                                            <ng-container *ngIf="((currentPartyData.baseData.documentType == 'N1')
+                                                || (currentPartyData.baseData.documentType == 'N3')
+                                                || (currentPartyData.baseData.documentType == 'F1')
+                                                  || (currentPartyData.baseData.declarationType=='EXW'))
+                                                && (currentPartyData.baseData.hasCourierDec)">
+                                              <div class="col-12 col-lg-4">
+
+                                                <div class="form-group">
+                                                  <label class="control-label"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.importer.address'
+                                                    |
+                                                    translate}}
+
+                                                  </label>
+                                                  <div>
+                                                    <div class="form-group">
+                                                      <textarea [attr.disabled]="notProvisional ? true : null"
+                                                        type="text" required class="form-control" value=""
+                                                        [(ngModel)]="currentPartyData.importerDTO.partyAddress"
+                                                        [ngModelOptions]="{standalone: true}" id="exporterAccountCode"
+                                                        rows="3"></textarea>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </ng-container>
+
+
+                                            <ng-container *ngIf="((currentPartyData.baseData.documentType == 'N1')
+                                              || (currentPartyData.baseData.documentType == 'N3')
+                                              || (currentPartyData.baseData.documentType == 'F1')
+                                                || (currentPartyData.baseData.declarationType=='EXW'))
+                                              && (currentPartyData.baseData.hasCourierDec)">
+                                              <!-- <div class="col-12 col-lg-4">
+
+                                                <div class="form-group">
+                                                  <label class="control-label"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.importer.address'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <div class="col-12 col-lg-3">
+                                                    <div class="form-group">
+                                                      <input [attr.disabled]="notProvisional ? true : null" type="text"
+                                                        required class="form-control" value=""
+                                                        [(ngModel)]="currentPartyData.importerDTO.partyAddress"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        id="exporterAccountCode" />
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div> -->
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label class="control-label"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.importer.ph'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <div>
+                                                    <div class="form-group">
+                                                      <input [attr.disabled]="notProvisional ? true : null" type="text"
+                                                        required class="form-control" value=""
+                                                        [(ngModel)]="currentPartyData.importerDTO.partyPhone"
+                                                        name="impPartyPhone1" #impPartyPhone1="ngModel"
+                                                        [ngModelOptions]="{standalone: false}"
+                                                        (blur)="validateTelNumber(currentPartyData.importerDTO.partyPhone, impPartyPhone1)"
+                                                        id="exporterAccountCode" />
+                                                      <div class="color-red"
+                                                        *ngIf="impPartyPhone1.invalid && impPartyPhone1.errors.pattern">
+                                                        {{'validation.DIGITS_PLUS_AND_HYPHEN' | translate}} </div>
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+
+
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label
+                                                    class="control-label">{{'declaration.party.customs.declaration.importer.idType'
+                                                    | translate}}</label>
+                                                  <select [attr.disabled]="notProvisional ? true : null"
+                                                    [(ngModel)]="currentPartyData.importerDTO.partyIdType"
+                                                    [ngModelOptions]="{standalone: true}" (change)="getIdType()">
+                                                    <ng-container
+                                                      *ngFor="let item of extraPageData.importerListSelectItemList">
+                                                      <option [value]="item.code">{{ selectedLang == 'en' ?
+                                                        item.enName : item.arName }}
+                                                      </option>
+                                                    </ng-container>
+                                                  </select>
+                                                </div>
+                                              </div>
+
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label class="control-label">
+                                                    {{'declaration.party.customs.declaration.importer.idNo'
+                                                    |
+                                                    translate}}
+
+                                                  </label>
+                                                  <ng-container *ngIf="extraPageData.idTypeFlag">
+                                                    <div class="form-group">
+                                                      <input [attr.disabled]="notProvisional ? true : null" type="text"
+                                                        class="form-control" value=""
+                                                        [(ngModel)]="currentPartyData.importerDTO.partyIdNo"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        id="exporterAccountCode" />
+                                                    </div>
+
+                                                  </ng-container>
+                                                  <ng-container *ngIf="!extraPageData.idTypeFlag">
+                                                    <div class="form-group">
+                                                      <input [attr.disabled]="notProvisional ? true : null" type="text"
+                                                        class="form-control" value=""
+                                                        [(ngModel)]="currentPartyData.importerDTO.partyIdNo"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        id="exporterAccountCode" />
+                                                    </div>
+
+                                                  </ng-container>
+                                                </div>
+                                              </div>
+                                            </ng-container>
+
+
+                                            <ng-container
+                                              *ngIf="(currentPartyData.baseData.documentType == 'N1')
+                                                || (currentPartyData.baseData.documentType == 'N3')
+                                                || (currentPartyData.baseData.documentType == 'F1')
+                                                  || (currentPartyData.baseData.declarationType=='EXW') || (currentPartyData.baseData.registeredTraderForTransit != null &&  currentPartyData.baseData.registeredTraderForTransit == 'Y')">
+
+                                              <div class="col-12 col-lg-4">
+
+                                                <div class="form-group">
+                                                  <label class="control-label"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.exporter.name'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <input type="text" [attr.disabled]="notProvisional ? true : null"
+                                                    required class="form-control" value=""
+                                                    [(ngModel)]="currentPartyData.exporterDTO.partyName"
+                                                    [ngModelOptions]="{standalone: true}" id="exporterAccountCode" />
+                                                </div>
+                                              </div>
+                                            </ng-container>
+
+
+                                            <!--Exporter address is optional for Normal Declaraion-->
+                                            <ng-container
+                                              *ngIf="(!currentPartyData.baseData.hasCourierDec) && (currentPartyData.baseData.documentType == 'N1')
+                                                || (currentPartyData.baseData.documentType == 'N3')
+                                                || (currentPartyData.baseData.documentType == 'F1') || (currentPartyData.baseData.registeredTraderForTransit != null &&  currentPartyData.baseData.registeredTraderForTransit == 'Y')">
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group">
+                                                  <label
+                                                    class="control-label">{{'declaration.party.customs.declaration.exporter.address'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <textarea type="text" [attr.disabled]="notProvisional ? true : null"
+                                                    class="form-control" value=""
+                                                    [(ngModel)]="currentPartyData.exporterDTO.partyAddress"
+                                                    [ngModelOptions]="{standalone: true}" id="exporterAccountCode"
+                                                    rows="3"></textarea>
+
+                                                </div>
+                                              </div>
+                                            </ng-container>
+
+                                            <!--Exporter address is Mandatory for Courier Declaraion-->
+                                            <ng-container *ngIf="(currentPartyData.baseData.hasCourierDec) && (currentPartyData.baseData.documentType == 'N1')
+                                                || (currentPartyData.baseData.documentType == 'N3')
+                                                || (currentPartyData.baseData.documentType == 'F1')">
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group ">
+                                                  <label class="control-label"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.exporter.address'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <textarea type="text" required
+                                                    [attr.disabled]="notProvisional ? true : null" class="form-control"
+                                                    value="" [(ngModel)]="currentPartyData.exporterDTO.partyAddress"
+                                                    [ngModelOptions]="{standalone: true}" id="exporterAccountCode"
+                                                    rows="3"></textarea>
+                                                </div>
+                                              </div>
+                                            </ng-container>
+
+
+                                            <ng-container *ngIf="(currentPartyData.baseData.hasCourierDec) && (currentPartyData.baseData.documentType == 'N1')
+                                                || (currentPartyData.baseData.documentType == 'N3')
+                                                || (currentPartyData.baseData.documentType == 'F1')">
+                                              <!-- <div class="col-12 col-lg-4">
+                                                    <div class="form-group ">
+                                                      <label
+                                                        class="control-label">{{'declaration.party.customs.declaration.exporter.address'
+                                                        |
+                                                        translate}}
+                                                      </label>
+                                                      <div class="col-12 col-lg-3">
+                                                        <div class="form-group">
+                                                          <input type="text" class="form-control" value=""
+                                                            [(ngModel)]="currentPartyData.exporterDTO.partyAddress"
+                                                            [ngModelOptions]="{standalone: true}"
+                                                            id="exporterAccountCode" />
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </div> -->
+
+
+                                              <div class="col-12 col-lg-4">
+                                                <div class="form-group ">
+                                                  <label class="control-label"><span class="alert-red">*</span>
+                                                    {{'declaration.party.customs.declaration.exporter.ph'
+                                                    |
+                                                    translate}}
+                                                  </label>
+                                                  <input type="text" [attr.disabled]="notProvisional ? true : null"
+                                                    required class="form-control" value=""
+                                                    [(ngModel)]="currentPartyData.exporterDTO.partyPhone"
+                                                    name="expPartyPhone" #expPartyPhone="ngModel"
+                                                    [ngModelOptions]="{standalone: false}"
+                                                    (blur)="validateTelNumber(currentPartyData.exporterDTO.partyPhone, expPartyPhone)"
+                                                    id="exporterAccountCode" />
+                                                  <div class="color-red"
+                                                    *ngIf="expPartyPhone.invalid && expPartyPhone.errors.pattern">
+                                                    {{'validation.DIGITS_PLUS_AND_HYPHEN' | translate}} </div>
+                                                </div>
+                                              </div>
+
+
+                                            </ng-container>
+
+
+                                            <!-- end exporter name/address -->
+                                            <ng-container *ngIf="((currentPartyData.baseData.declarationType=='IMP') || (currentPartyData.baseData.declarationType=='WHE')
+                                                || (currentPartyData.baseData.declarationType=='EXW')
+                                               || (currentPartyData.baseData.declarationType=='IMS')
+                                             || (currentPartyData.baseData.declarationType=='TIM')
+                                             || (currentPartyData.baseData.declarationType == 'TRN'
+                                                 && currentPartyData.baseData.entryPortType != 'F'
+                                                 && currentPartyData.baseData.exitPortType == 'F') || (currentPartyData.baseData.registeredTraderForTransit != null && currentPartyData.baseData.registeredTraderForTransit == 'Y') ) && !currentPartyData.baseData.hasCourierDec && (currentPartyData.importerDTO.accountCode != null && currentPartyData.importerDTO.accountCode != '')
+                                                  &&  currentPartyData.baseData.declarationType != 'IMS'">
+
+                                              <div class="col-12 col-lg-6">
+                                                <label for=""><span class="alert-red">*</span>
+                                                  {{'declaration.party.customs.declaration.party.using.trader.global.guarantee'
+                                                  | translate}}</label>
+                                                <div class="form-check my-0">
+                                                  <ng-container *ngIf="!notProvisional;else showViewGblGarenty2">
+                                                    <div class="d-flex">
+                                                      <div
+                                                        [ngClass]="{'disabled-element': notProvisional || !currentPartyData.importerDTO.hasActiveGlobalGuarantee || currentPartyData.declarationCourierInfoDTO.accountType == 'A'}">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input required
+                                                              [(ngModel)]="currentPartyData.declarationCourierInfoDTO.accountTypeOfTrader"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              name="accountTypeOfTraderIMP" class="form-check-input"
+                                                              type="radio" id="yes" value="T" />
+
+                                                            {{'declaration.party.customs.common.yes'
+                                                            |
+                                                            translate}}
+                                                            <i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+
+
+                                                      <div
+                                                        [ngClass]="{'disabled-element': notProvisional ||  !currentPartyData.importerDTO.hasActiveGlobalGuarantee || currentPartyData.declarationCourierInfoDTO.accountType == 'A'}">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input required
+                                                              [(ngModel)]="currentPartyData.declarationCourierInfoDTO.accountTypeOfTrader"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              name="accountTypeOfTraderIMP" class="form-check-input"
+                                                              type="radio" id="no" value="N" />
+
+                                                            {{'declaration.party.customs.common.no'
+                                                            |
+                                                            translate}}
+                                                            <i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </ng-container>
+                                                  <ng-template #showViewGblGarenty2>
+                                                    <div class="col-12">
+                                                      <ng-container
+                                                        *ngIf="currentPartyData.declarationCourierInfoDTO.accountType == 'T'">{{'declaration.party.customs.common.yes'
+                                                        | translate}}</ng-container>
+                                                      <ng-container
+                                                        *ngIf="currentPartyData.declarationCourierInfoDTO.accountType != 'T'">{{'declaration.party.customs.common.no'
+                                                        | translate}}</ng-container>
+                                                    </div>
+                                                  </ng-template>
+                                                </div>
+                                              </div>
+                                            </ng-container>
+
+
+                                            <ng-container
+                                              *ngIf="((currentPartyData.baseData.declarationType=='EXP')
+                                                  ||(currentPartyData.baseData.declarationType=='TEX')
+                                                  ||(currentPartyData.baseData.declarationType=='REE')
+                                                  ||(currentPartyData.baseData.declarationType=='REW')
+                                                  ||(currentPartyData.baseData.documentType == 'F3')
+                                                    || (currentPartyData.baseData.documentType == 'F7') ) && !currentPartyData.baseData.hasCourierDec &&
+                                                    (currentPartyData.exporterDTO.accountCode != null && currentPartyData.exporterDTO.accountCode != '')">
+
+                                              <div class="col-12 col-lg-6">
+                                                <label for=""><span class="alert-red">*</span>
+                                                  {{'declaration.party.customs.declaration.party.using.trader.global.guarantee'
+                                                  | translate}}</label>
+                                                <div class="form-check my-0">
+                                                  <ng-container *ngIf="!notProvisional;else showViewGblGarenty3">
+                                                    <div class="d-flex">
+
+                                                      <div
+                                                        [ngClass]="{'disabled-element': notProvisional || !currentPartyData.exporterDTO.hasActiveGlobalGuarantee || currentPartyData.declarationCourierInfoDTO.accountType == 'A'}">
+
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input required
+                                                              [(ngModel)]="currentPartyData.declarationCourierInfoDTO.accountTypeOfTrader"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              name="accountTypeOfTraderEXP" class="form-check-input"
+                                                              type="radio" id="yes" value="T" />
+
+                                                            {{'declaration.party.customs.common.yes'
+                                                            |
+                                                            translate}}
+                                                            <i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+
+                                                      </div>
+
+
+                                                      <div
+                                                        [ngClass]="{'disabled-element':notProvisional || !currentPartyData.exporterDTO.hasActiveGlobalGuarantee || currentPartyData.declarationCourierInfoDTO.accountType == 'A'}">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input required
+                                                              [(ngModel)]="currentPartyData.declarationCourierInfoDTO.accountTypeOfTrader"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              name="accountTypeOfTraderEXP" class="form-check-input"
+                                                              type="radio" id="no" value="N" />
+
+                                                            {{'declaration.party.customs.common.no'
+                                                            |
+                                                            translate}}
+                                                            <i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </ng-container>
+                                                  <ng-template #showViewGblGarenty3>
+                                                    <div class="col-12">
+                                                      <ng-container
+                                                        *ngIf="currentPartyData.declarationCourierInfoDTO.accountType == 'T'">{{'declaration.party.customs.common.yes'
+                                                        | translate}}</ng-container>
+                                                      <ng-container
+                                                        *ngIf="currentPartyData.declarationCourierInfoDTO.accountType != 'T'">{{'declaration.party.customs.common.no'
+                                                        | translate}}</ng-container>
+                                                    </div>
+                                                  </ng-template>
+                                                </div>
+                                              </div>
+                                            </ng-container>
+                                            <!-- container end-->
+                                          </div>
+                                        </div>
+                                      </ng-container>
+                                      <!-- end of IMPORTER / EXPORTER / OTHER PARTIES -->
+
+                                      <!-- id="awb_personal_declaration_lbl_1" -->
+                                      <!-- TODO : prod sync -->
+                                      <ng-container *ngIf="currentPartyData.baseData.declarationType=='REE'
+                                    &&  (currentPartyData.baseData.exitPortCode != null && currentPartyData.baseData.exitPortCode != '') && currentPartyData.baseData.exitPortCode == 'DOH'
+                                    && currentPartyData.airCargoEnabled == 'Yes'">
+                                        <div class="row">
+                                          <div class="col-12 col-lg-6">
+                                            <label for=""><span class="alert-red">*</span>
+                                              {{'declaration.party.customs.declaration.party.awb.is.personal.declaration'
+                                              | translate}}</label>
+                                            <div class="form-check my-0">
+                                              <div class="d-flex">
+                                                <div [ngClass]="notProvisional ? 'disabled-element' : ''">
+                                                  <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                      <input required
+                                                        [(ngModel)]="currentPartyData.exporterDTO.airCargoPersonalDeclaration"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        name="airCargoPersonalDeclaration" class="form-check-input"
+                                                        type="radio" id="yes" value="Y" />
+
+                                                      {{'declaration.party.customs.common.yes'
+                                                      |
+                                                      translate}}
+                                                      <i class="input-frame"></i>
+                                                    </label>
+                                                  </div>
+                                                </div>
+
+                                                <div [ngClass]="notProvisional ? 'disabled-element' : ''">
+                                                  <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                      <input required
+                                                        [(ngModel)]="currentPartyData.exporterDTO.airCargoPersonalDeclaration"
+                                                        [ngModelOptions]="{standalone: true}"
+                                                        name="airCargoPersonalDeclaration" class="form-check-input"
+                                                        type="radio" id="no" value="N" />
+
+                                                      {{'declaration.party.customs.common.no'
+                                                      |
+                                                      translate}}
+                                                      <i class="input-frame"></i>
+                                                    </label>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </ng-container>
+
+                                      <!-- TODO: Prod sync -->
+                                      <!-- awb_transport_thru_qas_lbl_val_1 -->
+                                      <ng-container *ngIf="currentPartyData.baseData.declarationType=='REE'
+                                    && (currentPartyData.baseData.exitPortCode != null && currentPartyData.baseData.exitPortCode != '') && currentPartyData.baseData.exitPortCode == 'DOH'
+                                    && currentPartyData.airCargoEnabled == 'Yes'">
+                                        <div class="row">
+                                          <div class="col-12 col-lg-6">
+                                            <label for=""><span class="alert-red">*</span>
+                                              {{'declaration.party.customs.declaration.party.awb.is.transport.thru.qas'
+                                              | translate}}</label>
+                                            <div class="form-check my-0">
+                                              <div class="d-flex">
+                                                <div [ngClass]="notProvisional ? 'disabled-element' : ''">
+                                                  <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                      <input required
+                                                        [(ngModel)]="currentPartyData.exporterDTO.transportThrouhgQAS"
+                                                        [ngModelOptions]="{standalone: true}" name="transportThrouhgQAS"
+                                                        class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                                      {{'declaration.party.customs.common.yes'
+                                                      |
+                                                      translate}}
+                                                      <i class="input-frame"></i>
+                                                    </label>
+                                                  </div>
+                                                </div>
+
+                                                <div [ngClass]="{'disabled-element': notProvisional}">
+                                                  <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                      <input required
+                                                        [(ngModel)]="currentPartyData.exporterDTO.transportThrouhgQAS"
+                                                        [ngModelOptions]="{standalone: true}" name="transportThrouhgQAS"
+                                                        class="form-check-input" type="radio" id="no" value="N" />
+
+                                                      {{'declaration.party.customs.common.no'
+                                                      |
+                                                      translate}}
+                                                      <i class="input-frame"></i>
+                                                    </label>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </ng-container>
+
+                                      <!-- start consinee / consiner -->
+                                      <ng-container
+                                        *ngIf="currentPartyData.baseData.declarationType =='TRN'
+                                          && !(currentPartyData.baseData.entryPortType != 'F'
+                                          && currentPartyData.baseData.exitPortType == 'F') && !(currentPartyData.baseData.registeredTraderForTransit != null && currentPartyData.baseData.registeredTraderForTransit == 'Y')">
+                                        <div class="mt-3 mt-lg-5">
+                                          <div class="row">
+                                            <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.consignor.name'
+                                                  | translate}}</label>
+                                                <input required type="text"
+                                                  [attr.disabled]="notProvisional ? true : null" class="form-control"
+                                                  [(ngModel)]="currentPartyData.consignorDTO.partyName"
+                                                  [ngModelOptions]="{standalone: true}">
+                                              </div>
+                                            </div>
+
+
+                                            <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.consignor.address'
+                                                  | translate}}</label>
+                                                <textarea required type="text"
+                                                  [attr.disabled]="notProvisional ? true : null" class="form-control"
+                                                  [(ngModel)]="currentPartyData.consignorDTO.partyAddress"
+                                                  [ngModelOptions]="{standalone: true}" rows="3"></textarea>
+                                              </div>
+                                            </div>
+
+                                            <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.consignee.name'
+                                                  | translate}}</label>
+                                                <input required type="text"
+                                                  [attr.disabled]="notProvisional ? true : null" class="form-control"
+                                                  [(ngModel)]="currentPartyData.consigneeDTO.partyName"
+                                                  [ngModelOptions]="{standalone: true}">
+                                              </div>
+                                            </div>
+
+
+                                            <div class="col-12 col-lg-4 mb-3 mb-lg-0">
+                                              <div class="form-group">
+                                                <label class="control-label"><span class="mandatory-field">*</span>
+                                                  {{'declaration.party.customs.declaration.consignee.address'
+                                                  | translate}}</label>
+                                                <textarea required [attr.disabled]="notProvisional ? true : null"
+                                                  type="text" class="form-control"
+                                                  [(ngModel)]="currentPartyData.consigneeDTO.partyAddress"
+                                                  [ngModelOptions]="{standalone: true}" rows="3"></textarea>
+                                              </div>
+                                            </div>
+
+                                          </div>
+                                        </div>
+
+                                      </ng-container>
+
+
+                                      <!--Change for QA#1980 (inspect without the presence of a representative from the company ) -->
+                                      <!--Panel Grid for impoter DTO  -->
+                                      <!--Whole Change will not apply for QpostDeclaration  -->
+                                      <ng-container *ngIf="currentPartyData.baseData.qpostDeclaration != 'Y'">
+                                        <div class="mt-3 mt-lg-5">
+                                          <div class="row">
+
+
+                                            <!-- Panel Grid for IMPORTER type DEC -->
+                                            <ng-container *ngIf="((currentPartyData.baseData.declarationType=='IMP')
+                                                || 	(currentPartyData.baseData.declarationType=='WHE')
+                                            ||  (currentPartyData.baseData.declarationType=='EXW')
+                                         ||  (currentPartyData.baseData.declarationType=='TIM')
+                                         ||  (currentPartyData.baseData.declarationType == 'TRN')
+                                         || (currentPartyData.baseData.declarationType == 'IMS'))
+                                          &&  (!currentPartyData.baseData.hasCourierDec)
+                                          &&  (!currentPartyData.importerDTO.individualFlag)">
+
+                                              <div class="col-12 col-lg-6 mb-3 mb-lg-0">
+                                                <label for="">
+                                                  {{'declaration.party.customs.declaration.party.inspectionWithoutRepresentative'
+                                                  |
+                                                  translate}}
+                                                </label>
+                                                <div class="form-check my-0">
+                                                  <ng-container *ngIf="!notProvisional;else showViewGblGarenty4">
+                                                    <div class="d-flex">
+
+                                                      <div [ngClass]="{'disabled-element':notProvisional}">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input
+                                                              [(ngModel)]="currentPartyData.importerDTO.inspectionWithoutRepresentative"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              name="inspectionWithoutRepresentativeIMP"
+                                                              class="form-check-input" type="radio" id="yes"
+                                                              value="Y" />
+
+                                                            {{'declaration.party.customs.common.yes' |
+                                                            translate}}<i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+
+
+                                                      <div [ngClass]="{'disabled-element':notProvisional}">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input name="inspectionWithoutRepresentativeIMP"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              [(ngModel)]="currentPartyData.importerDTO.inspectionWithoutRepresentative"
+                                                              class="form-check-input" type="radio" id="no" value="N" />
+
+                                                            {{'declaration.party.customs.common.no' |
+                                                            translate}}<i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+                                                    </div>
+                                                  </ng-container>
+                                                  <ng-template #showViewGblGarenty4>
+                                                    <div class="col-12">
+                                                      <ng-container
+                                                        *ngIf="currentPartyData.importerDTO.inspectionWithoutRepresentative == 'Y'">{{'declaration.party.customs.common.yes'
+                                                        | translate}}</ng-container>
+                                                      <ng-container
+                                                        *ngIf="currentPartyData.importerDTO.inspectionWithoutRepresentative != 'Y'">{{'declaration.party.customs.common.no'
+                                                        | translate}}</ng-container>
+                                                    </div>
+                                                  </ng-template>
+                                                </div>
+                                              </div>
+
+                                              <div class="col-12 mt-5">
+                                                <div class="alert col-12 alert-success mt-2 mb-4"
+                                                  style="font-weight: bold;" role="alert">
+                                                  {{'declaration.party.customs.common.search.notification.notelavel'
+                                                  | translate}} :
+                                                  {{'declaration.party.customs.declaration.party.inspectionWithoutRepresentative.note'
+                                                  | translate}}
+                                                </div>
+                                              </div>
+                                            </ng-container>
+
+
+                                            <!-- Panel Grid for EXPORTER type DEC -->
+                                            <ng-container *ngIf="((currentPartyData.baseData.declarationType=='EXP')
+                                          ||(currentPartyData.baseData.declarationType=='TEX')
+                                          ||(currentPartyData.baseData.declarationType=='REE')
+                                          ||(currentPartyData.baseData.declarationType=='REW'))
+                                                       &&  (!currentPartyData.baseData.hasCourierDec)
+                                                       &&  (!currentPartyData.exporterDTO.individualFlag)
+                                                       &&  (currentPartyData.baseData.qpostDeclaration != 'Y')">
+
+                                              <div class="col-12 col-lg-6 mb-3 mb-lg-0">
+                                                <label for="">
+                                                  {{'declaration.party.customs.declaration.party.inspectionWithoutRepresentative'
+                                                  |
+                                                  translate}}
+                                                </label>
+                                                <div class="form-check my-0">
+                                                  <div class="d-flex">
+                                                    <ng-container *ngIf="!notProvisional;else showViewGblGarenty5">
+                                                      <div [ngClass]="{'disabled-element':notProvisional}">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input
+                                                              [(ngModel)]="currentPartyData.exporterDTO.inspectionWithoutRepresentative"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              name="inspectionWithoutRepresentativeExp"
+                                                              class="form-check-input" type="radio" id="yes"
+                                                              value="Y" />
+
+                                                            {{'declaration.party.customs.common.yes' |
+                                                            translate}}
+                                                            <i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+
+                                                      <div [ngClass]="{'disabled-element':notProvisional}">
+                                                        <div class="form-check form-check-inline">
+                                                          <label class="form-check-label">
+                                                            <input name="inspectionWithoutRepresentativeExp"
+                                                              [ngModelOptions]="{standalone: true}"
+                                                              [(ngModel)]="currentPartyData.exporterDTO.inspectionWithoutRepresentative"
+                                                              class="form-check-input" type="radio" id="no" value="N" />
+
+                                                            {{'declaration.party.customs.common.no' |
+                                                            translate}}<i class="input-frame"></i>
+                                                          </label>
+                                                        </div>
+                                                      </div>
+                                                    </ng-container>
+
+                                                    <ng-template #showViewGblGarenty5>
+                                                      <div class="col-12">
+                                                        <ng-container
+                                                          *ngIf="currentPartyData.exporterDTO.inspectionWithoutRepresentative == 'Y'">{{'declaration.party.customs.common.yes'
+                                                          | translate}}</ng-container>
+                                                        <ng-container
+                                                          *ngIf="currentPartyData.exporterDTO.inspectionWithoutRepresentative != 'Y'">{{'declaration.party.customs.common.no'
+                                                          | translate}}</ng-container>
+                                                      </div>
+                                                    </ng-template>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="col-12 mt-5">
+                                                <div class="alert col-12 alert-info mt-2 mb-4"
+                                                  style="font-weight: bold;" role="alert">
+                                                  {{'declaration.party.customs.common.search.notification.notelavel'
+                                                  | translate}} :
+                                                  {{'declaration.party.customs.declaration.party.inspectionWithoutRepresentative.note'
+                                                  | translate}}
+                                                </div>
+                                              </div>
+                                            </ng-container>
+                                          </div>
+                                        </div>
+                                      </ng-container>
+
+                                      <!--Change for QA#1980  end Here -->
+                                      <!-- registeredTraderForTransitNoteAuth -->
+                                      <ng-container
+                                        *ngIf="!notProvisional && (currentPartyData.baseData.declarationType == 'TRN' && !(currentPartyData.baseData.entryPortType != 'F' && currentPartyData.baseData.exitPortType == 'F')
+                                      && !(currentPartyData.baseData.registeredTraderForTransit != null && currentPartyData.baseData.registeredTraderForTransit == 'Y'))">
+
+                                        <div class="row">
+                                          <div class="col-12 mt-5">
+                                            <div class="alert col-12 alert-info mt-2 mb-4" style="font-weight: bold;"
+                                              role="alert">
+                                              *{{'declaration.party.customs.declaration.party.registeredTraderForTransit.note.authorization'
+                                              | translate}}
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </ng-container>
+
+
+
+                                      <!-- </div> -->
+                                      <!-- </div> -->
+                                      <div class="row" *ngIf="!declarationNoView">
+                                        <div class="action-modal-search mt-1 mb-1">
+                                          <button *ngIf="!notProvisional;else showBtnInViewMode" type="button"
+                                            (click)="onSubmit()" class="btn btn-outline-primary">
+                                            {{'action.save' | translate}}
+                                          </button>
+                                          <ng-template #showBtnInViewMode>
+                                            <button
+                                              *ngIf="((headerSaveResponse?.hasTransferCCA)) || ((currentPartyData.loggedInUserIsSupervisor) && ((headerSaveResponse?.declarationDocumentStatus=='DRA')) && (headerSaveResponse?.hasUpdate))"
+                                              (click)="onSubmit()" class="btn btn-outline-primary">
+                                              {{'action.save' | translate}}
+                                            </button>
+
+                                          </ng-template>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-container>
+<ng-template #agentModelList>
+  <div id="impExpModalId">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{'account.accountmanagement.clearingagent' | translate}}
+          </h5>
+          <button type="button" (click)="this.modalRef.hide()" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-agent-modal (updateAgentTableData)="updateAgentTableData($event)" [AgencyList]="importerData">
+          </app-agent-modal>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- For Importer POPUP -->
+<ng-template #HeaderSearchPopupTemplateImpo>
+  <div id="impExpModalId">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{'declaration.party.customs.declaration.importer.list' |
+            translate}}
+          </h5>
+          <button type="button" (click)="this.modalRef.hide()" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-search-imp-exp [partyData]="currentPartyData" [isImpSearch]="true"
+            (valuesFromPopUp)="handleValuesFromPopupImpo($event)">
+          </app-search-imp-exp>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- For Importer POPUP -->
+
+
+<!-- For Exporter POPUP -->
+<ng-template #HeaderSearchPopupTemplateExpo>
+  <div id="impExpModalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{'declaration.party.customs.declaration.exporter.list' |
+            translate}}
+          </h5>
+          <button type="button" (click)="this.modalRef.hide()" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-search-imp-exp [partyData]="currentPartyData" [isImpSearch]="false"
+            (valuesFromPopUp)="handleValuesFromPopupExpo($event)">
+          </app-search-imp-exp>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+<!-- For Exporter POPUP -->
+
+<ng-template #KSAModel>
+
+  <div id="impExpModalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">{{'account.accountmanagement.user' | translate}}
+          </h5>
+          <button type="button" (click)="this.modalRef.hide()" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-ksa-modal [partyData]="currentPartyData" [isImpSearch]="true"
+            (updateKsaTableData)="updateKsaTableData($event)">
+          </app-ksa-modal>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <div class="modal-content">
+    <div class="modal-header">
+      <h3>User</h3>
+      <hr />
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" >
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+
+    </div>
+  </div> -->
+</ng-template>
+
+<!--duplicate upar hai
+ <div class="col-12 col-lg-6">
+  <div class="form-group ">
+    <label class="control-label">Exporter Phone Number <span class="alert-red">*</span></label>
+    <div class="col-12">
+      <input formControlName="exporterPhoneNumber" type="text" class="form-control" value="" />
+      <div class="field-error-message">
+        <div class="text-danger" *ngIf="formSubmitted && partyForm.get('exporterPhoneNumber').hasError('required')">
+          {{ validationErrorText | translate }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div> -->

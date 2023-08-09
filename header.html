@@ -1,0 +1,1972 @@
+<app-etir-doc-upload (attachmentDataOut)="handleUploadedETIRDoc($event)"></app-etir-doc-upload>
+<app-modal #modal [modalConfig]="modalConfig"> {{modalConfig?.modalBody}} </app-modal>
+
+<ng-container *ngIf="headerData && getObjKeys">
+  <form id="headerFrm" #headerFrm="ngForm">
+    <div class="tab-pane-disapled tab-pane-2-disapled" id="my-account">
+      <div class="tab-content-1">
+        <div class="tab-pane active" id="account-management">
+
+          <div class="row">
+            <div class="col">
+              <div class="collapse show" id="declarationCreateMain">
+                <div class="row">
+                  <div class="col-md-12 grid-margin stretch-card">
+                    <div class="card">
+                      <div class="card-body">
+
+                        <div class="row">
+                          <div class="col-md-9">
+                            <h3 class="title-card-form">{{'header.declarationInformation' | translate}}</h3>
+                          </div>
+                        </div>
+                        <div class="row" *ngIf="declarationStatus=='DRA' || declarationStatus=='SUB'">
+                          <ng-container *ngIf="declarationStatus=='DRA'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{'header.declarationProvisionalNumber' |
+                                  translate}}</label>
+                                <input [(ngModel)]="headerData.declarationDTO.declarationProvisionalNo"
+                                  [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                  [attr.disabled]="true" />
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <ng-container *ngIf="declarationStatus=='SUB'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{'declaration.create.customs.declaration.number' |
+                                  translate}}</label>
+                                <input [(ngModel)]="headerData.declarationDTO.declarationNo"
+                                  [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                  [attr.disabled]="true" />
+                              </div>
+                            </div>
+                          </ng-container>
+                        </div>
+
+                        <div class="row">
+
+                          <ng-container *ngIf="declarationStatus=='SUB'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label
+                                  class="control-label">{{"declaration.create.customs.declaration.date.of.submission" |
+                                  translate}}</label>
+                                <input type="text" class="form-control" [attr.disabled]="true"
+                                  [value]="headerData.declarationDTO.submittedDate | date : 'dd-MM-YYYY HH:mm:ss'"
+                                  [ngModelOptions]="{standalone:true}" />
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <div class="col-12 col-lg-3 mb-3 ">
+                            <div class="form-group">
+                              <label class="control-label"><span class="alert-red">*</span> {{"header.declarationType" |
+                                translate}}</label>
+                              <select id="declarationType" [attr.disabled]="declarationStatus != 'NEW' ? true : null"
+                                [ngModelOptions]="{standalone:true}" (change)="onChangeDecType($event)"
+                                name="declarationType" required [(ngModel)]="headerData.declarationDTO.declarationType">
+                                <ng-container *ngFor="let item of DeclTypeList">
+                                  <option [value]="item.value">
+                                    {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                  </option>
+                                </ng-container>
+                              </select>
+                              <div class="field-error-message">
+                                <div id="declarationType" class="text-danger">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div *ngIf="headerData.declarationDTO.declarationType == 'IMS'" class="col-12 col-lg-3 mb-3 ">
+                            <div class="form-group">
+                              <label class="control-label"> <span class="alert-red">*</span> {{'header.approvalNumber' |
+                                translate}}</label>
+                              <input name="impSuspendedRequestNo"
+                                [(ngModel)]="headerData.declarationDTO.impSuspendedRequestNo"
+                                [ngModelOptions]="{standalone:true}" type="text" class="form-control" required
+                                [attr.disabled]="declarationStatus != 'NEW' ? true : null" />
+                              <div class="field-error-message">
+                                <div id="impSuspendedRequestNo" class="text-danger">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+
+
+                          <div *ngIf="headerData.declarationDTO.declarationType == 'TIM'" class="col-12 col-lg-3 mb-3 ">
+                            <div class="form-group">
+                              <label class="control-label"> <span class="alert-red">*</span>
+                                {{'header.temporaryImportApplicationNumber' |
+                                translate}}</label>
+                              <input name="tempImportAppNo" [(ngModel)]="headerData.declarationDTO.tempImportAppNo"
+                                [ngModelOptions]="{standalone:true}" type="text" class="form-control" required
+                                [attr.disabled]="declarationStatus != 'NEW' || (headerData.declarationDTO.originalDeclarationNumber && headerData.declarationDTO.originalDeclarationNumber != null) ? true : null" />
+                              <div class="field-error-message">
+                                <div id="tempImportAppNo" class="text-danger">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- reddy -->
+                          <!-- starts here reddy analyis for new BRD && make sure exiting business NOT IMPACT  -->
+                          <!-- port of exit for Re-Export from WHE -->
+                          <ng-container
+                            *ngIf="(headerData.declarationDTO.declarationType == 'REW' && (headerData.declarationDTO.isMultiWHEDeclaration != null &&  headerData.declarationDTO.isMultiWHEDeclaration == 'Y'))">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label"><span class="alert-red">*</span> {{"header.portOfExit" |
+                                  translate}}</label>
+                                <ng-container *ngIf="declarationStatus == 'NEW';else showLblPortExit1">
+                                  <select name="portOfExitCode" required [ngModelOptions]="{standalone:true}"
+                                    type="text" class="form-control"
+                                    [attr.disabled]="declarationStatus !== 'NEW' ? true : null"
+                                    [(ngModel)]="headerData.declarationDTO.portOfExitCode"
+                                    (change)="onChangePortType($event, '2')">
+                                    <ng-container *ngFor="let item of entryPortTypeList">
+                                      <option [value]="item.value">
+                                        {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                      </option>
+                                    </ng-container>
+                                  </select>
+
+                                </ng-container>
+                                <ng-template #showLblPortExit1>
+                                  <input [(ngModel)]="headerData.declarationDTO.portOfExitCodeEnOrAr"
+                                    [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                    [attr.disabled]="true" />
+                                </ng-template>
+                                <div class="field-error-message">
+                                  <div class="text-danger" id="portOfExitCode">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div *ngIf="headerData.declarationDTO.exitPortType" class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{"header.portType" | translate}}</label>
+                                <input type="text" class="form-control" [attr.disabled]="true"
+                                  value='{{ "header.portTypeArr."+ headerData.declarationDTO.exitPortType | translate}}' />
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <!-- Harbour change start-->
+                          <ng-container *ngIf="declarationStatus == 'NEW'">
+                            <div
+                              *ngIf="(headerData.declarationDTO.exitPortType !== null && ( headerData.declarationDTO.declarationType == 'REW' && headerData.declarationDTO.isMultiWHEDeclaration !=  null && headerData.declarationDTO.isMultiWHEDeclaration == 'Y') )"
+                              class="col-12 col-lg-6">
+                              <div class="form-group">
+                                <label class="control-label">{{"header.isHarbour" | translate}}</label>
+                                <input type="text" class="form-control" disabled
+                                  value='{{ "header.harbourFlagArr."+ headerData.declarationDTO.harbourFlag  | translate}}' />
+                              </div>
+                            </div>
+                          </ng-container>
+                          <!--  end of exit port of RE-export from WHE -->
+
+                          <!-- Do you want to Re-export from Multiple Warehouse Declaration? -->
+                          <div class="col-12 col-lg-3 mb-3 "
+                            *ngIf="headerData.declarationDTO.declarationType == 'EXW' || headerData.declarationDTO.declarationType == 'REW'">
+                            <div class="form-group">
+                              <label class="control-label">
+                                <span class="alert-red">*</span>
+                                <ng-container *ngIf="headerData.declarationDTO.declarationType == 'EXW'">
+                                  {{'declaration.create.customs.warehouse.want.multiple.whe.declarations.imp' |
+                                  translate}}
+                                </ng-container>
+                                <ng-container *ngIf="headerData.declarationDTO.declarationType == 'REW'">
+                                  {{'declaration.create.customs.warehouse.want.multiple.whe.declarations.reexp' |
+                                  translate}}
+                                </ng-container>
+                              </label>
+                              <div class="col-12">
+                                <div class="form-check my-0 row">
+                                  <div class="d-flex">
+                                    <div class="form-check form-check-inline">
+                                      <label class="form-check-label">
+                                        <input requried
+                                          (change)="headerData.declarationDTO.licenseNo = null;headerData.declarationDTO.wheTraderCode = null;headerData.declarationDTO.wheTraderName = null; headerData.declarationDTO.warehousreDeclarationNo = null"
+                                          [ngModelOptions]="{standalone:true}"
+                                          [attr.disabled]="declarationStatus == 'DRA' || declarationStatus=='SUB' ? true : null"
+                                          [(ngModel)]="headerData.declarationDTO.isMultiWHEDeclaration"
+                                          name="isMultiWHEDeclaration" class="form-check-input" type="radio" id="yes"
+                                          value="Y" />
+                                        {{'declaration.party.customs.common.yes' |
+                                        translate}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                      <label class="form-check-label">
+                                        <input required
+                                          (change)="headerData.declarationDTO.licenseNo = null;headerData.declarationDTO.wheTraderCode = null;headerData.declarationDTO.wheTraderName = null; headerData.declarationDTO.warehousreDeclarationNo = null"
+                                          [ngModelOptions]="{standalone:true}"
+                                          [attr.disabled]="declarationStatus=='DRA' || declarationStatus=='SUB' ? true : null"
+                                          [(ngModel)]="headerData.declarationDTO.isMultiWHEDeclaration"
+                                          name="isMultiWHEDeclaration" class="form-check-input" type="radio" id="yes"
+                                          value="N" />
+                                        {{'declaration.party.customs.common.no' |
+                                        translate}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                            </div>
+
+                          </div>
+
+                          <!-- licence  starts here -->
+                          <div class="col-12 col-lg-3 mb-3 "
+                            *ngIf="(headerData.declarationDTO.declarationType == 'EXW'
+                          ||  headerData.declarationDTO.declarationType == 'REW') && (headerData.declarationDTO.isMultiWHEDeclaration != null && headerData.declarationDTO.isMultiWHEDeclaration == 'Y')">
+                            <div class="form-group">
+                              <label class="control-label"> <span class="alert-red">*</span> {{"header.BondedWarehouse"
+                                | translate}}</label>
+                              <select required [ngModelOptions]="{standalone:true}"
+                                [attr.disabled]="declarationStatus !=='NEW' ? true : null" name="bondedWareHouse"
+                                [(ngModel)]="headerData.declarationDTO.licenseNo">
+                                <ng-container *ngFor="let item of bondedWareHouseList">
+                                  <option [value]="item.value">
+                                    {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                  </option>
+                                </ng-container>
+                              </select>
+                              <div class="field-error-message">
+                                <div id="bondedWareHouse" class="text-danger">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- licence  ends here -->
+
+
+
+                          <!-- party starts here for Import -->
+                          <div class="col-12 col-lg-6 mb-3 "
+                            *ngIf="(headerData.declarationDTO.declarationType == 'EXW') && (headerData.declarationDTO.isMultiWHEDeclaration != null && headerData.declarationDTO.isMultiWHEDeclaration == 'Y')">
+                            <div class="form-group">
+                              <label class="control-label"><span class="alert-red">*</span>
+                                {{'declaration.create.customs.declaration.importer' |
+                                translate}} </label>
+                              <div class="row">
+                                <div class="col-12 col-lg-6">
+                                  <div class="form-group">
+                                    <div class="search-input-custom">
+                                      <img *ngIf="declarationStatus == 'NEW'" (click)="onClickSearchImporter()"
+                                        src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                        class="input-search-icon" alt="">
+                                      <input type="text" (change)="getImpExpNameByCode(true)" required
+                                        name="wheTraderName" class="form-control" [ngModelOptions]="{standalone:true}"
+                                        [attr.disabled]="declarationStatus !=='NEW' ? true : null"
+                                        [(ngModel)]="headerData.declarationDTO.wheTraderCode" value="">
+                                    </div>
+                                  </div>
+                                  <!-- <input type="text" (change)="getImpExpNameByCode(true)" required name="wheTraderName"
+                                    class="form-control" [ngModelOptions]="{standalone:true}"
+                                    [attr.disabled]="declarationStatus !=='NEW' ? true : null"
+                                    [(ngModel)]="headerData.declarationDTO.wheTraderCode" value=""> -->
+                                </div>
+
+                                <div class="col-12 col-lg-6">
+                                  <div class="form-group">
+                                    <input type="text" class="form-control" required
+                                      [ngModelOptions]="{standalone:true}" [attr.disabled]="true"
+                                      [(ngModel)]="headerData.declarationDTO.wheTraderName" value="">
+                                  </div>
+                                </div>
+                                <!-- <div class="col-2">
+                                  <button type="button" *ngIf="declarationStatus == 'NEW'"
+                                    class="btn btn-outline-primary mt-0 "
+                                    (click)="onClickSearchImporter()">{{'action.search' | translate}}</button>
+                                </div> -->
+                              </div>
+                              <div class="field-error-message">
+                                <div class="text-danger" id="wheTraderName">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- party ends here for Import -->
+
+
+                          <!-- party starts here for Re-Export from WHE -->
+                          <div class="col-12 col-lg-6 mb-3 "
+                            *ngIf="(headerData.declarationDTO.declarationType == 'REW') && (headerData.declarationDTO.isMultiWHEDeclaration != null && headerData.declarationDTO.isMultiWHEDeclaration == 'Y')">
+                            <div class="form-group">
+                              <label class="control-label"><span class="alert-red">*</span>
+                                {{'declaration.create.customs.declaration.exporter' |
+                                translate}} </label>
+                              <div class="row">
+                                <div class="col-12 col-lg-6">
+                                  <div class="form-group">
+                                    <div class="search-input-custom">
+                                      <img *ngIf="declarationStatus == 'NEW'" (click)="onClickSearchImporter()"
+                                        src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                        class="input-search-icon" alt="">
+                                      <input type="text" (change)="getImpExpNameByCode(false)" required
+                                        name="wheTraderName" class="form-control" [ngModelOptions]="{standalone:true}"
+                                        [attr.disabled]="declarationStatus !=='NEW' ? true : null"
+                                        [(ngModel)]="headerData.declarationDTO.wheTraderCode" value="">
+                                    </div>
+                                  </div>
+                                </div>
+
+                                <!-- <div [ngClass]="declarationStatus == 'NEW' ? 'col-5' : 'col-6'">
+                                  <input type="text" (change)="getImpExpNameByCode(false)" required name="wheTraderName"
+                                    class="form-control" [ngModelOptions]="{standalone:true}"
+                                    [attr.disabled]="declarationStatus !=='NEW' ? true : null"
+                                    [(ngModel)]="headerData.declarationDTO.wheTraderCode" value="">
+                                </div> -->
+
+                                <div class="col-12 col-lg-6">
+                                  <input type="text" class="form-control" [ngModelOptions]="{standalone:true}" required
+                                    [attr.disabled]="true" [(ngModel)]="headerData.declarationDTO.wheTraderName"
+                                    value="">
+                                </div>
+
+                                <!-- <div class="col-2" *ngIf="declarationStatus == 'NEW'">
+                                  <button type="button" class="btn btn-outline-primary mt-0 "
+                                    (click)="onClickSearchImporter()">{{'action.search' | translate}}</button>
+                                </div> -->
+
+                              </div>
+                              <div class="field-error-message">
+                                <div class="text-danger" id="wheTraderName">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                          <!-- party ends here for Export -->
+
+                          <!-- reddy new multi WHE table && declararions -->
+                          <div class="col-12 col-lg-6 mb-3"
+                            *ngIf="(headerData.declarationDTO.declarationType == 'EXW'
+                    ||  headerData.declarationDTO.declarationType == 'REW') && (headerData.declarationDTO.isMultiWHEDeclaration != null && headerData.declarationDTO.isMultiWHEDeclaration == 'Y')">
+                            <div class="form-group">
+                              <label class="control-label">
+                                <span *ngIf="headerData.wheModelList && headerData.wheModelList.length <= 0"
+                                  class="alert-red">*</span>
+                                {{'declaration.create.customs.declaration.declarationdata' |
+                                translate}} </label>
+                              <div class="row">
+                                <div class="col-12">
+                                  <div class="form-group">
+                                    <div class="search-input-custom">
+                                      <img *ngIf="declarationStatus != 'SUB'" (click)="searchRetrieveDeclaration()"
+                                        src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                        class="input-search-icon" alt="">
+                                      <input type="text"
+                                        [attr.required]="headerData.wheModelList && headerData.wheModelList.length <= 0 ? true : null"
+                                        (change)="getWHEModalList(null,$event)" class="form-control"
+                                        [ngModelOptions]="{standalone:true}"
+                                        [attr.disabled]="declarationStatus=='SUB' ? true : null"
+                                        [(ngModel)]="headerData.declarationDTO.warehousreDeclarationNo"
+                                        name="RetriveList">
+                                    </div>
+                                  </div>
+                                </div>
+                                <!-- <div class="col-10">
+                                  <input type="text"
+                                    [attr.required]="headerData.wheModelList && headerData.wheModelList.length <= 0 ? true : null"
+                                    (change)="getWHEModalList(null,$event)" class="form-control"
+                                    [ngModelOptions]="{standalone:true}"
+                                    [attr.disabled]="declarationStatus=='SUB' ? true : null"
+                                    [(ngModel)]="headerData.declarationDTO.warehousreDeclarationNo" name="RetriveList">
+                                </div> -->
+                                <!-- <div class="col-2" *ngIf="declarationStatus != 'SUB'">
+                                  <button type="button" class="btn btn-outline-primary mt-0 "
+                                    (click)="searchRetrieveDeclaration()">{{'action.search' | translate}}</button>
+                                </div> -->
+                              </div>
+                              <div class="field-error-message">
+                                <div class="text-danger" id="RetriveList">
+                                </div>
+                              </div>
+                              <div class="text-danger">
+                                {{'declaration.create.customs.warehouse.multiple.note' | translate}}
+                              </div>
+                            </div>
+                          </div>
+                          <!-- New Multi WHE ends here : reddy -->
+
+
+                          <!-- note  -->
+                          <ng-container
+                            *ngIf="(headerData.declarationDTO.declarationType == 'EXW'
+                          ||  headerData.declarationDTO.declarationType == 'REW') && (headerData.declarationDTO.isMultiWHEDeclaration != null && headerData.declarationDTO.isMultiWHEDeclaration == 'Y')">
+                            <div *ngIf="headerData.wheModelList && headerData.wheModelList.length > 0"
+                              class="col-12 col-lg-6 mb-3 ">
+
+                              <div class="table-responsive">
+                                <table id="serviceFeeDatilsPaymentTable" class="table custom-table">
+                                  <thead>
+                                    <tr>
+                                      <th>{{'OGA.serial_no' | translate}}
+                                      </th>
+                                      <th>
+                                        {{'declaration.create.customs.declaration.number'
+                                        | translate}}</th>
+                                      <th>
+                                        {{'declaration.create.customs.declaration.port.of.entry'
+                                        | translate}}</th>
+                                      <th>
+                                        {{'declaration.create.customs.declaration.port.type'
+                                        | translate}}</th>
+                                      <th>
+                                        {{'accountManagement.accountDatatable.status'
+                                        | translate}}</th>
+                                      <th>
+                                        {{'declaration.create.customs.declaration.seal.qa.option'
+                                        | translate}}</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                                    <ng-container *ngFor="let list of headerData.wheModelList;let i = index">
+                                      <tr>
+                                        <td> {{ i+1 }}
+                                        </td>
+                                        <td>{{list.warehousreDeclarationNo}}
+                                        </td>
+                                        <td>
+                                          {{list.portOfEntryCode}}
+                                        </td>
+                                        <td>{{"header.portTypeArr." + list.entryPortType | translate}}
+                                        </td>
+                                        <td>{{'declaration.create.wheStatuses.customs.common.bondewarehouse.' +
+                                          list.warehousreDeclarationStatus | translate}}
+                                        </td>
+                                        <td>
+                                          <a href="javascript:void(0);" class="font-weight-normal highlightText"
+                                            (click)="deleteWHEDeclaration(i)">
+                                            {{'bol.delete_selected' | translate}}
+                                          </a>
+                                        </td>
+                                      </tr>
+                                    </ng-container>
+                                  </tbody>
+                                </table>
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <!-- Reddy : Retrieve Declaration Data Starts here :old one -->
+                          <!-- refresh : resetWarehousePort : pending -->
+                          <ng-container
+                            *ngIf="(headerData.declarationDTO.declarationType == 'EXW'
+                    ||  headerData.declarationDTO.declarationType == 'REW') && (headerData.declarationDTO.isMultiWHEDeclaration == null  || headerData.declarationDTO.isMultiWHEDeclaration == 'N' )">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label"><span class="alert-red">*</span>
+                                  {{'declaration.create.customs.declaration.declarationdata' |
+                                  translate}} </label>
+                                <div class="row">
+                                  <div class="col-12">
+                                    <div class="form-group">
+                                      <div class="search-input-custom">
+                                        <img *ngIf="declarationStatus != 'SUB'" (click)="searchRetrieveDeclaration()"
+                                          src="assets/dashboard/images/magnifying-glass-solid.svg"
+                                          class="input-search-icon" alt="">
+                                          <input type="text" required class="form-control"
+                                          [ngModelOptions]="{standalone:true}" (change)="getWHEModalList(null,$event)"
+                                          [attr.disabled]="declarationStatus=='SUB' ? true : null"
+                                          [(ngModel)]="headerData.declarationDTO.warehousreDeclarationNo"
+                                          name="RetriveList">
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- <div [ngClass]="declarationStatus != 'SUB' ? 'col-8' : 'col-12'">
+                                    <input type="text" required class="form-control"
+                                      [ngModelOptions]="{standalone:true}" (change)="getWHEModalList(null,$event)"
+                                      [attr.disabled]="declarationStatus=='SUB' ? true : null"
+                                      [(ngModel)]="headerData.declarationDTO.warehousreDeclarationNo"
+                                      name="RetriveList">
+                                  </div>
+                                  <div class="col-4" *ngIf="declarationStatus != 'SUB'">
+                                    <button type="button" class="btn btn-outline-primary mt-0 "
+                                      (click)="searchRetrieveDeclaration()">{{'action.search'
+                                      | translate}}</button>
+                                  </div> -->
+                                </div>
+                                <div class="field-error-message">
+                                  <div class="text-danger" id="RetriveList">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <!-- below section completely depends on flag : resetWarehousePort however we need to display only for N as Y will be replaced by table-->
+                          <ng-container
+                            *ngIf="headerData.resetWarehousePort && (headerData.declarationDTO.declarationType == 'EXW'
+                          ||  headerData.declarationDTO.declarationType == 'REW') && (headerData.declarationDTO.isMultiWHEDeclaration == null  || headerData.declarationDTO.isMultiWHEDeclaration == 'N' )">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{'declaration.create.customs.declaration.port.of.entry' |
+                                  translate}}</label>
+                                <!-- <select name="portOfEntryCode" [ngModelOptions]="{standalone:true}" type="text"
+                                  class="form-control" [attr.disabled]="true"
+                                  [(ngModel)]="headerData.declarationDTO.portOfEntryCode"
+                                  (change)="onChangePortType($event, '1')">
+                                  <ng-container *ngFor="let item of entryPortTypeList">
+                                    <option [value]="item.value">
+                                      {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                    </option>
+                                  </ng-container>
+                                </select> -->
+                                <input [(ngModel)]="headerData.declarationDTO.portOfEntryCodeEnorAr"
+                                  [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                  [attr.disabled]="true" />
+                              </div>
+                            </div>
+                            <div *ngIf="headerData.declarationDTO.entryPortType" class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{'declaration.create.customs.declaration.port.type' |
+                                  translate}}</label>
+                                <input
+                                  [value]="'header.portTypeArr.' + headerData.declarationDTO.entryPortType | translate"
+                                  type="text" class="form-control" [attr.disabled]="true" />
+                              </div>
+                            </div>
+                          </ng-container>
+
+
+                          <!-- Reddy : Retrieve Declaration Data ENDS here :old one -->
+
+
+                          <!-- renderRegionOnly="true" -->
+                          <ng-container *ngIf="headerData.declarationDTO.declarationType == 'IMP'
+                            || headerData.declarationDTO.declarationType == 'TIM'
+                            || headerData.declarationDTO.declarationType == 'WHE'
+                            || headerData.declarationDTO.declarationType == 'TRN'
+                            || ( declarationStatus != 'NEW' && headerData.declarationDTO.declarationType == 'REW')
+                            || headerData.declarationDTO.declarationType == 'IMS'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label"><span class="alert-red">*</span> {{"header.portOfEntry" |
+                                  translate}}</label>
+                                <ng-container *ngIf="declarationStatus == 'NEW';else showLblPortEntry">
+                                  <select name="portOfEntryCode" required [ngModelOptions]="{standalone:true}"
+                                    type="text" class="form-control"
+                                    [attr.disabled]="declarationStatus !== 'NEW' ? true : null"
+                                    [(ngModel)]="headerData.declarationDTO.portOfEntryCode"
+                                    (change)="onChangePortType($event, '1')">
+                                    <ng-container *ngFor="let item of entryPortTypeList">
+                                      <option [value]="item.value">
+                                        {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                      </option>
+                                    </ng-container>
+                                  </select>
+                                </ng-container>
+                                <ng-template #showLblPortEntry>
+                                  <input [(ngModel)]="headerData.declarationDTO.portOfEntryCodeEnorAr"
+                                    [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                    [attr.disabled]="true" />
+                                </ng-template>
+                                <div class="field-error-message">
+                                  <div class="text-danger" id="portOfEntryCode">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div *ngIf="headerData.declarationDTO.entryPortType" class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{"header.portType" | translate}}</label>
+                                <input type="text" class="form-control" [attr.disabled]="true"
+                                  value='{{ "header.portTypeArr."+ headerData.declarationDTO.entryPortType | translate}}' />
+                              </div>
+                            </div>
+                          </ng-container>
+
+
+
+                          <!--/a4j:region-->
+                          <ng-container
+                            *ngIf="headerData.declarationDTO.declarationType == 'EXP'
+                          || headerData.declarationDTO.declarationType == 'REE'
+                          || headerData.declarationDTO.declarationType == 'TEX'
+                          || headerData.declarationDTO.declarationType == 'TRN'
+                          || (headerData.declarationDTO.declarationType == 'REW' && (headerData.declarationDTO.isMultiWHEDeclaration == null ||  headerData.declarationDTO.isMultiWHEDeclaration == 'N'))">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label"><span class="alert-red">*</span> {{"header.portOfExit" |
+                                  translate}}</label>
+                                <ng-container *ngIf="declarationStatus == 'NEW';else showLblPortExit">
+                                  <select name="portOfExitCode" required [ngModelOptions]="{standalone:true}"
+                                    type="text" class="form-control"
+                                    [attr.disabled]="declarationStatus !== 'NEW' ? true : null"
+                                    [(ngModel)]="headerData.declarationDTO.portOfExitCode"
+                                    (change)="onChangePortType($event, '2')">
+                                    <ng-container *ngIf="headerData.declarationDTO.declarationType=='TRN'">
+                                      <ng-container *ngFor="let item of exitPortTypeList">
+                                        <option [value]="item.value">
+                                          {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                        </option>
+                                      </ng-container>
+                                    </ng-container>
+                                    <ng-container *ngIf="headerData.declarationDTO.declarationType!='TRN'">
+                                      <ng-container *ngFor="let item of entryPortTypeList">
+                                        <option [value]="item.value">
+                                          {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                        </option>
+                                      </ng-container>
+                                    </ng-container>
+                                  </select>
+                                </ng-container>
+                                <ng-template #showLblPortExit>
+                                  <input [(ngModel)]="headerData.declarationDTO.portOfExitCodeEnOrAr"
+                                    [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                    [attr.disabled]="true" />
+                                </ng-template>
+
+                                <div class="field-error-message">
+                                  <div class="text-danger" id="portOfExitCode">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                            <div *ngIf="headerData.declarationDTO.exitPortType" class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{"header.portType" | translate}}</label>
+                                <input type="text" class="form-control" [attr.disabled]="true"
+                                  value='{{ "header.portTypeArr."+ headerData.declarationDTO.exitPortType | translate}}' />
+                              </div>
+                            </div>
+                          </ng-container>
+
+
+                          <!-- Harbour change start-->
+                          <ng-container *ngIf="declarationStatus == 'NEW'">
+                            <div
+                              *ngIf="((headerData.declarationDTO.exitPortType != null || headerData.declarationDTO.entryPortType != null) && ( headerData.declarationDTO.isMultiWHEDeclaration ==  null || headerData.declarationDTO.isMultiWHEDeclaration == 'N') )"
+                              class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{"header.isHarbour" | translate}}</label>
+                                <input type="text" class="form-control" disabled
+                                  value='{{ "header.harbourFlagArr."+ headerData.declarationDTO.harbourFlag  | translate}}' />
+                              </div>
+                            </div>
+                          </ng-container>
+                          <!-- Harbour change end-->
+                          <ng-container *ngIf="declarationStatus=='DRA' || declarationStatus=='NEW'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{"declaration.create.customs.declaration.date.of.creation"
+                                  | translate}}</label>
+                                <input type="text" class="form-control" [attr.disabled]="true" [(ngModel)]="createdDate"
+                                  [ngModelOptions]="{standalone:true}" />
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <!-- added on 28/01/2011 temp import freezone not showing statistical  -->
+                          <!-- 26/04/2011 replace export by re-export from UAT-->
+                          <div
+                            *ngIf="((headerData.declarationDTO.declarationType == 'IMP'
+                          || headerData.declarationDTO.declarationType == 'TIM')
+                          && headerData.declarationDTO.entryPortType != 'F')
+                          || (headerData.declarationDTO.declarationType == 'REE' || (declarationStatus !== 'NEW' && headerData.declarationDTO.declarationType == 'REW'))"
+                            class="col-12 col-lg-3 mb-3 ">
+                            <div class="form-group">
+                              <label class="control-label">
+                                <span class="alert-red">*</span>
+                                {{'header.statisticalDeclaration'
+                                | translate}}</label>
+                              <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+
+                                <div class="d-flex">
+                                  <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                      <input required ngModel [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                        [(ngModel)]="headerData.declarationDTO.statisticalDeclaration"
+                                        [ngModelOptions]="{standalone: true}" name="statisticalDeclaration"
+                                        class="form-check-input" type="radio" id="yes" value="Y" />
+                                      {{'declaration.party.customs.common.yes' |
+                                      translate}}
+                                      <i class="input-frame"></i>
+                                    </label>
+                                  </div>
+
+                                  <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                      <input required  ngModel [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                        name="statisticalDeclaration" [ngModelOptions]="{standalone: true}"
+                                        [(ngModel)]="headerData.declarationDTO.statisticalDeclaration"
+                                        class="form-check-input" type="radio" id="no" value="N" />
+
+                                      {{'declaration.party.customs.common.no' |
+                                      translate}}
+                                      <i class="input-frame"></i>
+                                    </label>
+                                  </div>
+
+                                </div>
+                                <div class="invalid-msg" *ngIf="declarationStatus == 'NEW' && headerData.declarationDTO.declarationType == 'REE'
+                                && headerData.declarationDTO.statisticalDeclaration == 'Y'">
+                                  {{"header.customs.REE.statistical.message.delaing.tab" |
+                                  translate}}</div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- 12-01-2014 Statistical Export (to gcc country / || to non gcc country) -->
+                          <ng-container *ngIf="headerData.declarationDTO.declarationType == 'EXP'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'declaration.create.customs.declaration.statistical.declaration'
+                                  | translate}}</label>
+                                <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            [(ngModel)]="headerData.declarationDTO.isStatisticalExport"
+                                            [ngModelOptions]="{standalone: true}" name="isStatisticalExport"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            name="isStatisticalExport" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.declarationDTO.isStatisticalExport"
+                                            class="form-check-input" type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <!-- 12-01-2014 Statistical Export (to gcc country / || to non gcc country) -->
+                          <div class="col-12 col-lg-3 mb-3 "
+                            *ngIf="(headerData.declarationDTO.declarationType == 'WHE')">
+                            <div class="form-group">
+                              <label class="control-label"> <span class="alert-red">*</span> {{"header.BondedWarehouse"
+                                | translate}}</label>
+                              <select required [ngModelOptions]="{standalone:true}"
+                                [attr.disabled]="declarationStatus=='SUB' ? true : null" name="bondedWareHouse"
+                                [(ngModel)]="headerData.declarationDTO.licenseNo">
+                                <ng-container *ngFor="let item of bondedWareHouseList">
+                                  <option [value]="item.value">
+                                    {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                  </option>
+                                </ng-container>
+                              </select>
+                              <div class="field-error-message">
+                                <div id="bondedWareHouse" class="text-danger">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- TODO : prod sync uncomment -->
+                          <!-- NADEEBOPR -484 changes Start-->
+                          <!-- ONLY DRA -->
+                          <ng-container
+                            *ngIf="((declarationStatus == 'DRA' || declarationStatus == 'NEW') && headerData.declarationDTO.declarationType == 'TRN' &&
+                          ((headerData.declarationDTO.entryPortType == 'F' && headerData.declarationDTO.exitPortType == 'F')
+                          || !(headerData.declarationDTO.exitPortType == 'F'))) || (declarationStatus == 'SUB' && headerData.declarationDTO.declarationType == 'TRN' && (headerData.declarationDTO.registeredTraderForTransit != null))">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'declaration.create.customs.declaration.registeredTraderForTransit'
+                                  | translate}}</label>
+                                <div class="col-12">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required
+                                            [(ngModel)]="headerData.declarationDTO.registeredTraderForTransit"
+                                            [ngModelOptions]="{standalone: true}" name="registeredTraderForTransit"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required name="registeredTraderForTransit"
+                                            [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.declarationDTO.registeredTraderForTransit"
+                                            class="form-check-input" type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+
+
+                          <!-- cater for freezone scenario 1-->
+                          <ng-container *ngIf="!(headerData.declarationDTO.declarationType == 'TRN'
+                          && (headerData.declarationDTO.exitPortType == 'F'
+                            || headerData.declarationDTO.entryPortType == 'F')
+                          && !(headerData.declarationDTO.exitPortType == 'F'
+                            && headerData.declarationDTO.entryPortType == 'F')
+                            )">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'header.onsiteInspectionApproval'
+                                  | translate}}</label>
+                                <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            [(ngModel)]="headerData.onsiteInspectionApproval"
+                                            [ngModelOptions]="{standalone: true}" name="onsiteInspectionApproval"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            name="onsiteInspectionApproval" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.onsiteInspectionApproval" class="form-check-input"
+                                            type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                  <div class="invalid-msg" *ngIf="headerData.onsiteInspectionApproval == 'Y'">
+                                    {{"header.onsiteInspectionApprovalMsg" |
+                                    translate}}</div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+
+
+                          <div class="col-12 col-lg-3 mb-3 ">
+                            <div class="form-group">
+                              <label class="control-label">
+                                <span class="alert-red">*</span>
+                                {{'header.hasContainer'
+                                | translate}}</label>
+                              <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+                                <div class="form-check my-0 row">
+                                  <div class="d-flex">
+                                    <div class="form-check form-check-inline">
+                                      <label class="form-check-label">
+                                        <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                          [(ngModel)]="headerData.containerFlag" [ngModelOptions]="{standalone: true}"
+                                          name="containerFlag" class="form-check-input" type="radio" id="yes"
+                                          value="Y" />
+
+                                        {{'declaration.party.customs.common.yes' |
+                                        translate}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                      <label class="form-check-label">
+                                        <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                          name="containerFlag" [ngModelOptions]="{standalone: true}"
+                                          [(ngModel)]="headerData.containerFlag" class="form-check-input" type="radio"
+                                          id="no" value="N" />
+
+                                        {{'declaration.party.customs.common.no' |
+                                        translate}}
+                                        <i class="input-frame"></i>
+                                      </label>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- start added by amoussaoui for detained goods cr -->
+                          <ng-container
+                            *ngIf="headerData.declarationDTO.declarationType == 'IMP' || headerData.declarationDTO.declarationType == 'TIM'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'header.hasDetainedReceipt'
+                                  | translate}}</label>
+                                <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required (change)="headerData.declarationDTO.dgReceiptNo =null"
+                                            [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            [(ngModel)]="headerData.dgReceiptFlag" [ngModelOptions]="{standalone: true}"
+                                            name="dgReceiptFlag" class="form-check-input" type="radio" id="yes"
+                                            value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required (change)="headerData.declarationDTO.dgReceiptNo =null"
+                                            [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            name="dgReceiptFlag" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.dgReceiptFlag" class="form-check-input" type="radio"
+                                            id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+
+                          <div
+                            *ngIf="headerData.dgReceiptFlag == 'Y' && (headerData.declarationDTO.declarationType == 'IMP' || headerData.declarationDTO.declarationType == 'TIM')"
+                            class="col-12 col-lg-3 mb-3 ">
+                            <div class="form-group">
+                              <label class="control-label"> <span class="alert-red">*</span> {{'header.receiptNumber' |
+                                translate}}</label>
+                              <input [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                [(ngModel)]="headerData.declarationDTO.dgReceiptNo" [ngModelOptions]="{standalone:true}"
+                                type="text" class="form-control" required />
+                            </div>
+                          </div>
+                          <!-- end added by amoussaoui for detained goods cr -->
+
+
+
+                          <!-- added by rakesh for 915 -->
+                          <!-- COMMENTED BECUASE : Service Fees Charges BRD V5.0 - Part-2.docx : 10.2 Escort Fees Between Customs Ports Charge -->
+                          <!-- <ng-container *ngIf="(headerData.declarationDTO.declarationType == 'TRN')
+                            || (headerData.declarationDTO.declarationType == 'WHE')
+                            || (headerData.declarationDTO.declarationType == 'REW')">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'header.escort'
+                                  | translate}}</label>
+                                <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required (change)="headerData.declarationDTO.outSideDohaFlag = 'N'"
+                                            [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            [(ngModel)]="headerData.declarationDTO.escortByCustomsFlag"
+                                            [ngModelOptions]="{standalone: true}" name="escortByCustomsFlag"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required (change)="headerData.declarationDTO.outSideDohaFlag = 'N'"
+                                            [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            name="escortByCustomsFlag" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.declarationDTO.escortByCustomsFlag"
+                                            class="form-check-input" type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container> -->
+                          <!-- ended  by rakesh for 915 -->
+
+                          <ng-container *ngIf="(headerData.declarationDTO.declarationType == 'EXP')">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'header.hasStrategicGoods'
+                                  | translate}}</label>
+                                <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            [(ngModel)]="headerData.strategicGoodsFlag"
+                                            [ngModelOptions]="{standalone: true}" name="strategicGoodsFlag"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            name="strategicGoodsFlag" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.strategicGoodsFlag" class="form-check-input"
+                                            type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container>
+
+
+                          <!-- added by rakesh for 915 -->
+                          <!-- ONLY NEW -->
+                          <!-- COMMENTED BECUASE : Service Fees Charges BRD V5.0 - Part-2.docx : 10.2 Escort Fees Between Customs Ports Charge -->
+                          <!-- <ng-container *ngIf="headerData.declarationDTO.escortByCustomsFlag == 'Y'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'header.customs.declaration.header.outSideDoha'
+                                  | translate}}</label>
+                                <div class="col-12" [ngClass]="declarationStatus == 'SUB' ? 'disabled-element' : ''">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            [(ngModel)]="headerData.declarationDTO.outSideDohaFlag"
+                                            [ngModelOptions]="{standalone: true}" name="outSideDohaFlag"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                            name="outSideDohaFlag" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.declarationDTO.outSideDohaFlag"
+                                            class="form-check-input" type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </ng-container> -->
+
+                          <div class="col-12 col-lg-6 mb-3 ">
+                            <div class="form-group">
+                              <label class="control-label">{{"header.remarks(optional)" | translate}}</label>
+                              <textarea #fname="ngModel" ngModel [(ngModel)]="headerData.declarationDTO.remarks" rows="4" class="form-control"
+                                [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                 name="remarks"></textarea>
+                              <div class="field-error-message">
+                                <div id="remarks" class="text-danger">
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+
+                          <!-- ONLY SUB -->
+                          <ng-container *ngIf="declarationStatus == 'SUB'">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  {{'declaration.create.customs.declaration.greenListTraders'
+                                  | translate}}</label>
+                                <input [value]="headerData.declarationDTO.isGreenListTrader" type="text"
+                                  class="form-control" [attr.disabled]="true" />
+                              </div>
+                            </div>
+
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{'declaration.create.customs.declaration.lane' |
+                                  translate}}</label>
+                                <div>
+                                  <img src="assets/dashboard/images/circle-red-16.png"
+                                    *ngIf="headerData.declarationDTO.rmsAsmFinalLane == 1">
+                                  <img src="assets/dashboard/images/circle-yellow-16.png"
+                                    *ngIf="headerData.declarationDTO.rmsAsmFinalLane == 2">
+                                  <img src="assets/dashboard/images/circle-green-16.png"
+                                    *ngIf="headerData.declarationDTO.rmsAsmFinalLane == 3">
+                                </div>
+                              </div>
+                            </div>
+
+                            <div
+                              *ngIf="headerData.declarationDTO.taxAccountStatus && headerData.declarationDTO.taxAccountStatus != null && headerData.declarationDTO.taxAccountStatus != ''"
+                              class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{'declaration.create.customs.common.tax.account.status' |
+                                  translate}}</label>
+                                <input *ngIf="headerData.declarationDTO.taxAccountStatus == 'Y'"
+                                  [value]="'declaration.create.customs.common.tax.account.status.registered' | translate"
+                                  type="text" class="form-control" [attr.disabled]="true" />
+                                <input *ngIf="headerData.declarationDTO.taxAccountStatus == 'N'"
+                                  [value]="'declaration.create.customs.common.tax.account.status.non.registered' | translate"
+                                  type="text" class="form-control" [attr.disabled]="true" />
+                              </div>
+                            </div>
+
+                          </ng-container>
+                        </div>
+
+
+                        <!-- ETIR Payment Details -->
+                        <!-- SUB || NEW || DRA -->
+                        <ng-container *ngIf="(declarationStatus == 'NEW' && (headerData.declarationDTO.declarationType == 'TRN'))
+                          || (declarationStatus == 'DRA' && headerData.declarationDTO.declarationType == 'TRN')
+                          || (declarationStatus=='SUB' && headerData.declarationDTO.eTIRPaymentFlag == 'Y')">
+
+
+                          <div class="divider-custom my-4"></div>
+                          <div class="row">
+                            <div class="col-md-9">
+                              <h3 class="title-card-form mt-3">
+                                {{"declaration.create.customs.declaration.eTIRPaymentDetails" | translate}}</h3>
+                            </div>
+                          </div>
+                          <!-- in edit ETIR their is two sections headerCreateETIRPanel & headerCreateETIRAmendPanel
+                            headerCreateETIRPanel follows (empty headerData.declarationDTO.originalDeclarationNumber)
+                            headerCreateETIRAmendPanel follows (!empty headerData.declarationDTO.originalDeclarationNumber)
+                            So we are going to wrap up this in one single section with the below conditions
+                            if declarationStatus == 'SUB' ||  (!empty headerData.declarationDTO.originalDeclarationNumber) -> disabled element
+                            else -> not disabled element
+                          -->
+                          <div
+                            *ngIf="(headerData.declarationDTO.originalDeclarationNumber == null || headerData.declarationDTO.originalDeclarationNumber == '') && (headerData.declarationDTO.declarationType == 'TRN')"
+                            class="row">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'declaration.create.customs.declaration.has.eTIRPaymentFlag'
+                                  | translate}}</label>
+                                <div class="col-12"
+                                  [ngClass]="declarationStatus == 'SUB' || (headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '') ? 'disabled-element' : ''">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required
+                                            [attr.disabled]="declarationStatus == 'SUB' || (headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '') ? true : null"
+                                            [(ngModel)]="headerData.declarationDTO.eTIRPaymentFlag"
+                                            [ngModelOptions]="{standalone: true}" name="eTIRPaymentFlag"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input required
+                                            [attr.disabled]="declarationStatus == 'SUB' || (headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '') ? true : null"
+                                            name="eTIRPaymentFlag" [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.declarationDTO.eTIRPaymentFlag"
+                                            class="form-check-input" type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <ng-container *ngIf="headerData.declarationDTO.eTIRPaymentFlag == 'Y'">
+
+                              <div class="col-12 col-lg-3 mb-3 ">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'declaration.create.customs.declaration.carnetTIRNo' |
+                                    translate}}</label>
+
+                                  <ng-container
+                                    *ngIf="declarationStatus != 'SUB' && (headerData.declarationDTO.originalDeclarationNumber == null || headerData.declarationDTO.originalDeclarationNumber == '')">
+                                    <div class="ap-otp-inputs d-flex">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo2,'')"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo1
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo1" data-index="0">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo3,carnetTIRNo1)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo2
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo2" data-index="1">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo4,carnetTIRNo2)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo3
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo3" data-index="2">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo5,carnetTIRNo3)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo4
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo4" data-index="3">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo6,carnetTIRNo4)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo5
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo5" data-index="4">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo7,carnetTIRNo5)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo6
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo6" data-index="5">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo8,carnetTIRNo6)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo7
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo7" data-index="6">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo9,carnetTIRNo7)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo8
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo8" data-index="7">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,carnetTIRNo10,carnetTIRNo8)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo9
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo9" data-index="8">
+                                      <input class="form-control" type="tel"
+                                        (keyup)="carnetController($event,'',carnetTIRNo9)"
+                                        [ngModelOptions]="{standalone: true}" maxlength="1" required #carnetTIRNo10
+                                        [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo10" data-index="9">
+                                    </div>
+                                  </ng-container>
+
+                                  <ng-container
+                                    *ngIf="declarationStatus == 'SUB' || (headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '')">
+                                    <input required [attr.disabled]="true"
+                                      [(ngModel)]="headerData.eTIRPaymentDTO.carnetTIRNo"
+                                      [ngModelOptions]="{standalone:true}" type="text" class="form-control" />
+                                  </ng-container>
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 ">
+                                <div class="form-group">
+                                  <label class="control-label"> <span class="alert-red">*</span>
+                                    {{'declaration.create.customs.declaration.validfrom' |
+                                    translate}}</label>
+                                  <div class="input-group date datepicker" id="datePickerExample">
+                                    <input type="text" required (keyup.Tab)="submittedDateFor.toggle()"
+                                      (keydown.Tab)="submittedDateFor.toggle()"
+                                      [attr.disabled]="declarationStatus == 'SUB' || (headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '') ? true : null"
+                                      [(ngModel)]="headerData.eTIRPaymentDTO.validFrom"
+                                      [ngModelOptions]="{standalone: true}" placeholder="" [bsConfig]="bsConfig"
+                                      class="form-control" #submittedDateFor="bsDatepicker" bsDatepicker>
+                                    <span class="input-group-addon" (click)="submittedDateFor.toggle()"><i
+                                        data-feather="calendar"></i></span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 ">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'declaration.create.customs.declaration.validfor' |
+                                    translate}}</label>
+                                  <div class="input-group date datepicker" id="datePickerExample">
+                                    <input type="text" required (keyup.Tab)="submittedDateFrom.toggle()"
+                                      (keydown.Tab)="submittedDateFrom.toggle()"
+                                      [attr.disabled]="declarationStatus == 'SUB' || (headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '') ? true : null"
+                                      [(ngModel)]="headerData.eTIRPaymentDTO.validFor"
+                                      [ngModelOptions]="{standalone: true}" placeholder="" [bsConfig]="bsConfig"
+                                      class="form-control" bsDatepicker #submittedDateFrom="bsDatepicker">
+                                    <span class="input-group-addon" (click)="submittedDateFrom.toggle()"><i
+                                        data-feather="calendar"></i></span>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 ">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'declaration.create.customs.declaration.issuedby' |
+                                    translate}}</label>
+                                  <input required pattern="^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF a-zA-Z]*$"
+                                    pattern-msg="{{'validation.CHARS_AND_SPACES' | translate}}" name="issuedBy"
+                                    [attr.disabled]="declarationStatus == 'SUB' || (headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '') ? true : null"
+                                    [(ngModel)]="headerData.eTIRPaymentDTO.issuedBy"
+                                    [ngModelOptions]="{standalone:true}" type="text" class="form-control" />
+                                  <div class="field-error-message">
+                                    <div id="issuedBy" class="text-danger">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <div class="col-12 col-lg-3 mb-3 ">
+                                <div class="form-group">
+                                  <label class="control-label"><span class="alert-red">*</span>
+                                    {{'declaration.create.customs.declaration.holder' |
+                                    translate}}</label>
+                                  <input required pattern="^[\u0600-\u065F\u066A-\u06EF\u06FA-\u06FF a-zA-Z]*$"
+                                    name="holder" pattern-msg="{{'validation.CHARS_AND_SPACES' | translate}}"
+                                    [attr.disabled]="headerData.declarationDTO.originalDeclarationNumber != null ? true : null"
+                                    [(ngModel)]="headerData.eTIRPaymentDTO.holder" [ngModelOptions]="{standalone:true}"
+                                    type="text" class="form-control" />
+                                  <div class="field-error-message">
+                                    <div id="holder" class="text-danger">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Upload ETIR documents -->
+                              <ng-container>
+
+                                <div class="col-12 col-lg-6">
+                                  <div class="row">
+                                    <div class="col-12">
+                                      <div class="form-group">
+                                        <button *ngIf="declarationStatus != 'SUB'" (click)="addAttachment()"
+                                          type="button"
+                                          class="btn btn-custom btn-outline-primary">{{'documents.AddAttachment' |
+                                          translate}}</button>
+                                        <button
+                                          *ngIf="headerData.declarationETIRFileUploadDocuments && headerData.declarationETIRFileUploadDocuments.length > 0"
+                                          (click)="downloadMultipleSelected()" type="button"
+                                          class="btn btn-custom btn-outline-primary">{{'action.download' |
+                                          translate}}</button>
+                                        <button
+                                          *ngIf="declarationStatus != 'SUB' && headerData.declarationETIRFileUploadDocuments && headerData.declarationETIRFileUploadDocuments.length > 0"
+                                          (click)="deleteSelected()" type="button"
+                                          class="btn btn-custom btn-outline-primary">{{'bol.delete_selected' |
+                                          translate}}</button>
+
+                                      </div>
+                                      <div
+                                        *ngIf="!(headerData.declarationETIRFileUploadDocuments && headerData.declarationETIRFileUploadDocuments.length > 0)"
+                                        class="col-12">
+                                        <span class="alert-red">*</span> {{'declaration.create.uploadETIR_copy' |
+                                        translate}}
+                                      </div>
+                                    </div>
+                                    <div class="col-12">
+                                      <div class="table-responsive">
+                                        <table id="decAssignSearchTable" class="table custom-table w-100">
+                                          <thead>
+                                            <tr>
+                                              <th class="no_sort_icon">
+                                                <input type="checkbox" name="id_1" [checked]="isChecked"
+                                                  (click)="selectAll($event)" />
+                                              </th>
+                                              <th>{{ "decl_approved_document.fileName" | translate }}
+                                              </th>
+                                              <th>{{ "decl_approved_document.date" | translate }}
+                                              </th>
+                                              <th>{{ "decl_approved_document.size" | translate }}
+                                              </th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr
+                                              *ngFor="let item of headerData.declarationETIRFileUploadDocuments; let i = index">
+                                              <td>
+                                                <input type="checkbox" name="id" [checked]="item?.isChecked"
+                                                  (change)="onSingleSelect($event,i)" />
+                                              </td>
+
+                                              <td><a href="javascript:void(0)" (click)="downloadSingleFile(item)"
+                                                  class="font-weight-normal highlightText">
+                                                  {{item.fileName}}</a>
+                                              </td>
+                                              <td>
+                                                {{ getDateConvrted(item.createdDate) }}
+                                              </td>
+                                              <td>
+                                                {{ getByteToKb(item.uplodedFileSize) }}
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                          <tbody
+                                            *ngIf="headerData.declarationETIRFileUploadDocuments == null || (headerData.declarationETIRFileUploadDocuments && headerData.declarationETIRFileUploadDocuments.length === 0)">
+                                            <tr>
+                                              <td colspan="20" class="no-data-available">
+                                                {{'accountManagement.accountDatatable.no_data' | translate}}
+                                              </td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </ng-container>
+                            </ng-container>
+
+                          </div>
+                        </ng-container>
+
+
+                        <!-- courier information -->
+                        <!-- Express Company Changes -->
+                        <ng-container *ngIf="(declarationStatus=='NEW' && headerData.courierInfoFlag && (headerData.declarationDTO.declarationType != 'IMS'))
+                        || (declarationStatus=='DRA' && headerData.declarationDTO.declarationType != 'IMS') || (declarationStatus=='SUB' && headerData.courierDecFlag == 'Y' ||
+                        (headerData.declarationDTO.qpostDeclaration != null
+                          && headerData.declarationDTO.qpostDeclaration == 'Y') )">
+
+                          <div class="divider-custom my-4"></div>
+                          <div class="row">
+                            <div class="col-md-9">
+                              <h3 class="title-card-form mt-3">
+                                {{"header.courierInformation" | translate}}</h3>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-12 col-lg-3 mb-3 "
+                              *ngIf="headerData.declarationDTO.declarationType == 'IMP'">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'header.isQPOSTDecleration' | translate}}
+                                </label>
+                                <div class="col-12">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input [ngModelOptions]="{standalone:true}"
+                                            [attr.disabled]="declarationStatus=='SUB' || (headerData.courierDecFlag == 'Y' || !headerData.canCreateQpostDeclaration) ? true : null"
+                                            required [(ngModel)]="headerData.declarationDTO.qpostDeclaration"
+                                            name="qpostDeclaration1" class="form-check-input" type="radio" id="yes"
+                                            value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input [ngModelOptions]="{standalone:true}"
+                                            [attr.disabled]="declarationStatus=='SUB' || (headerData.courierDecFlag == 'Y' || !headerData.canCreateQpostDeclaration) ? true : null"
+                                            required [(ngModel)]="headerData.declarationDTO.qpostDeclaration"
+                                            name="qpostDeclaration1" class="form-check-input" type="radio" id="yes"
+                                            value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+
+                            </div>
+
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <ng-container
+                                    *ngIf="(headerData.declarationDTO.declarationType != 'TRN' && headerData.declarationDTO.declarationType != 'WHE' && headerData.declarationDTO.declarationType != 'EXW' && headerData.declarationDTO.declarationType != 'REW')">*</ng-container>
+                                  {{'header.courierDecleration' | translate}}
+                                </label>
+                                <div class="col-12">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input (change)="this.resetFieldsOnParentFieldChange('courierDecFlag')"
+                                            [ngModelOptions]="{standalone:true}"
+                                            [attr.disabled]="declarationStatus=='SUB' || ((headerData.declarationDTO.declarationType == 'IMP' && headerData.declarationDTO.qpostDeclaration == 'Y') || (headerData.declarationDTO.declarationType == 'TRN' || headerData.declarationDTO.declarationType == 'WHE' || headerData.declarationDTO.declarationType == 'EXW' || headerData.declarationDTO.declarationType == 'REW')) ? true : null"
+                                            [attr.required]="(headerData.declarationDTO.declarationType != 'TRN' && headerData.declarationDTO.declarationType != 'WHE' && headerData.declarationDTO.declarationType != 'EXW' && headerData.declarationDTO.declarationType != 'REW') ? 'required': null"
+                                            [(ngModel)]="headerData.courierDecFlag" name="courierDecFlag"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input (change)="this.resetFieldsOnParentFieldChange('courierDecFlag') "
+                                            [ngModelOptions]="{standalone:true}"
+                                            [attr.disabled]="declarationStatus=='SUB' || ((headerData.declarationDTO.declarationType == 'IMP' && headerData.declarationDTO.qpostDeclaration == 'Y') || (headerData.declarationDTO.declarationType == 'TRN' || headerData.declarationDTO.declarationType == 'WHE' || headerData.declarationDTO.declarationType == 'EXW' || headerData.declarationDTO.declarationType == 'REW')) ? true : null"
+                                            [attr.required]="(headerData.declarationDTO.declarationType != 'TRN' && headerData.declarationDTO.declarationType != 'WHE' && headerData.declarationDTO.declarationType != 'EXW' && headerData.declarationDTO.declarationType != 'REW') ? 'required': null"
+                                            [(ngModel)]="headerData.courierDecFlag" name="courierDecFlag"
+                                            class="form-check-input" type="radio" id="yes" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+
+                            <div class="col-12 col-lg-3 mb-3 " *ngIf="headerData.courierDecFlag == 'Y'">
+                              <div class="form-group">
+                                <label class="control-label">{{"header.expressCompanies" | translate}} <span
+                                    class="alert-red">*</span></label>
+                                <select name="expressCompanies"
+                                  (change)="headerData.courierAccountFlag = null;headerData.courierPayModeFlag = 'N';onSelectexpressCourier()"
+                                  [attr.disabled]="declarationStatus=='SUB' ? true : null"
+                                  *ngIf="headerData.courierDecFlag == 'Y' && (ExpCompanyList && ExpCompanyList.length && ExpCompanyList.length > 2)"
+                                  [(ngModel)]="headerData.declarationDTO.courierCompName" required>
+                                  <ng-container *ngFor="let item of ExpCompanyList">
+                                    <option [value]="item.value">
+                                      {{currentLang =='en' ? item.labelEn : item.labelAr}}
+                                    </option>
+                                  </ng-container>
+                                </select>
+                                <input
+                                  *ngIf="headerData.courierDecFlag == 'Y' && (ExpCompanyList && ExpCompanyList.length && ExpCompanyList.length == 2)"
+                                  [(ngModel)]="headerData.declarationDTO.courierCompName"
+                                  [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                  [attr.disabled]="true" />
+                                <div class="field-error-message">
+                                  <div class="text-danger" id="expressCompanies">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div
+                              *ngIf="headerData.courierDecFlag == 'Y' && (headerData.declarationDTO.courierCompName && headerData.declarationDTO.courierCompName != null)"
+                              class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  <span class="alert-red">*</span>
+                                  {{'header.modeOfPayment' | translate}}
+                                </label>
+                                <div class="col-12">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input
+                                            (change)="headerData.courierAccountFlag = null; onChangeModeOfPayment()"
+                                            [attr.disabled]="declarationStatus=='SUB' ? true: null"
+                                            [ngModelOptions]="{standalone:true}" required
+                                            [(ngModel)]="headerData.courierPayModeFlag" name="courierPayModeFlag"
+                                            class="form-check-input" type="radio" id="yes" value="G" />
+
+                                          {{'header.globalGuarantee' |
+                                          translate}}
+                                          <i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input (change)="headerData.courierAccountFlag = null;"
+                                            [attr.disabled]="declarationStatus=='SUB' ? true: null"
+                                            [ngModelOptions]="{standalone:true}" required
+                                            [(ngModel)]="headerData.courierPayModeFlag" name="courierPayModeFlag"
+                                            class="form-check-input" type="radio" id="yes" value="N" />
+
+                                          {{'header.normal' |
+                                          translate}}
+                                          <i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                      <div class="field-error-message">
+                                        <div class="text-danger" id="courierPayModeFlag">
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
+                              </div>
+
+                            </div>
+
+
+                            <div class="col-12 col-lg-3 mb-3 "
+                              *ngIf="headerData.courierDecFlag == 'Y' &&  headerData.courierPayModeFlag == 'G' && (headerData.hasOwnGlobalAccount || headerData.authGlobalAccount )">
+                              <div class="form-group">
+                                <label class="control-label"><span class="alert-red">*</span>
+                                  {{"header.guaranteeAccount" | translate}}</label>
+                                <div class="form-group">
+                                  <ng-container
+                                    *ngIf="headerData.courierDecFlag == 'Y' &&
+                                 headerData.courierPayModeFlag == 'G' && headerData.authGlobalAccount && headerData.hasOwnGlobalAccount">
+                                    <div class="form-check form-check-inline">
+                                      <input [attr.disabled]="declarationStatus=='SUB' ? true: null"
+                                        class="form-check-input" [(ngModel)]="headerData.courierAccountFlag"
+                                        type="radio" name="courierAccountFlag" id="courierAccountFlag" value="C">
+                                      <label class="form-check-label-1"
+                                        for="courierAccountFlag">{{"header.expressCompany"
+                                        |
+                                        translate}}</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                      <input [attr.disabled]="declarationStatus=='SUB' ? true: null"
+                                        class="form-check-input" [(ngModel)]="headerData.courierAccountFlag"
+                                        type="radio" name="courierAccountFlag" id="courierAccountFlag" value="O">
+                                      <label class="form-check-label-1" for="courierAccountFlag">{{"header.ownCompany" |
+                                        translate}}</label>
+                                    </div>
+                                  </ng-container>
+
+                                  <input [attr.disabled]="true" class="form-control"
+                                    *ngIf="headerData.courierDecFlag == 'Y' &&
+                                headerData.courierPayModeFlag == 'G' && !headerData.authGlobalAccount && headerData.hasOwnGlobalAccount" type="text"
+                                    value="{{'declaration.create.customs.own.account' | translate}}">
+                                  <input [attr.disabled]="true" class="form-control"
+                                    *ngIf="headerData.courierDecFlag == 'Y' &&
+                                headerData.courierPayModeFlag == 'G' && headerData.authGlobalAccount && !headerData.hasOwnGlobalAccount" type="text"
+                                    value="{{'declaration.create.customs.company.account' | translate}}">
+
+                                  <div class="field-error-message">
+                                    <div class="text-danger" id="courierAccountFlag">
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-container>
+
+
+                        <ng-container *ngIf="isKSAShow">
+
+                          <div class="divider-custom my-4"></div>
+
+                          <div class="row">
+                            <div class="col-md-9">
+                              <h3 class="title-card-form mt-3">
+                                {{"header.KSADeclerationInformation" | translate}}</h3>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+
+                                <div class="col-12">
+                                  <label class="control-label">
+                                    {{'header.KSADecleration' | translate}}
+                                  </label>
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input (change)="headerData.declarationDTO.ksaDeclarationNo = null"
+                                            [attr.disabled]="declarationStatus=='SUB' ? true: null"
+                                            [ngModelOptions]="{standalone:true}"
+                                            [(ngModel)]="headerData.declarationDTO.ksaDecFlag" name="ksaDecFlag"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input (change)="headerData.declarationDTO.ksaDeclarationNo = null"
+                                            [attr.disabled]="declarationStatus=='SUB' ? true: null"
+                                            [ngModelOptions]="{standalone:true}"
+                                            [(ngModel)]="headerData.declarationDTO.ksaDecFlag" name="ksaDecFlag"
+                                            class="form-check-input" type="radio" id="yes" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                      <div class="field-error-message">
+                                        <div class="text-danger" id="ksaDecFlag">
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+
+                            <div class="col-12 col-lg-3 mb-3 " *ngIf="headerData.declarationDTO.ksaDecFlag == 'Y' ">
+                              <div class="form-group">
+                                <label class="control-label"> <span class="alert-red">*</span>
+                                  {{"header.KSADeclarationNumber" | translate}}</label>
+                                <input name="ksaDeclarationNo" [attr.disabled]="declarationStatus=='SUB' ? true: null"
+                                  [ngModelOptions]="{standalone:true}" required pattern="^[0-9]*$"
+                                  pattern-msg="{{'validation.DIGITS_ONLY' | translate}}"
+                                  [(ngModel)]="headerData.declarationDTO.ksaDeclarationNo" type="text"
+                                  class="form-control">
+                                <div class="field-error-message">
+                                  <div id="ksaDeclarationNo" class="text-danger">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                        </ng-container>
+
+
+
+
+                        <!-- ONLY SUB -->
+                        <ng-container
+                          *ngIf="(declarationStatus == 'SUB' || declarationStatus == 'DRA') && (headerData.declarationDTO.declarationType == 'EXP' || headerData.declarationDTO.declarationType == 'REE' || headerData.declarationDTO.declarationType == 'TEX')">
+
+                          <div class="divider-custom my-4"></div>
+
+                          <div class="row">
+                            <div class="col-md-9">
+                              <h3 class="title-card-form mt-3">
+                                {{"declaration.create.customs.header.coo.heading" | translate}}</h3>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  {{'declaration.create.customs.header.coo.subheading'
+                                  | translate}}</label>
+                                <div class="col-12 disabled-element">
+                                  <div class="form-check my-0 row">
+                                    <div class="d-flex">
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input [attr.disabled]="true" [(ngModel)]="headerData.declarationDTO.cooFlag"
+                                            [ngModelOptions]="{standalone: true}" name="cooFlag"
+                                            class="form-check-input" type="radio" id="yes" value="Y" />
+
+                                          {{'declaration.party.customs.common.yes' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+
+                                      <div class="form-check form-check-inline">
+                                        <label class="form-check-label">
+                                          <input [attr.disabled]="true" name="cooFlag"
+                                            [ngModelOptions]="{standalone: true}"
+                                            [(ngModel)]="headerData.declarationDTO.cooFlag" class="form-check-input"
+                                            type="radio" id="no" value="N" />
+
+                                          {{'declaration.party.customs.common.no' |
+                                          translate}}<i class="input-frame"></i>
+                                        </label>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-container>
+
+                        <ng-container *ngIf="declarationStatus !== 'NEW' && declarationStatus !== 'DRA'">
+                          <div class="divider-custom my-4"></div>
+
+                          <div class="row">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">{{'declaration.create.customs.account.comm.activity.PCL' |
+                                  translate}}</label>
+                                <input
+                                  [value]="(headerData.declarationDTO.pclrFlag == 'Y' ? 'header.harbourFlagArr.true' : 'header.harbourFlagArr.false') | translate"
+                                  [ngModelOptions]="{standalone:true}" type="text" class="form-control"
+                                  [attr.disabled]="true" />
+                              </div>
+                            </div>
+                          </div>
+                        </ng-container>
+
+                        <!-- amendment remarks -->
+                        <ng-container
+                          *ngIf="(headerData.declarationDTO.originalDeclarationNumber && headerData.declarationDTO.originalDeclarationNumber != null && headerData.declarationDTO.originalDeclarationNumber != '')">
+                          <div class="divider-custom my-4"></div>
+
+                          <div class="row">
+                            <div class="col-md-9">
+                              <h3 class="title-card-form mt-3">
+                                {{"declaration.create.customs.declaration.amendment" | translate}}</h3>
+                            </div>
+                          </div>
+
+                          <div class="row">
+                            <div class="col-12 col-lg-3 mb-3 ">
+                              <div class="form-group">
+                                <label class="control-label">
+                                  {{'declaration.create.customs.declaration.amendment.reason'
+                                  | translate}}</label>
+                                <textarea rows="4" class="form-control"
+                                  [attr.disabled]="declarationStatus == 'SUB' ? true : null"
+                                  [(ngModel)]="headerData.declarationDTO.amendRemarks" name="amendRemarks"></textarea>
+                                <div class="field-error-message">
+                                  <div id="remarks" class="text-danger">
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </ng-container>
+
+
+                        <div class="row" *ngIf="declarationStatus !='SUB'">
+
+                          <!-- <div *ngIf="successMessage !=''" class="alert alert-success">
+                                                    {{successMessage}}</div> -->
+                          <div class="action-modal-search mt-5 mb-4">
+                            <!-- <button type="button" class="btn btn-primary text-gray"
+                                                        style="font-weight: normal;">
+                                                        Cancel</button> -->
+                            <!-- <button type="button" class="btn btn-light btn-light-custom" (click)="cancel()">
+                            {{'registerVehicleForm.cancel' | translate}}
+                          </button> -->
+                            <!-- <button *ngIf="notProvisional" type="button" class="btn btn-light btn-light-custom">
+                            {{'header.print' | translate}}
+                          </button> -->
+                            <button (click)="saveHeader()" type="submit" class="btn btn-light btn-outline-primary">
+                              {{'registerVehicleForm.save' | translate}}
+                            </button>
+                            <!--<button *ngIf="!notProvisional" type="button" (click)="sharedSubmitButtonService.submit()"
+                            class="btn btn-light btn-light-custom">
+                            {{ 'action.submit' | translate }}
+                          </button>
+                          <button (click)="next()" type="button" class="btn btn-outline-primary">Next</button>-->
+                            <!-- <button (click)="next()" type="button"
+                                                        class="btn btn-outline-primary"
+                                                        [disabled]="successMessage ==='' ? 'disabled' : ''">Next</button> -->
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</ng-container>
+<!-- For POPUP -->
+
+<!-- For POPUP -->
+<!-- <ng-template #HeaderSearchPopupTemplate>
+  <div class="modal-content" style="min-width: 800px;">
+    <div class="modal-header">
+      <h3>{{headerData.declarationDTO.declarationType === 'EXW' ? 'Importer' : 'Exporter'}} list</h3>
+      <hr>
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modalRef.hide();">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+      <app-declare-search-popup (valuesFromPopUp)="handleValuesFromPopup($event)"></app-declare-search-popup>
+    </div>
+  </div>
+</ng-template> -->
+
+<ng-template #HeaderSearchPopupTemplate>
+  <div id="impExpModalId" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">
+            <ng-container *ngIf="headerData.declarationDTO.declarationType === 'EXW';else showImppList">
+              {{'declaration.party.customs.declaration.exporter.list' | translate}}
+            </ng-container>
+            <ng-template #showImppList>
+              {{'declaration.party.customs.declaration.importer.list' | translate}}
+            </ng-template>
+          </h5>
+          <button type="button" (click)="this.modalRef.hide()" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body">
+          <app-declare-search-popup [partyData]="headerData"
+            [isImpSearch]="headerData.declarationDTO.declarationType === 'EXW' ? false : true"
+            (valuesFromPopUp)="handleValuesFromPopup($event)">
+          </app-declare-search-popup>
+        </div>
+      </div>
+    </div>
+  </div>
+</ng-template>
+
+<!-- For POPUP -->
+
+<ng-template #SearchPopupTemplateRetrieveDeclaration>
+  <div class="modal-content" id="retrieveDeclarationPopUp">
+    <div class="modal-header">
+      <h5 class="modal-title" id="exampleModalLabel">
+        {{'assignment_config.customs.oga.auto.assignment.searchCritaria' | translate}}
+      </h5>
+      <hr />
+      <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="modalRef.hide()">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-body">
+
+      <app-retrieve-search-popup [getToSendData]="getToSendData"
+        (valuesFromPopUpDecSearch)="valuesFromPopupRetrieveDec($event)">
+      </app-retrieve-search-popup>
+
+    </div>
+  </div>
+</ng-template>

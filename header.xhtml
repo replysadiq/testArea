@@ -1,0 +1,989 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:a4j="http://richfaces.org/a4j"
+	xmlns:rich="http://richfaces.org/rich"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:cust="http://com.crimsonlogic.trade/customs" 
+	xmlns:customs="http://com.crimsonlogic.trade/customs"
+	xmlns:c="http://java.sun.com/jstl/core">
+
+<h:panelGrid width="704">
+		<h:panelGroup>
+ 		<h:outputText value="*" styleClass="mandatory" />
+		<h:outputText value=" #{bundle['customs.declaration.indicates.mandatory.fields']}" />
+	</h:panelGroup>
+	<h:panelGroup>
+		<h:graphicImage url="../../imgs/bullet.gif" width="10" height="10" /><rich:spacer width="5" height="15" />
+		<h:outputText value="#{bundle['customs.declaration.information']}" styleClass="table-header" />
+	</h:panelGroup>
+	<h:panelGroup>
+		<rich:separator lineType="none" styleClass="separator" width="100%" />
+	</h:panelGroup>
+</h:panelGrid>
+
+<h:panelGrid id="headerPanel" columns="3" width="704" cellspacing="0" 
+	style="margin: 0px 10px 0px 10px;" 
+	columnClasses="col_indent,edit_label,edit_value">
+
+	<h:outputText value="&#160;"/>
+	<h:panelGroup>
+		<cust:outputLabel for="decProvisionalNo" value=" #{bundle['customs.declaration.provisional.number']}" />
+	</h:panelGroup>
+	<h:panelGroup>
+		<h:outputText id="decProvisionalNo" value="#{declarationHeaderBean.declarationDTO.declarationProvisionalNo}"
+		style="font-weight:bold;"	/>
+	</h:panelGroup>
+		
+	<h:outputText value="&#160;"/>
+	<h:panelGroup>
+		<cust:outputLabel for="dateOfCreation" value=" #{bundle['customs.declaration.date.of.creation']}" /> 
+	</h:panelGroup>
+	<h:panelGroup>
+		<h:outputText id="dateOfCreation" value="#{declarationHeaderBean.declarationDTO.createdDate}">
+			<f:convertDateTime type="both"	pattern="#{declarationHeaderBean.dateFormatWithSec}" timeZone="#{custConstants.timeZone}" />
+		</h:outputText>
+	</h:panelGroup>
+		
+	<h:outputText value="&#160;"/>
+	<h:panelGroup>
+		<cust:outputLabel for="selectDeclareType" value="#{bundle['customs.declaration.type']}" />
+	</h:panelGroup>
+	<h:panelGroup>
+           	<!--h:selectOneMenu id="selectDeclareType" value="#{declarationHeaderBean.declarationDTO.declarationType}" required="true">
+				<f:selectItems value="#{declarationType.selectItemList}"/>
+				<a4j:support ajaxSingle="true" event="onchange" reRender="portOfExitBlock,tempImportAppNoBlock,previousDecNumberBlock,guaranteeModeBlock" />
+			</h:selectOneMenu-->
+			<h:outputText id="selectDeclareType" value="#{declarationHeaderBean.declarationDTO.declarationType}" 
+				converter="#{declarationType}">
+			</h:outputText>
+		  
+	</h:panelGroup>
+		
+	<h:outputText value="&#160;" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'TIM'}"/>
+	<h:panelGroup rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'TIM'}">
+		<cust:outputLabel for="tempImportAppNo" value=" #{bundle['customs.declaration.temporary.import.application.number']}" />
+	</h:panelGroup>
+	<h:panelGroup rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'TIM'}">
+       	<!--h:inputText id="tempImportAppNo" value="#{declarationHeaderBean.tempImportApplicationNumber}" maxlength="50" size="50" 
+       	styleClass="test-field-styles" required="true"/-->
+       	<!--h:outputText id="tempImportAppNo" value="#{declarationHeaderBean.declarationDTO.tempImportAppNo}" /-->
+       	<h:inputText
+			id="tempImportAppNo" disabled="#{!(empty declarationHeaderBean.declarationDTO.originalDeclarationNumber)}"
+			value="#{declarationHeaderBean.declarationDTO.tempImportAppNo}"
+			maxlength="30"
+			size="30"
+			styleClass="test-field-styles"
+			required="true"
+		>
+		</h:inputText>
+		<br />
+		<rich:message
+			for="tempImportAppNo"
+			errorClass="error"
+		/>
+	</h:panelGroup> 
+		
+	<h:outputText value="&#160;"
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'IMP' || declarationHeaderBean.declarationDTO.declarationType eq 'WHE' || declarationHeaderBean.declarationDTO.declarationType eq 'TIM' || declarationHeaderBean.declarationDTO.declarationType eq 'TRN'}"/>
+	<h:panelGroup
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'IMP' || declarationHeaderBean.declarationDTO.declarationType eq 'WHE' || declarationHeaderBean.declarationDTO.declarationType eq 'TIM' || declarationHeaderBean.declarationDTO.declarationType eq 'TRN'}">
+		<cust:outputLabel for="selectPorOfEntry" value=" #{bundle['customs.declaration.port.of.entry']}" />
+	</h:panelGroup>
+	<h:panelGroup 
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'IMP' || declarationHeaderBean.declarationDTO.declarationType eq 'WHE' || declarationHeaderBean.declarationDTO.declarationType eq 'TIM' || declarationHeaderBean.declarationDTO.declarationType eq 'TRN'}">
+		<h:outputText id="selectPorOfEntry" value="#{declarationHeaderBean.declarationDTO.portOfEntryCode}" 
+			converter="portConverter"/>
+		<rich:spacer width="60"/>
+		<cust:outputLabel for="portTypeOfEntryPort" value="#{bundle['customs.declaration.port.type']}" style="font-size:11px;"/>
+		<rich:spacer width="30"/>
+		<h:outputText id="portTypeOfEntryPort" 
+			value="#{declarationHeaderBean.declarationDTO.entryPortType}"
+			converter="#{portType}"/>
+	</h:panelGroup>
+	
+	<h:outputText value="&#160;" 
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP' || declarationHeaderBean.declarationDTO.declarationType eq 'REE' || declarationHeaderBean.declarationDTO.declarationType eq 'TEX' || declarationHeaderBean.declarationDTO.declarationType eq 'TRN' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}"/>
+	<h:panelGroup 
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP' || declarationHeaderBean.declarationDTO.declarationType eq 'REE' || declarationHeaderBean.declarationDTO.declarationType eq 'TEX' || declarationHeaderBean.declarationDTO.declarationType eq 'TRN'|| declarationHeaderBean.declarationDTO.declarationType eq 'REW'}">
+		<cust:outputLabel for="selectPorOfExit" value="#{bundle['customs.declaration.port.of.exit']}" />
+	</h:panelGroup>
+	<h:panelGroup 
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP' || declarationHeaderBean.declarationDTO.declarationType eq 'REE' || declarationHeaderBean.declarationDTO.declarationType eq 'TEX' || declarationHeaderBean.declarationDTO.declarationType eq 'TRN' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}">
+		<h:outputText id="selectPorOfExit" value="#{declarationHeaderBean.declarationDTO.portOfExitCode}"
+			converter="portConverter"/>
+		<rich:spacer width="60"/>
+   		<cust:outputLabel for="portTypeOfExitPort" value=" #{bundle['customs.declaration.port.type']}" style="font-size:11px;"/>
+   		<rich:spacer width="30"/>
+   		<h:outputText id="portTypeOfExitPort" 
+   			value="#{declarationHeaderBean.declarationDTO.exitPortType}"
+   			converter="#{portType}"/>
+   	</h:panelGroup>
+	
+	<!-- reddy dochanges here..... -->
+	<!-- WHE-CR-2020: reddy starts here -->
+	<h:outputText value="&#160;" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}"/>
+	<h:panelGroup rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}">
+		<cust:outputLabel for="isMultiWHEDecYes" value=" #{bundle['customs.warehouse.want.multiple.whe.declarations.imp']}"  rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}"/>
+	<cust:outputLabel for="isMultiWHEDecYes" value=" #{bundle['customs.warehouse.want.multiple.whe.declarations.reexp']}" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'REW'}" />
+	</h:panelGroup>
+	<h:panelGroup layout="block"
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}">
+		<h:outputText id="isMultiWHEDecYes" value="#{bundle['customs.declaration.yes']}" 
+			rendered="#{declarationHeaderBean.declarationDTO.isMultiWHEDeclaration=='Y'}"/>
+		<h:outputText id="isMultiWHEDecNo" value="#{bundle['customs.declaration.no']}" 
+			rendered="#{declarationHeaderBean.declarationDTO.isMultiWHEDeclaration=='N'}"/>
+    </h:panelGroup>
+    <!-- added for spaces -->
+    <h:outputText value="&#160;" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}"/>
+	<h:outputText value="&#160;" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}"/>
+	<h:outputText value="&#160;" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW'}"/>
+	<!-- added above lines for spaces End of reddy -->
+	
+	
+    <!-- license no/name -->
+		<h:outputText value="&#160;"
+			rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' ||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}" />
+		<h:panelGroup
+			rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' ||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+			<cust:outputLabel for="licenceNoWHE"
+				value=" #{bundle['customs.bondedwarehouse.warehouse']}" />
+		</h:panelGroup>
+		<h:panelGroup
+			rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' ||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+			<h:outputText id="licenceNoWHE"
+				value="#{declarationHeaderBean.declarationDTO.licenseNo}"
+				converter="#{licenseNoToNameConverter}">
+			</h:outputText>
+		</h:panelGroup>
+		
+		<!-- end license no/name -->
+			<!-- whe importer -->
+			<h:outputText value="&#160;" rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}"
+			/>
+			<h:panelGroup
+				rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+				<cust:outputLabel id="multiWHEImpLabelEdit"  for="multiWHEImporterEdit" value ="#{bundle['customs.declaration.importer']}" />	
+			</h:panelGroup>
+			<h:panelGroup rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+			<h:outputText
+			id="multiWHEImporterEdit"
+			value="#{declarationHeaderBean.declarationDTO.wheTraderCode} - #{declarationHeaderBean.declarationDTO.wheTraderName}"
+			/>
+			</h:panelGroup>
+		<!-- whe importer ends -->
+		
+		<!-- whe exporter starts -->
+			<h:outputText value="&#160;" 
+				rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}"
+			/>
+			<h:panelGroup
+				rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+				<cust:outputLabel id="multiWHEExpLabelEdit"  for="multiWHEReExporterEdit" value ="#{bundle['customs.declaration.exporter']}" />	
+			</h:panelGroup>
+			<h:panelGroup rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}" >
+			<h:outputText
+			id="multiWHEReExporterEdit"
+			value="#{declarationHeaderBean.declarationDTO.wheTraderCode} - #{declarationHeaderBean.declarationDTO.wheTraderName}"
+			/>
+			</h:panelGroup>
+	
+		<!-- whe exporter ends -->
+	
+    
+		<!-- reddy new multi WHE table and declararions this field is mandatory only if whe list is empty in edit page -->
+											<h:outputText value="&#160;" 
+												rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}" />
+										
+										<h:panelGroup
+											rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+											<cust:outputLabel for="declarationWarehouseNoMultiWHE" required="#{ empty declarationHeaderBean.wheModelList}"
+												value=" #{bundle['customs.declaration.declarationdata']}" />
+										</h:panelGroup>
+										
+										<h:panelGroup id="decPanelMulti" 
+											rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+											<a4j:region >
+											
+											<h:inputText  id="declarationWarehouseNoMultiWHE" 	value="#{declarationHeaderBean.declarationDTO.warehousreDeclarationNo}">
+													<a4j:support ajaxSingle="true" event="onchange" status="waitStatus"
+														action="#{declarationHeaderBean.resetWarehousePortMultiWHE}"
+														reRender="decPanelMulti,headerPanel" />
+
+												</h:inputText>
+											
+											<h:inputHidden id="wheDeclarationNo12Multi"
+													value="#{declarationHeaderBean.declarationDTO.warehousreDeclarationNo}" />
+												<h:inputHidden id="portcodeMulti"
+													value="#{declarationHeaderBean.portCode}" />
+												<h:inputHidden id="wheStaus"
+													value="#{declarationHeaderBean.wheStaus}" />
+											
+												<h:inputHidden id="hasErrorsForMultiWHE" value="#{declarationHeaderBean.hasErrorsForMultiWHE}" />		
+									
+										<a4j:commandButton id="decNoMulti"  reRender="hasErrorsForMultiWHE"
+													value="#{bundle['customs.common.search']}" ajaxSingle="true"  status="waitStatus"
+												action="#{declarationHeaderBean.validatePopupMandatory}"
+											     oncomplete="if(validateBeforePopup()){showPopUp(this,'declarationWarehouseNoMultiWHE','../../jsf/bondedwarehouse/BondedWarehouseDecPopUpTrader.jsf?accountCode=#{declarationHeaderBean.declarationDTO.wheTraderCode}&amp;licenseNo=#{declarationHeaderBean.declarationDTO.licenseNo}&amp;decType=#{declarationHeaderBean.declarationDTO.declarationType}');} else {return false;}"
+													styleClass="button-styles" />
+																								
+												<a4j:commandButton id="refreshPortMulti" value="Refresh" status="waitStatus"
+													styleClass="button-styles"
+													action="#{declarationHeaderBean.resetWarehousePortMultiWHE}"
+													style="display: none;" reRender="decPanelMulti,headerPanel" />			
+												<br />
+											<a4j:outputPanel>
+												<rich:message for="declarationWarehouseNoMultiWHE" errorClass="error" />
+												
+											</a4j:outputPanel>
+											</a4j:region>
+										</h:panelGroup>
+										<!-- New Multi WHE ends here : reddy -->
+																				<!--  Data table for WHE CR : starts -->
+										<h:outputText value="&#10;"
+												rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}" />
+										<rich:column style="text-align:center;border:none;" rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+										<h:panelGrid columns="6" width="300" id="wheDecTableList" 
+										rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}">
+											<rich:dataTable rowKeyVar="rowKey" id="wheDecList" rows="5"
+												rowClasses="table-row-light, table-row-dark"
+												headerClass="table-heading"  cellspacing="1" 	cellpadding="0"
+													value="#{declarationHeaderBean.wheModelList}"
+													var="wheModel" width="500" styleClass="tabular-details" rendered="#{!empty declarationHeaderBean.wheModelList}">
+													<rich:column width="auto">
+														<f:facet name="header">
+															<h:outputText value="#{bundle['customs.declaration.sno']}" />
+														</f:facet>
+														<h:outputText value="#{rowKey+1}" />
+													</rich:column>
+													<rich:column width="auto">
+														<f:facet name="header">
+															<h:outputText value="#{bundle['customs.declaration.decNo']}"  />
+														</f:facet>
+														<h:outputText value="#{wheModel.warehousreDeclarationNo}" />
+													
+													</rich:column>
+													<rich:column width="auto">
+														<f:facet name="header">
+															<h:outputText value="#{bundle['customs.declaration.port.of.entry']}"  />
+														</f:facet>
+													<h:outputText value="#{wheModel.portOfEntryCode}" 	converter="portConverter" />	
+													</rich:column>
+													<rich:column width="auto">
+														<f:facet name="header">
+															<h:outputText value="#{bundle['customs.declaration.port.type']}" />
+														</f:facet>
+															<h:outputText value="#{wheModel.entryPortType}" 	converter="#{portType}" />
+													</rich:column>
+													<rich:column width="auto">
+														<f:facet name="header">
+															<h:outputText value="#{bundle_bwm['customs.warehouse.search.warehouseStatus']}"/>
+														</f:facet>
+															<h:outputText value="#{wheModel.warehousreDeclarationStatus}" converter="#{bondedwarehouseStatus}" />
+														
+													</rich:column>
+													<rich:column width="auto">
+														<f:facet name="header">
+															<h:outputText value="#{bundle['customs.declaration.seal.qa.option']}"  />
+														</f:facet>
+													<a4j:commandLink id="deleteLink" ajaxSingle="true"
+													value="#{bundle['customs.common.delete']}"
+													action="#{declarationHeaderBean.deleteWHEDeclaration}"
+													status="waitStatus"
+													reRender="wheDecTableList,wheMultiscroller,headerPanel,decPanelMulti"
+													rendered="#{ declarationHeaderBean.declarationDTO.documentStatus eq 'DRA' }"
+													disabled="false">
+													<a4j:actionparam name="selectedRowkey" value="#{rowKey}" />
+												</a4j:commandLink>
+
+													</rich:column>
+													</rich:dataTable>
+										</h:panelGrid>
+										<h:panelGroup>
+										<h:panelGrid id="wheMultiscroller">
+											<cust:datascroller id="abcScrollTop" for="wheDecList"
+											fastControls="hide" boundaryControls="hide" maxPages="20"
+											page="#{declarationHeaderBean.scrollerPage}"
+											align="#{declarationHeaderBean.isArabic?'left':'right'}"
+											renderIfSinglePage="false">
+											<f:facet name="previous">
+												<h:panelGroup>
+													<a4j:commandLink
+														value="#{bundle['customs.common.ds.previous']}"
+														onclick="previous()" styleClass="scroller-button-previous" />
+												</h:panelGroup>
+											</f:facet>
+											<f:facet name="previous_disabled">
+												<h:outputText value="#{bundle['customs.common.ds.previous']}"
+													styleClass="scrollerCell" />
+											</f:facet>
+											<f:facet name="next">
+												<h:panelGroup>
+													<a4j:commandLink value="#{bundle['customs.common.ds.next']}"
+														onclick="next()" styleClass="scroller-button-next" />
+												</h:panelGroup>
+											</f:facet>
+											<f:facet name="next_disabled">
+												<h:outputText value="#{bundle['customs.common.ds.next']}"
+													styleClass="scrollerCell" />
+											</f:facet>
+										</cust:datascroller>
+												</h:panelGrid>
+											</h:panelGroup>
+										</rich:column>
+									<h:outputText value="&#10;"
+												rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration ne null and declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'Y')}" />
+																
+										<!--  Ends Data table for WHE CR -->
+										<!-- data scroller :starts  -->
+										
+										<!-- data scroller :ends  -->
+										
+    
+    
+     <!-- end of reddy here -->
+    
+		<!-- reddy here check for WHE CR this should come for old impl ie when N -->
+		
+	<h:outputText value="&#160;"  	rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq null  or declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'N' ) }" />
+	<h:panelGroup 	rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq null  or declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'N' ) }" >
+		<cust:outputLabel for="declarationWarehouseNo" value = "#{bundle['customs.declaration.declarationdata']}"/>	
+	</h:panelGroup>
+	<h:panelGroup  id="decPanel" 	rendered="#{ (declarationHeaderBean.declarationDTO.declarationType eq 'EXW' 
+											||  declarationHeaderBean.declarationDTO.declarationType eq 'REW') and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq null  or declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'N' ) }" >	
+			<h:inputText id="declarationWarehouseNo" required="true" value="#{declarationHeaderBean.declarationDTO.warehousreDeclarationNo}"  >
+											<a4j:support
+							   ajaxSingle="true"
+								event="onchange"
+								action="#{declarationHeaderBean.resetWarehousePort}"
+								reRender="decPanel,headerPanel"
+							/>
+											</h:inputText> 
+											
+											<h:inputHidden id="wheDeclarationNo12" value="#{declarationHeaderBean.declarationDTO.warehousreDeclarationNo}"/>
+			                                 	<h:inputHidden id="portcode" value="#{declarationHeaderBean.portCode}"/>
+			                                 	
+											 <a4j:commandButton id="decNo"   value="#{bundle['customs.common.popup_label']}"
+												oncomplete="showPopUp(this,'declarationWarehouseNo','../../jsf/bondedwarehouse/BondedWarehouseDecPopUp.jsf');"
+												styleClass="short-button-styles" />
+												
+												<a4j:commandButton
+							 id="refreshPort"
+							 value="Refresh"
+							 styleClass="button-styles"
+							 action="#{declarationHeaderBean.resetWarehousePort}"
+							 style="display: none;"
+							 reRender="decPanel,headerPanel"
+						    />
+												
+												<br/>
+											
+												<a4j:outputPanel>
+											  <rich:message for="declarationWarehouseNo" errorClass="error" />
+											</a4j:outputPanel> 					
+	</h:panelGroup>
+	<!-- below section completely depends on flag : resetWarehousePort however we need to display only for N as Y will be replaced by table-->
+	<h:outputText
+		value="&#160;"
+		rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW')
+		              and declarationHeaderBean.resetWarehousePort and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq null or declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'N')}"
+	/>
+	<h:panelGroup
+		rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW')
+		              and declarationHeaderBean.resetWarehousePort and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq null or declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'N')}"
+	>
+		<cust:outputLabel
+			for="selectPorOfEntryEXW"
+			value=" #{bundle['customs.declaration.port.of.entry']}"
+		/>
+	</h:panelGroup>
+	<h:panelGroup
+		rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'EXW' || declarationHeaderBean.declarationDTO.declarationType eq 'REW')
+		              and declarationHeaderBean.resetWarehousePort and (declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq null or declarationHeaderBean.declarationDTO.isMultiWHEDeclaration eq 'N')}"
+	>
+		<h:outputText
+			id="selectPorOfEntryEXW"
+			value="#{declarationHeaderBean.declarationDTO.portOfEntryCode}"
+			converter="portConverter"
+		/>
+		<rich:spacer width="60" />
+		<cust:outputLabel
+			for="portTypeOfEntryPortEXW"
+			value="#{bundle['customs.declaration.port.type']}"
+			style="vertical-align: middle; color: #606060; font-weight: bold;"
+		/>
+		<rich:spacer width="30" />
+		<h:outputText
+			id="portTypeOfEntryPortEXW"
+			value="#{declarationHeaderBean.declarationDTO.entryPortType}"
+			converter="#{portType}"
+		/>
+	</h:panelGroup>
+	
+	<h:outputText value="&#160;" rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'WHE')}"/>
+		<h:panelGroup rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'WHE')}">
+										<cust:outputLabel
+											for="licenceNo1"
+											value=" #{bundle['customs.bondedwarehouse.warehouse']}"
+										/>
+		</h:panelGroup>
+	<h:panelGroup rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'WHE')}">
+				<h:outputText id="licenceNo" value="#{declarationHeaderBean.declarationDTO.licenseNo}" 
+				converter="#{licenseNoToNameConverter}">
+			</h:outputText>
+	</h:panelGroup>
+
+	<!-- NADEEBOPR -484 changes Start-->
+	<h:outputText value="&#160;"
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'TRN' and !(declarationHeaderBean.declarationDTO.exitPortType eq 'F')}" />
+	<h:panelGroup
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'TRN' and !(declarationHeaderBean.declarationDTO.exitPortType eq 'F')}">
+		<cust:outputLabel for="traderREGTRNYesNo"
+			value="#{bundle['customs.declaration.registeredTraderForTransit']}" />
+	</h:panelGroup>
+	<h:panelGroup style="vertical-align: top;"
+		rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'TRN' and !(declarationHeaderBean.declarationDTO.exitPortType eq 'F')}">
+		<h:selectOneRadio id="traderREGTRNYesNo"
+			value="#{declarationHeaderBean.declarationDTO.registeredTraderForTransit}"
+			required="true">
+			<f:selectItem id="traderREGTRN_Yes"
+				itemLabel="#{bundle['customs.declaration.yes']}" itemValue="Y" />
+			<f:selectItem id="traderREGTRN_No"
+				itemLabel="#{bundle['customs.declaration.no']}" itemValue="N" />
+		</h:selectOneRadio>
+	</h:panelGroup>
+	<!-- NADEEBOPR -484 changes End-->
+
+	<!-- added on 28/01/2011 temp import freezone not showing statistical  -->
+	<!-- 26/04/2011 replace export by re-export from UAT-->
+	<h:outputText value="&#160;"
+		rendered="#{((declarationHeaderBean.declarationDTO.declarationType eq 'IMP'
+										or declarationHeaderBean.declarationDTO.declarationType eq 'TIM') 
+					and declarationHeaderBean.declarationDTO.entryPortType ne 'F') 
+					or (declarationHeaderBean.declarationDTO.declarationType eq 'REE' || declarationHeaderBean.declarationDTO.declarationType eq 'REW')}"/>
+	<h:panelGroup rendered="#{((declarationHeaderBean.declarationDTO.declarationType eq 'IMP'
+										or declarationHeaderBean.declarationDTO.declarationType eq 'TIM') 
+					and declarationHeaderBean.declarationDTO.entryPortType ne 'F') 
+					or (declarationHeaderBean.declarationDTO.declarationType eq 'REE' || declarationHeaderBean.declarationDTO.declarationType eq 'REW')}">
+		<cust:outputLabel value=" #{bundle['customs.declaration.statistical.declaration']}" />
+	</h:panelGroup>
+	<h:panelGroup rendered="#{((declarationHeaderBean.declarationDTO.declarationType eq 'IMP'
+										or declarationHeaderBean.declarationDTO.declarationType eq 'TIM') 
+					and declarationHeaderBean.declarationDTO.entryPortType ne 'F') 
+					or (declarationHeaderBean.declarationDTO.declarationType eq 'REE' || declarationHeaderBean.declarationDTO.declarationType eq 'REW')}">
+		<h:outputText id="statisticalDeclarationYes" value="#{bundle['customs.declaration.yes']}" 
+			rendered="#{declarationHeaderBean.declarationDTO.statisticalDeclaration=='Y'}"/>
+		<h:outputText id="statisticalDeclarationNo" value="#{bundle['customs.declaration.no']}" 
+			rendered="#{declarationHeaderBean.declarationDTO.statisticalDeclaration=='N'}"/>
+	</h:panelGroup>
+		
+	<!-- 12-01-2014 Statistical Export (to gcc country / or to non gcc country) -->
+	<h:outputText value="&#160;" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP'}"/>
+	<h:panelGroup rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP'}">
+		<cust:outputLabel value=" #{bundle['customs.declaration.statistical.declaration']}" />
+	</h:panelGroup>
+	<h:panelGroup rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP'}">
+		<!--<h:outputText id="statisticalExportDeclarationYes" value="#{bundle['customs.declaration.yes']}" 
+			rendered="#{declarationHeaderBean.declarationDTO.isStatisticalExport=='Y'}"/>
+		<h:outputText id="statisticalExportDeclarationNo" value="#{bundle['customs.declaration.no']}" 
+			rendered="#{declarationHeaderBean.declarationDTO.isStatisticalExport=='N'}"/>
+	-->
+	
+	<h:selectOneRadio id="statisticalExportDeclaration"
+				value="#{declarationHeaderBean.declarationDTO.isStatisticalExport}"
+				required="true">
+				<f:selectItem id="statisticalExportDeclarationYes"
+					itemLabel="#{bundle['customs.declaration.yes']}" itemValue="Y" />
+				<f:selectItem id="statisticalExportDeclarationNo"
+					itemLabel="#{bundle['customs.declaration.no']}" itemValue="N" />
+			</h:selectOneRadio>
+	
+	
+	
+	</h:panelGroup>		
+	<!-- 12-01-2014 Statistical Export (to gcc country / or to non gcc country) -->		
+	<h:outputText value="&#160;" 
+		rendered="#{!(declarationHeaderBean.declarationDTO.declarationType eq 'TRN' 
+					and (declarationHeaderBean.declarationDTO.exitPortType eq 'F'
+						or declarationHeaderBean.declarationDTO.entryPortType eq 'F') 
+					and !(declarationHeaderBean.declarationDTO.exitPortType eq 'F'
+						and declarationHeaderBean.declarationDTO.entryPortType eq 'F')
+						)}"/>
+	<h:panelGroup 
+		rendered="#{!(declarationHeaderBean.declarationDTO.declarationType eq 'TRN' 
+					and (declarationHeaderBean.declarationDTO.exitPortType eq 'F'
+						or declarationHeaderBean.declarationDTO.entryPortType eq 'F') 
+					and !(declarationHeaderBean.declarationDTO.exitPortType eq 'F'
+						and declarationHeaderBean.declarationDTO.entryPortType eq 'F')
+						)}">
+		<cust:outputLabel for="onsiteInspectionApp" value=" #{bundle['customs.declaration.onsite.inspection.approval']}" />
+	</h:panelGroup>
+	<h:panelGroup
+		rendered="#{!(declarationHeaderBean.declarationDTO.declarationType eq 'TRN' 
+					and (declarationHeaderBean.declarationDTO.exitPortType eq 'F'
+						or declarationHeaderBean.declarationDTO.entryPortType eq 'F') 
+					and !(declarationHeaderBean.declarationDTO.exitPortType eq 'F'
+						and declarationHeaderBean.declarationDTO.entryPortType eq 'F')
+						)}">
+		<h:selectOneRadio id="onsiteInspectionApp" value="#{declarationHeaderBean.onsiteInspectionApproval}" required="true">
+       		<f:selectItem id="onsiteInspectionApp_Yes" itemLabel="#{bundle['customs.declaration.yes']}" itemValue="Y" />
+       		<f:selectItem id="onsiteInspectionApp_No" itemLabel="#{bundle['customs.declaration.no']}" itemValue="N" />
+       		<a4j:support ajaxSingle="true" event="onclick" reRender="onsiteInspectAppManNotes" /> 
+		</h:selectOneRadio>
+		<a4j:outputPanel id="onsiteInspectAppManNotes">
+			<h:outputText value="* #{bundle['customs.declaration.prior.approval.is.required.for.onsite.inspection']}" styleClass="mandatory"
+				rendered="#{declarationHeaderBean.onsiteInspectionApproval eq 'Y'}"/>
+		</a4j:outputPanel>
+    </h:panelGroup>
+    
+    <!-- start added by amoussaoui for detained goods cr -->
+										<h:outputText value="&#160;" rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'IMP' or declarationHeaderBean.declarationDTO.declarationType eq 'TIM'}"/>
+										<h:panelGroup  rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'IMP' or declarationHeaderBean.declarationDTO.declarationType eq 'TIM'}">
+											<cust:outputLabel
+												value="#{bundle['customs.declaration.has.detainedGoodsReceipt']}" />
+										</h:panelGroup>
+										<h:panelGroup  rendered="#{declarationHeaderBean.declarationDTO.declarationType eq 'IMP' or declarationHeaderBean.declarationDTO.declarationType eq 'TIM'}">
+											<h:selectOneRadio id="dgReceiptFlag"
+												value="#{declarationHeaderBean.dgReceiptFlag}" required="true">
+												<f:selectItem id="dgReceiptFlag_Yes"
+													itemLabel="#{bundle['customs.declaration.yes']}" itemValue="Y" />
+												<f:selectItem id="dgReceiptFlag_No"
+													itemLabel="#{bundle['customs.declaration.no']}" itemValue="N" />
+												<a4j:support ajaxSingle="true" event="onclick" reRender="dgReceiptNoLabelStar,dgReceiptNoLabel,dgReceiptNoInput"/>
+											</h:selectOneRadio>
+										</h:panelGroup>
+										<h:panelGroup id="dgReceiptNoLabelStar" >
+										<h:outputText id="dgReceiptNoLabelStar_11" value="&#160;" rendered="#{declarationHeaderBean.dgReceiptFlag eq 'Y' and (declarationHeaderBean.declarationDTO.declarationType eq 'IMP' or declarationHeaderBean.declarationDTO.declarationType eq 'TIM')}"/>
+										</h:panelGroup>
+										
+										<h:panelGroup id="dgReceiptNoLabel" >
+											<cust:outputLabel for="dgReceiptNo" rendered="#{declarationHeaderBean.dgReceiptFlag eq 'Y' and (declarationHeaderBean.declarationDTO.declarationType eq 'IMP' or declarationHeaderBean.declarationDTO.declarationType eq 'TIM')}"
+												value="#{bundle['customs.declaration.has.detainedGoodsReceipt']}" />
+										</h:panelGroup>
+										<h:panelGroup id="dgReceiptNoInput">
+											<h:inputText id="dgReceiptNo" rendered="#{declarationHeaderBean.dgReceiptFlag eq 'Y' and (declarationHeaderBean.declarationDTO.declarationType eq 'IMP' or declarationHeaderBean.declarationDTO.declarationType eq 'TIM')}"
+													value="#{declarationHeaderBean.declarationDTO.dgReceiptNo}"
+													maxlength="13" size="13" styleClass="test-field-styles"
+													required="true">
+													<cust:trimConverter />
+												</h:inputText>
+												<br />
+												<rich:message for="dgReceiptNo" errorClass="error" />
+										</h:panelGroup>
+	<!-- end added by amoussaoui for detained goods cr -->
+    
+    <h:outputText value="&#160;"/>
+	<h:panelGroup>
+		<cust:outputLabel value="#{bundle['customs.declaration.has.container']}" />
+	</h:panelGroup>
+	<h:panelGroup>
+		<h:outputText id="containerFlagYes" value="#{bundle['customs.declaration.yes']}" rendered="#{declarationHeaderBean.containerFlag=='Y'}" />
+		<h:outputText id="containerFlagNo" value="#{bundle['customs.declaration.no']}" rendered="#{declarationHeaderBean.containerFlag=='N'}"/>
+	</h:panelGroup>	
+	
+	<c:if test="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP'}">
+		<h:outputText value="&#160;"/>
+		<h:panelGroup>
+			<cust:outputLabel value="#{bundle['customs.declaration.has.strategicgoods']}" />
+		</h:panelGroup>
+		<h:panelGroup>
+			<!--  <h:outputText id="strategicGoodsFlagYes" value="#{bundle['customs.declaration.yes']}" rendered="#{declarationHeaderBean.containerFlag=='Y'}" />
+			<h:outputText id="strategicGoodsFlagNo" value="#{bundle['customs.declaration.no']}" rendered="#{declarationHeaderBean.containerFlag=='N'}"/> -->
+			<h:selectOneRadio
+				id="strategicGoodsFlag"
+				value="#{declarationHeaderBean.strategicGoodsFlag}"
+				required="true"
+			>
+				<f:selectItem
+					id="strategicGoodsFlag_Yes"
+					itemLabel="#{bundle['customs.declaration.yes']}"
+					itemValue="Y"
+				/>
+				<f:selectItem
+					id="strategicGoodsFlag_No"
+					itemLabel="#{bundle['customs.declaration.no']}"
+					itemValue="N"
+				/>
+				<a4j:support
+					ajaxSingle="true"
+					event="onclick"
+				/>
+			</h:selectOneRadio>
+		</h:panelGroup>	
+	</c:if>
+      
+    <!--h:outputText value="&#160;" rendered="#{declarationHeaderBean.onsiteInspectionApproval eq 'Y'}"/>
+    <h:panelGroup rendered="#{declarationHeaderBean.onsiteInspectionApproval eq 'Y'}"/>
+    <h:panelGroup id="onsiteInspectAppManNotes" rendered="#{declarationHeaderBean.onsiteInspectionApproval eq 'Y'}">
+   		<h:outputText value="* #{bundle['customs.declaration.prior.approval.is.required.for.onsite.inspection']}" styleClass="mandatory"/>
+   	</h:panelGroup-->
+	<c:if test="#{declarationHeaderBean.declarationDTO.declarationType eq 'EXP' or declarationHeaderBean.declarationDTO.declarationType eq 'REE' or declarationHeaderBean.declarationDTO.declarationType eq 'TEX'}">
+		<h:outputText value="&#160;" />
+		<h:panelGroup>
+			<h:outputLabel value="#{bundle['customs.header.coo.subheading']}" />
+			</h:panelGroup>
+		<h:panelGroup style="vertical-align: top;">
+										<h:selectOneRadio id="seletCoo"
+										disabled="#{declarationEditBean.baseData.cooFlag eq 'Y'}"
+											value="#{declarationHeaderBean.cooFlag}"
+											>
+											<f:selectItem id="cooFlag_Yes"
+												itemLabel="#{bundle['customs.declaration.yes']}"
+												itemValue="Y" 
+												 />
+											<f:selectItem id="cooFlag_No"
+												itemLabel="#{bundle['customs.declaration.no']}"
+												itemValue="N" 
+												 />
+										</h:selectOneRadio>
+
+
+									</h:panelGroup>
+	</c:if>
+	<h:outputText value="&#160;"/>
+	<cust:outputLabel for="remarks" value=" #{bundle['customs.declaration.remarks']}" />
+	<h:panelGroup>
+		<h:inputTextarea id="remarks" value="#{declarationHeaderBean.declarationDTO.remarks}" rows="3" cols="80" styleClass="test-field-styles">
+			<f:validateLength minimum="0" maximum="300"/>
+		</h:inputTextarea>
+		<br/>
+		<a4j:outputPanel>
+			<h:message for="remarks" errorClass="message error"/>
+		</a4j:outputPanel>
+	</h:panelGroup>
+
+</h:panelGrid>
+<a4j:outputPanel id="headerCreateETIRAmendPanel"
+	rendered="#{!(empty declarationHeaderBean.declarationDTO.originalDeclarationNumber)}">
+	<h:panelGrid id="headerETIRAmendPanel" columns="3" width="100%"
+		cellspacing="0" style="margin: 0px 10px 0px 10px;"
+		columnClasses="col_indent,edit_label,edit_value"
+		rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'TRN')
+										and ((!empty(declarationHeaderBean.declarationDTO.portOfEntryCode))and (!empty(declarationHeaderBean.declarationDTO.portOfExitCode)))and(declarationHeaderBean.declarationDTO.portOfEntryCode ne declarationHeaderBean.declarationDTO.portOfExitCode)
+										                }">
+		<h:outputText value="&#160;" />
+		<h:panelGroup
+			rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'TRN')
+										and ((!empty(declarationHeaderBean.declarationDTO.portOfEntryCode))and (!empty(declarationHeaderBean.declarationDTO.portOfExitCode)))and(declarationHeaderBean.declarationDTO.portOfEntryCode ne declarationHeaderBean.declarationDTO.portOfExitCode)
+										                }">
+			<cust:outputLabel for="eTIRPaymentFlag"
+				value="#{bundle['customs.declaration.has.eTIRPaymentFlag']}" />
+		</h:panelGroup>
+		<h:panelGroup style="vertical-align: top;"
+			rendered="#{(declarationHeaderBean.declarationDTO.declarationType eq 'TRN')
+										and((!empty(declarationHeaderBean.declarationDTO.portOfEntryCode))and (!empty(declarationHeaderBean.declarationDTO.portOfExitCode)))and(declarationHeaderBean.declarationDTO.portOfEntryCode ne declarationHeaderBean.declarationDTO.portOfExitCode)}">
+			<h:outputText id="eTIRPaymentFlagValueYes"
+				value="#{bundle['customs.declaration.yes']}"
+				rendered="#{declarationHeaderBean.declarationDTO.eTIRPaymentFlag=='Y'}" />
+			<h:outputText id="eTIRPaymentFlagValueNo"
+				value="#{bundle['customs.declaration.no']}"
+				rendered="#{declarationHeaderBean.declarationDTO.eTIRPaymentFlag=='N'}" />
+		</h:panelGroup>
+		<h:outputText value="&#160;" />
+		<h:panelGroup id="carnetTIRAmendLbl">
+			<cust:outputLabel
+				value="#{bundle['customs.declaration.carnetTIRNo']}"
+				for="carnetTIRNo"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:outputText id="carnetTIRNoAmend"
+				value="#{declarationHeaderBean.eTIRPaymentDTO.carnetTIRNo}"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:outputText value="&#160;" />
+		<h:panelGroup id="validFromAmendLbl">
+			<cust:outputLabel value="#{bundle['customs.declaration.validfrom']}"
+				for="eTIRvalidFrom"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:outputText id="eTIRvalidFromAmend"
+				value="#{declarationHeaderBean.eTIRPaymentDTO.validFrom}"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}">
+				<f:convertDateTime pattern="#{declarationHeaderBean.dateFormat}"
+					type="date" timeZone="#{custConstants.timeZone}" />
+			</h:outputText>
+		</h:panelGroup>
+		<h:outputText value="&#160;" />
+		<h:panelGroup id="validForAmendLbl">
+			<cust:outputLabel value="#{bundle['customs.declaration.validfor']}"
+				for="eTIRvalidFor"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:outputText id="eTIRvalidForAmend"
+				value="#{declarationHeaderBean.eTIRPaymentDTO.validFor}"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}">
+				<f:convertDateTime pattern="#{declarationHeaderBean.dateFormat}"
+					type="date" timeZone="#{custConstants.timeZone}" />
+			</h:outputText>
+		</h:panelGroup>
+		<h:outputText value="&#160;" />
+		<h:panelGroup id="issuedByAmendLbl">
+			<cust:outputLabel value="#{bundle['customs.declaration.issuedby']}"
+				for="eTIRIssuedBy"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:outputText id="eTIRIssuedByAmend"
+				value="#{declarationHeaderBean.eTIRPaymentDTO.issuedBy}"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:outputText value="&#160;" />
+		<h:panelGroup id="holderAmendLbl">
+			<cust:outputLabel value="#{bundle['customs.declaration.holder']}"
+				for="eTIRHolder"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:panelGroup>
+			<h:outputText id="eTIRHolderAmend"
+				value="#{declarationHeaderBean.eTIRPaymentDTO.holder}"
+				rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}" />
+		</h:panelGroup>
+		<h:outputText value="&#160;" />
+		<h:panelGroup id="attachmentAmendpanel"
+			rendered="#{(declarationHeaderBean.declarationDTO.eTIRPaymentFlag eq 'Y')}">
+			<rich:dataTable rowKeyVar="rowKey" id="filelistOther1Amend" rows="15"
+				width="100%"
+				value="#{declarationEditBean.declarationETIRFileUploadBean.docDetailsDTOList}"
+				var="docmodel"
+				rendered="#{!(empty declarationEditBean.declarationETIRFileUploadBean.docDetailsDTOList)}"
+				styleClass="tabular-details">
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{bundle['customs.finalization.sno']}" />
+					</f:facet>
+					<h:outputText value="#{rowKey+1}"></h:outputText>
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:selectBooleanCheckbox id="selectAllCheckBoxOtherAA"
+							value="false"
+							onclick="toggleCheckBox(this,'filelistOther1', 'selectAllCheckBoxOther');" />
+					</f:facet>
+					<center>
+						<h:selectBooleanCheckbox id="selectAllCheckBoxOther"
+							value="#{docmodel.selected}"
+							valueChangeListener="#{declarationEditBean.declarationETIRFileUploadBean.selectListenerEX}">
+							<a4j:support ajaxSingle="true" event="onclick"
+								reRender="selectAllCheckBoxOther">
+								<f:setPropertyActionListener
+									target="#{declarationEditBean.declarationETIRFileUploadBean.selectedDTO}"
+									value="#{docmodel}" />
+							</a4j:support>
+						</h:selectBooleanCheckbox>
+					</center>
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{bundle['customs.declaration.file.name']}" />
+					</f:facet>
+					<a4j:commandLink rendered="#{docmodel.docAttachmentId ne null}"
+						id="othPervPopUp"
+						onclick="previewDocument('../../jsf/common/EXDeclarationDocumentPreview.jsf?fileDownloadName=#{docmodel.fileName}&amp;preview=#{declarationEditBean.declarationETIRFileUploadBean.preview}&amp;id=#{docmodel.docAttachmentId}','web',1050,550);">
+						<h:outputText id="othPervLink" value="#{docmodel.fileName}" />
+					</a4j:commandLink>
+					<h:outputText rendered="#{docmodel.docAttachmentId eq null}"
+						value="#{docmodel.fileName}" />
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{bundle['customs.jbpm.date']}">
+						</h:outputText>
+					</f:facet>
+					<h:outputText value="#{docmodel.createdDate}">
+						<f:convertDateTime pattern="dd/MM/yyyy hh:mm" />
+					</h:outputText>
+				</rich:column>
+				<rich:column>
+					<f:facet name="header">
+						<h:outputText value="#{bundle['customs.declaration.size']}" />
+					</f:facet>
+					<h:outputText value="#{docmodel.uplodedFileSize}"
+						converter="sizeTokbConverter">
+					</h:outputText>
+				</rich:column>
+			</rich:dataTable>
+			<br />
+			<h:panelGroup>
+				<h:panelGrid columns="3" width="100%" cellspacing="0"
+					columnClasses="col_label,edit_value,edit_label,edit_value">
+					<h:panelGroup>
+						<h:commandButton styleClass="button1-styles"
+							action="#{declarationEditBean.declarationETIRFileUploadBean.downloadMultiFileOther}"
+							value="#{bundle['customs.document.download']}"
+							rendered="#{!(empty declarationEditBean.declarationETIRFileUploadBean.docDetailsDTOList)}">
+						</h:commandButton>
+					</h:panelGroup>
+				</h:panelGrid>
+			</h:panelGroup>
+		</h:panelGroup>
+	</h:panelGrid>
+</a4j:outputPanel>
+<!-- Express Company Changes -->		
+	<h:panelGrid id="expressDetailsHeader" width="705" rendered="#{declarationHeaderBean.courierDecFlag eq 'Y'
+							or (!empty declarationHeaderBean.declarationDTO.qpostDeclaration
+								and declarationHeaderBean.declarationDTO.qpostDeclaration eq 'Y') }">
+        <h:panelGroup>
+		<h:graphicImage url="../../imgs/bullet.gif" width="10" height="10" /><rich:spacer width="5" height="15" />
+		<h:outputText value="#{bundle['customs.courier.information']}" styleClass="table-header" />
+		</h:panelGroup>
+		<h:panelGroup>
+			<rich:separator lineType="none" styleClass="separator" width="100%" />
+		</h:panelGroup>
+	</h:panelGrid>
+	
+	
+	<a4j:outputPanel id="headerCreateCourierPanel" ajaxRendered="false"  rendered="#{declarationHeaderBean.courierDecFlag eq 'Y'
+		or (!empty declarationHeaderBean.declarationDTO.qpostDeclaration and declarationHeaderBean.declarationDTO.qpostDeclaration eq 'Y') }">
+	
+	<h:panelGrid id="amend_headerPanel_qpost" columns="3" width="100%" cellspacing="0" style="margin: 0px 10px 0px 10px;" 
+					columnClasses="col_indent,edit_label,edit_value"	rendered="#{declarationHeaderBean.declarationDTO.qpostDeclaration eq 'Y'}" >
+			<h:outputText value="&#160;" />
+			<h:panelGroup>
+				<cust:outputLabel for="amend__headerPanel_qpost_flag_yes"
+					value="#{bundle['customs.declaration.is.qpost.declaration']}" />
+			</h:panelGroup>
+			<h:panelGroup style="vertical-align: top;">
+			<h:outputText id="amend__headerPanel_qpost_yes" value="#{bundle['customs.declaration.yes']}" 
+				 />
+		
+			</h:panelGroup>
+			
+			<h:outputText value="&#160;"/>
+			<cust:outputLabel for="amend_qpost_decCourierNo" value=" #{bundle['customs.courier.declaration']}" />
+			<h:panelGroup style="vertical-align: top;">
+			<h:outputText id="amend_qpost_courierDecFlagYes" value="#{bundle['customs.declaration.yes']}" 
+				rendered="#{!empty declarationHeaderBean.courierDecFlag  and declarationHeaderBean.courierDecFlag=='Y'}" />
+			<h:outputText id="amend_qpost_courierDecFlagNo" value="#{bundle['customs.declaration.no']}" 
+				rendered="#{empty declarationHeaderBean.courierDecFlag or declarationHeaderBean.courierDecFlag=='N'}" />
+		</h:panelGroup>
+	</h:panelGrid>
+	
+		<h:panelGrid id="headerCourierPanel" columns="3" width="704" cellspacing="0" styleClass="section-tables"
+				columnClasses="col_indent,header_edit_label,edit_value" rendered="#{declarationHeaderBean.courierDecFlag eq 'Y'}" >
+			
+			<h:outputText value="&#160;" />
+			<h:panelGroup>
+				<cust:outputLabel for="amend_headerPanel_qpost_no"
+					value="#{bundle['customs.declaration.is.qpost.declaration']}" />
+			</h:panelGroup>
+			<h:panelGroup style="vertical-align: top;">
+			<h:outputText id="amend_headerPanel_qpost_no" value="#{bundle['customs.declaration.no']}" />
+				</h:panelGroup> 
+			<h:outputText value="&#160;" />
+			<h:panelGroup>
+				<cust:outputLabel for="courierDecFlag" value=" #{bundle['customs.courier.declaration']}" required="true" />
+			</h:panelGroup>
+			<h:panelGroup style="vertical-align: top;">
+				<h:selectOneRadio id="courierDecFlag" value="#{declarationHeaderBean.courierDecFlag}" required="true"
+						disabled="true">
+					<f:selectItem id="courierDecFlag_Yes" itemLabel="#{bundle['customs.declaration.yes']}" itemValue="Y" />
+					<f:selectItem id="courierDecFlag_No"  itemLabel="#{bundle['customs.declaration.no']}"  itemValue="N" />
+					<a4j:support  ajaxSingle="true" event="onclick" action="#{declarationHeaderBean.resetExpCompList}"
+					reRender="companiesLbl,companiesList,payModeLbl,payModeoptions,accountLbl,accountOptions" />
+				</h:selectOneRadio>
+			</h:panelGroup>
+			<h:outputText value="&#160;" />
+			<h:panelGroup id="companiesLbl">
+				<cust:outputLabel value=" #{bundle['customs.courier.companies']}" rendered="#{declarationHeaderBean.courierDecFlag eq 'Y'}" required="true" />
+			</h:panelGroup>
+			<h:panelGroup id = "companiesList">
+				<h:selectOneMenu id="companies" value="#{declarationHeaderBean.declarationDTO.courierCompName}" styleClass="test-field-styles" required="true" disabled="true"
+						rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and (declarationHeaderBean.manyExCompList)}" >
+					<f:selectItems value="#{declarationHeaderBean.selectExCompList}" />
+					<a4j:support  ajaxSingle="true"	event="onchange" action="#{declarationHeaderBean.resetExpAccOptions}"
+							reRender="headerCreateCourierPanel,payModeLbl,payModeoptions,accountLbl,accountOptions" />
+				</h:selectOneMenu>				
+				<h:outputText value="#{declarationHeaderBean.declarationDTO.courierCompName}"
+									rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and (!declarationHeaderBean.manyExCompList)}" />
+				<br />
+				<a4j:outputPanel>
+					<rich:message for="companies" errorClass="error" />
+				</a4j:outputPanel>
+			</h:panelGroup>
+			<h:outputText value="&#160;" />
+			<h:panelGroup id ="payModeLbl">
+				<cust:outputLabel value=" #{bundle['customs.courier.payment.mode']}"  required="true"
+				rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and (!empty declarationHeaderBean.declarationDTO.courierCompName) }" />
+			</h:panelGroup>
+			<h:panelGroup id ="payModeoptions">
+				<h:selectOneRadio id="paymentModeFlag" value="#{declarationHeaderBean.courierPayModeFlag}" required="true" disabled="true"
+					rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and (!empty declarationHeaderBean.declarationDTO.courierCompName) }" >
+					<f:selectItem id="paymentModeFlag_Gua" itemLabel="#{bundle['customs.global.mode']}" itemValue="G" />
+					<f:selectItem id="paymentModeFlag_Nor" itemLabel="#{bundle['customs.normal.mode']}" itemValue="N" />
+					<a4j:support ajaxSingle="true" event="onclick" action="#{declarationHeaderBean.resetExpAccOptions}" reRender="accountLbl,accountOptions" />
+				</h:selectOneRadio>
+			</h:panelGroup>
+			<h:outputText value="&#160;" />
+			<h:panelGroup id="accountLbl">
+				<cust:outputLabel value=" #{bundle['customs.courier.guarantee.account']}"
+					rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and  declarationHeaderBean.courierPayModeFlag eq 'G'}" />
+			</h:panelGroup>
+			<h:panelGroup id="accountOptions">
+				<h:selectOneRadio id="guaAccountFlag" disabled="true" value="#{declarationHeaderBean.courierAccountFlag}"
+					rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and  
+					declarationHeaderBean.courierPayModeFlag eq 'G' and declarationHeaderBean.authGlobalAccount and declarationHeaderBean.courierAccountFlag eq 'O' }">
+					<f:selectItem id="guaAccountFlag_Gua" itemLabel="#{bundle['customs.company.account']}" itemValue="C"/>
+					<f:selectItem id="guaAccountFlag_No"  itemLabel="#{bundle['customs.own.account']}" 	itemValue="O" />
+					<a4j:support ajaxSingle="true" event="onclick" />
+				</h:selectOneRadio>
+				<h:outputText	value="#{bundle['customs.own.account']}" rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and  
+				declarationHeaderBean.courierPayModeFlag eq 'G' and !declarationHeaderBean.authGlobalAccount and declarationHeaderBean.courierAccountFlag eq 'O' }"/>
+				<h:outputText	value="#{bundle['customs.company.account']}" rendered="#{declarationHeaderBean.courierDecFlag eq 'Y' and  
+				declarationHeaderBean.courierPayModeFlag eq 'G' and declarationHeaderBean.authGlobalAccount and ((empty declarationHeaderBean.courierAccountFlag ) or declarationHeaderBean.courierAccountFlag ne 'O')}"/>
+			</h:panelGroup>
+		</h:panelGrid>
+	</a4j:outputPanel>
+<!-- Express Company Changes Ends -->
+<!-- this section is to show amend reason for customs officer 05/11/2009 -->
+<h:panelGrid width="720" border="0" cellpadding="0" cellspacing="0"
+	rendered="#{!(empty declarationHeaderBean.declarationDTO.originalDeclarationNumber)}" style="margin: 0px 10px 0px 10px;" 
+	>
+        <!-- start of original table for search criteria -->
+		<h:panelGrid columns="3" styleClass="table-contents" width="100%"
+			columnClasses="col_indent,edit_label,edit_value">
+			<f:facet name="header">
+				<h:panelGroup styleClass="search-header">
+					<h:graphicImage alt="box" width="10" height="10"
+						url="../../imgs/bullet.gif">
+					</h:graphicImage>
+					<rich:spacer width="5" height="15" />
+					<h:outputText
+						value="#{bundle['customs.declaration.amendment']}" />
+					<rich:separator lineType="none" styleClass="separator" />
+				</h:panelGroup>
+			</f:facet>
+
+			<!-- shown for customs user amend declaration -->
+			<h:panelGroup>
+				<h:outputText value="&#160;"/>
+			</h:panelGroup>
+			<h:panelGroup>
+				<cust:outputLabel for="amendReason" value=" #{bundle['customs.declaration.amendment.reason']}" />
+			</h:panelGroup>
+			<h:panelGroup>
+				<h:inputTextarea id="amendReason" value="#{declarationHeaderBean.declarationDTO.amendRemarks}" rows="3" cols="80" styleClass="test-field-styles">
+					<f:validateLength minimum="0" maximum="300"/>
+				</h:inputTextarea>
+				<br/>
+				<a4j:outputPanel>
+					<h:message for="amendReason" errorClass="message error"/>
+				</a4j:outputPanel>
+			</h:panelGroup>
+
+		</h:panelGrid>
+</h:panelGrid>
+
+</html>
